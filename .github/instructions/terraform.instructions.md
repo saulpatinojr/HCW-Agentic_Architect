@@ -1,15 +1,57 @@
 ---
-applyTo: "**/*.tf"
+applyTo: "**/*.tf,**/*.tfvars"
 ---
-# Terraform Agent Instructions
 
-Follow AGENTS.md. Additional Terraform-specific rules:
+# Terraform File Instructions
 
-1. Run `terraform fmt` before every commit
-2. All resources must include the tags block from AGENTS.md tagging standard
-3. Use `azurerm` provider >= 3.100.0
-4. Remote state backend: azurerm (storage account `st` + env)
-5. No hardcoded location strings — use `var.location`
-6. Module source: prefer `aztfmod/caf/azurerm` for landing zone resources
-7. Naming: use `azurecaf_name` resource or follow AGENTS.md pattern manually
-8. `terraform validate` and `terraform plan` must pass before PR
+These instructions apply to all `.tf` and `.tfvars` files in this repository.
+
+## Structure Rules
+
+- `main.tf` at root level: provider config and module calls only
+- All resources live inside modules under `infra/terraform/modules/`
+- Each module must have: `main.tf`, `variables.tf`, `outputs.tf`
+
+## Required Variables
+
+Every module MUST accept:
+```hcl
+variable "env" {
+  description = "Environment: dev | tst | stg | prd"
+  type        = string
+  validation {
+    condition     = contains(["dev","tst","stg","prd"], var.env)
+    error_message = "env must be dev, tst, stg, or prd"
+  }
+}
+
+variable "tags" {
+  description = "Resource tags"
+  type        = map(string)
+  default     = {}
+}
+```
+
+## Naming
+
+Use the local naming convention:
+```hcl
+locals {
+  name_prefix = "${var.resource_type}-${var.workload}-${var.env}-${var.region}"
+}
+```
+
+## Sensitive Values
+
+```hcl
+output "secret_value" {
+  value     = azurerm_key_vault_secret.example.value
+  sensitive = true  # REQUIRED for secrets
+}
+```
+
+## State
+
+- Remote state in Azure Storage only — never local state in production
+- State file key: `<workload>/<env>.terraform.tfstate`
+- Never commit `terraform.tfstate`, `terraform.tfstate.backup`, `.terraform/`

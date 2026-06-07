@@ -1,15 +1,54 @@
 ---
-applyTo: "**/*.bicep"
+applyTo: "**/*.bicep,**/*.bicepparam"
 ---
-# Bicep Agent Instructions
 
-Follow AGENTS.md. Additional Bicep-specific rules:
+# Bicep File Instructions
 
-1. Every param must have `@description()` decorator
-2. Every output must have `@description()` decorator
-3. Use `existing` keyword for cross-resource references — no string interpolation for resource IDs
-4. Target scope: `resourceGroup` unless explicitly set to `subscription` or `managementGroup`
-5. API versions: use latest stable (check aka.ms/bicep-types)
-6. Naming: follow CAF pattern from AGENTS.md — `<abbr>-<workload>-<env>-<region>-<instance>`
-7. No `any()` type casts — resolve types explicitly
-8. Lint before committing: `az bicep lint --file <file>`
+These instructions apply to all `.bicep` and `.bicepparam` files in this repository.
+
+## Structure Rules
+
+- `main.bicep` is an **orchestrator only** — never declare inline resources here
+- Every resource lives in a dedicated module under `infra/bicep/modules/`
+- Module folders: `network/`, `identity/`, `storage/`, `keyvault/`, `ai/`, `monitoring/`
+
+## Required Decorators
+
+```bicep
+@description('...')  // Required on every param
+@secure()            // Required on secrets
+@minLength(3)        // Use validation decorators
+@maxLength(24)
+```
+
+## Required Module Outputs
+
+Every module MUST output:
+```bicep
+output resourceId string = resource.id
+output resourceName string = resource.name
+```
+
+## Naming
+
+All resource names via the shared naming function in `infra/bicep/shared/naming.bicep`:
+```bicep
+module naming '../shared/naming.bicep' = {
+  name: 'naming'
+  params: { workload: workload, env: env, region: region }
+}
+```
+
+## Tags
+
+Every resource MUST include:
+```bicep
+tags: {
+  env: env
+  owner: ownerEmail
+  costCenter: costCenter
+  project: projectName
+  managedBy: 'bicep'
+  createdDate: utcNow('yyyy-MM-dd')
+}
+```
