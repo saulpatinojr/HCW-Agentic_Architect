@@ -1,46 +1,36 @@
 {
-  // HCW Agentic Architect — Recommended Extensions
-  // VS Code will prompt users to install these on workspace open.
-  // Also used by Antigravity for extension suggestions.
-  // Install all: pwsh ./scripts/install_cli.ps1 (runs code --install-extension for each)
   "recommendations": [
-    // ─── AI Assistants ───────────────────────────────────────────────
-    "GitHub.copilot",
-    "GitHub.copilot-chat",
-
-    // ─── Azure + IaC ─────────────────────────────────────────────────
+    // ─── Azure & IaC ───────────────────────────────────────────────
     "ms-azuretools.vscode-bicep",
+    "ms-vscode.azure-account",
+    "ms-azuretools.vscode-azurefunctions",
     "ms-azuretools.azure-dev",
     "hashicorp.terraform",
-    "ms-azure-devops.azure-pipelines",
+    "ms-kubernetes-tools.vscode-kubernetes-tools",
 
-    // ─── PowerShell ──────────────────────────────────────────────────
+    // ─── AI & Copilot ──────────────────────────────────────────────
+    "github.copilot",
+    "github.copilot-chat",
+    "ms-vscode.copilot-mcp",
+
+    // ─── Languages ─────────────────────────────────────────────────
     "ms-vscode.powershell",
-
-    // ─── Containers & Remote ─────────────────────────────────────────
-    "ms-vscode-remote.remote-containers",
-    "ms-vscode-remote.remote-wsl",
-    "ms-azuretools.vscode-docker",
-
-    // ─── Ansible ─────────────────────────────────────────────────────
-    "redhat.ansible",
-
-    // ─── Git & GitHub ─────────────────────────────────────────────────
-    "eamodio.gitlens",
-    "GitHub.vscode-github-actions",
-    "GitHub.vscode-pull-request-github",
-
-    // ─── Languages ───────────────────────────────────────────────────
-    "ms-python.python",
-    "ms-python.vscode-pylance",
     "redhat.vscode-yaml",
+    "ms-vscode.vscode-json",
+    "ms-python.python",
 
-    // ─── Quality of life ─────────────────────────────────────────────
+    // ─── Git & GitHub ──────────────────────────────────────────────
+    "github.vscode-github-actions",
+    "github.vscode-pull-request-github",
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+
+    // ─── Productivity ──────────────────────────────────────────────
     "streetsidesoftware.code-spell-checker",
-    "EditorConfig.EditorConfig",
-    "ms-vscode.vscode-node-azure-pack"
+    "davidanson.vscode-markdownlint",
+    "yzhang.markdown-all-in-one",
+    "editorconfig.editorconfig",
+    "gruntfuggly.todo-tree"
   ],
-
-  // Extensions that should NOT be recommended for this workspace type
   "unwantedRecommendations": []
 }

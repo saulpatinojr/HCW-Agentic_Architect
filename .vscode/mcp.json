@@ -1,0 +1,37 @@
+{
+  // MCP Server Configuration for VS Code Copilot + Antigravity
+  // Tokens must be set as environment variables — never hardcode here.
+  // Required env vars:
+  //   GITHUB_TOKEN       — GitHub Personal Access Token (repo + read:org scope)
+  //   AZURE_TENANT_ID    — Set after running scripts/configure_cli.ps1
+  //   AZURE_SUBSCRIPTION_ID — Set after running scripts/configure_cli.ps1
+  //
+  "servers": {
+    "github": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${env:GITHUB_TOKEN}"
+      }
+    },
+    "filesystem": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "${workspaceFolder}"
+      ]
+    },
+    "azure-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@azure/mcp@latest", "server", "start"],
+      "env": {
+        "AZURE_TENANT_ID": "${env:AZURE_TENANT_ID}",
+        "AZURE_SUBSCRIPTION_ID": "${env:AZURE_SUBSCRIPTION_ID}"
+      }
+    }
+  }
+}
