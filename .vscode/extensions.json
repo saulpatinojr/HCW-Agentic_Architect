@@ -1,0 +1,17 @@
+{
+  "recommendations": [
+    "github.copilot",
+    "github.copilot-chat",
+    "ms-azuretools.vscode-bicep",
+    "hashicorp.terraform",
+    "ms-vscode.powershell",
+    "ms-vscode.azure-account",
+    "ms-azuretools.vscode-azureresourcegroups",
+    "eamodio.gitlens",
+    "github.vscode-github-actions",
+    "ms-vscode-remote.remote-wsl",
+    "ms-vscode-remote.remote-containers",
+    "redhat.vscode-yaml",
+    "ms-vscode.vscode-node-azure-pack"
+  ]
+}

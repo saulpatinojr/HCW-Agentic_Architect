@@ -1,0 +1,55 @@
+# Local-only agent config (NEVER commit)
+AGENTS.local.md
+.env
+.env.*
+*.local
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+.terraform.lock.hcl
+
+# Azure / Bicep
+*.compiled.json
+.bicep/
+
+# Secrets & credentials
+*.pem
+*.pfx
+*.key
+*.crt
+**/credentials
+serviceaccount.json
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Python / Ansible
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# VS Code workspace state
+.vscode/*.log
+
+# Logs
+logs/
+*.log

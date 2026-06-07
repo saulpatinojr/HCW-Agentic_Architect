@@ -1,0 +1,40 @@
+{
+  "editor.formatOnSave": true,
+  "editor.rulers": [120],
+  "editor.tabSize": 2,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  "github.copilot.enable": { "*": true },
+  "github.copilot.chat.agent.enabled": true,
+
+  "bicep.enableOutputsView": true,
+  "bicep.decompileOnPaste": false,
+
+  "terraform.languageServer.enable": true,
+  "terraform.experimentalFeatures.validateOnSave": true,
+
+  "powershell.powerShellDefaultVersion": "PowerShell (x64)",
+  "powershell.scriptAnalysis.enable": true,
+
+  "[bicep]": { "editor.defaultFormatter": "ms-azuretools.vscode-bicep" },
+  "[terraform]": { "editor.defaultFormatter": "hashicorp.terraform" },
+  "[powershell]": { "editor.defaultFormatter": "ms-vscode.powershell" },
+  "[json]": { "editor.defaultFormatter": "vscode.json-language-features" },
+  "[yaml]": { "editor.defaultFormatter": "redhat.vscode-yaml" },
+  "[markdown]": { "editor.defaultFormatter": "vscode.markdown-language-features" },
+
+  "files.associations": {
+    "*.bicepparam": "bicep",
+    "*.tfvars": "terraform",
+    "AGENTS*.md": "markdown",
+    "CLAUDE.md": "markdown",
+    "GEMINI.md": "markdown"
+  },
+
+  "search.exclude": {
+    "**/.terraform": true,
+    "**/node_modules": true,
+    "**/.bicep": true
+  }
+}
