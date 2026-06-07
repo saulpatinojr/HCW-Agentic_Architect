@@ -56,11 +56,13 @@ Every diagram should make explicit:
 For manual editing and review:
 - Extension: `hediet.vscode-drawio`
 - Open any `.drawio` file in VS Code or Antigravity to edit visually
+- Changes are saved back to the `.drawio` XML file format
 
 ## Azure Architecture Icon Set
-Use the official Microsoft Azure architecture icon set:
+Use the official Microsoft Azure architecture icon set for consistency:
 - Download from https://aka.ms/AzureIcons
 - Import into Draw.io via Extras > Edit Diagram or shape library
+- Use the standard Azure icon for each service type
 
 ## Review Checklist
 Before committing a diagram:

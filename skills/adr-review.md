@@ -35,7 +35,7 @@ Run this skill automatically when:
 ## ADR Compliance Review
 
 | ADR | Title | Status | Finding |
-|-----|-------|--------|--------|
+|-----|-------|--------|---------|
 | ADR-NNNN | <title> | accepted | ✅ / ⚠️ / ❌ |
 
 ### Findings Detail

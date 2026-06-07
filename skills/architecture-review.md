@@ -23,7 +23,7 @@ against Azure CAF, zero-trust, IaC, AI/RAG, FinOps, and documentation standards.
    | Docs, ADRs, diagrams | `docs.md` |
 3. Run ADR review (`adr-review` skill) to surface any decision conflicts.
 4. Identify gaps that require new ADRs and queue them.
-5. Produce the Architecture Review Report.
+5. Produce the Architecture Review Report (template below).
 
 ## Architecture Review Report Template
 ```markdown
@@ -34,7 +34,7 @@ Owner: <name>
 Agents consulted: <list>
 
 ## Summary
-<2-3 sentence assessment: ready, needs work, or blocked?>
+<2-3 sentence assessment: is this design ready, needs work, or blocked?>
 
 ## Findings by Domain
 
@@ -76,6 +76,6 @@ Agents consulted: <list>
 ```
 
 ## Escalation Rule
-- ❌ finding = review blocked until resolved
-- ⚠️ finding = may proceed with documented deviation rationale
-- ✅ finding = no action needed
+If any finding is ❌, the review is blocked until resolved.
+⚠️ findings may proceed with documented deviation rationale.
+✅ findings require no further action.

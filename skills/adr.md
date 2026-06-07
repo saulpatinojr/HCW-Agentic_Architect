@@ -39,13 +39,14 @@ Run this skill when any of the following are true:
 | Superseded By     | —                                                        |
 
 ## Context
-<What situation, constraint, requirement, or problem drives this decision?>
+<What situation, constraint, requirement, or problem drives this decision?
+Be specific. Include relevant Azure subscription, service, or workload context.>
 
 ## Decision
 <State the decision clearly in one or two sentences.>
 
 ## Rationale
-<Why was this option chosen?>
+<Why was this option chosen? What evidence, constraints, or principles guided it?>
 
 ## Alternatives Considered
 | Option | Reason Not Chosen |
@@ -63,13 +64,13 @@ Run this skill when any of the following are true:
 - ...
 
 ## Implementation Notes
-<Key steps, sequencing, or agents that must act on this decision.>
+<Any key steps, sequencing requirements, or agents that must act on this decision.>
 
 ## MCP Context Used
 | Server         | What was queried                             |
 |----------------|----------------------------------------------|
 | github         | PR/issue/code context (if applicable)        |
-| azure          | Resource state (if applicable)               |
+| azure          | Resource group / service state (if applicable)|
 | drawio         | Diagram generated (if applicable)            |
 
 ## Related ADRs
@@ -81,7 +82,7 @@ Run this skill when any of the following are true:
 |------------|--------------------------------------------------|
 | proposed   | Under review, not yet binding                    |
 | accepted   | Finalized and binding on all future work         |
-| superseded | Replaced by a later ADR                          |
+| superseded | Replaced by a later ADR — link to successor      |
 | deprecated | No longer relevant to the current system         |
 | rejected   | Considered but not adopted — kept for audit trail|
 
