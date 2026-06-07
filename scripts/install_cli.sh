@@ -1,67 +1,195 @@
 #!/usr/bin/env bash
-# HCW Agentic Architect - macOS (Apple Silicon) CLI Installer
-# Requires: Homebrew (https://brew.sh)
-# Usage: bash scripts/install_cli.sh
+# =============================================================================
+# HCW Agentic Architect — macOS Apple Silicon CLI Installer
+# Package manager: Homebrew
+# Platform: macOS (arm64 / Apple silicon primary; Intel compatible)
+#
+# Usage:
+#   chmod +x scripts/install_cli.sh
+#   ./scripts/install_cli.sh
+#   ./scripts/install_cli.sh --skip-docker --skip-antigravity
+#
+# After running: ./scripts/configure_repo.sh (or pwsh ./scripts/configure_repo.ps1)
+# =============================================================================
 
 set -euo pipefail
 
-SKIP_AI=${SKIP_AI:-false}
+SKIP_DOCKER=false
+SKIP_ANTIGRAVITY=false
+SKIP_ANSIBLE=false
+DRY_RUN=false
 
-log()  { echo -e "\033[0;36m  $1\033[0m"; }
-ok()   { echo -e "\033[0;32m  OK $1\033[0m"; }
-warn() { echo -e "\033[0;33m  WARN $1\033[0m"; }
-head() { echo -e "\n\033[1;33m$1\033[0m"; }
-
-echo ""
-echo "=== HCW Agentic Architect - CLI Installer (macOS Apple Silicon) ==="
-echo ""
-
-if ! command -v brew &>/dev/null; then
-    warn "Homebrew not found. Installing..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi
-
-head "[ 1/4 ] Core Cloud & IaC CLIs"
-brew install azure-cli
-brew install terraform
-brew install gh
-brew install --cask visual-studio-code
-brew install --cask docker
-brew install --cask github
-az bicep install
-ok "Core CLIs installed"
-
-head "[ 2/4 ] Node.js Runtime"
-brew install node
-ok "Node.js installed: $(node --version)"
-
-if [ "$SKIP_AI" != "true" ]; then
-    head "[ 3/4 ] AI & Assistant CLIs"
-    npm install -g @anthropic-ai/claude-code
-    npm install -g @openai/codex
-    npm install -g @google/gemini-cli
-    ok "AI CLIs installed"
-fi
-
-head "[ 4/4 ] Ansible"
-brew install ansible
-ok "Ansible installed: $(ansible --version | head -1)"
-
-echo ""
-echo "=== Editor CLIs ==="
-log "VS Code CLI (code): available after VS Code install"
-log "Antigravity: install from https://antigravity.dev and add to PATH"
-
-echo ""
-echo "=== Verification ==="
-for tool in az terraform gh code docker node claude gemini ansible; do
-    if command -v "$tool" &>/dev/null; then
-        echo "  OK $tool: $($tool --version 2>&1 | head -1)"
-    else
-        echo "  FAIL $tool: not found"
-    fi
+for arg in "$@"; do
+  case $arg in
+    --skip-docker)      SKIP_DOCKER=true ;;
+    --skip-antigravity) SKIP_ANTIGRAVITY=true ;;
+    --skip-ansible)     SKIP_ANSIBLE=true ;;
+    --dry-run)          DRY_RUN=true ;;
+  esac
 done
 
+step()  { echo; echo "==> $1"; }
+ok()    { echo "  [OK] $1"; }
+skip()  { echo "  [--] $1 (skipped)"; }
+warn()  { echo "  [!!] $1"; }
+
+brew_install() {
+  local formula=$1
+  local name=$2
+  local skip=${3:-false}
+  if [ "$skip" = true ]; then skip "$name"; return; fi
+  echo -n "  Installing $name ($formula)..."
+  if [ "$DRY_RUN" = true ]; then echo " [DRY RUN]"; return; fi
+  if brew list "$formula" &>/dev/null; then
+    echo " already installed"
+    ok "$name"
+  else
+    brew install "$formula" --quiet && ok "$name" || warn "$name may have failed — check manually"
+  fi
+}
+
+brew_cask_install() {
+  local cask=$1
+  local name=$2
+  local skip=${3:-false}
+  if [ "$skip" = true ]; then skip "$name"; return; fi
+  echo -n "  Installing $name ($cask)..."
+  if [ "$DRY_RUN" = true ]; then echo " [DRY RUN]"; return; fi
+  if brew list --cask "$cask" &>/dev/null; then
+    echo " already installed"
+    ok "$name"
+  else
+    brew install --cask "$cask" --quiet && ok "$name" || warn "$name may have failed — check manually"
+  fi
+}
+
+# ─────────────────────────────────────────────
+# 0. Ensure Homebrew is installed
+# ─────────────────────────────────────────────
+step "Checking Homebrew"
+if ! command -v brew &>/dev/null; then
+  echo "  Homebrew not found. Installing..."
+  if [ "$DRY_RUN" = false ]; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    # Apple silicon path
+    eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
+  fi
+else
+  ok "Homebrew $(brew --version | head -1)"
+fi
+
+# ─────────────────────────────────────────────
+# 1. Core developer runtime
+# ─────────────────────────────────────────────
+step "Core developer runtime"
+brew_install git          "Git"
+brew_install gh           "GitHub CLI (gh)"
+brew_install node         "Node.js LTS"
+brew_install python@3.12  "Python 3.12"
+
+# ─────────────────────────────────────────────
+# 2. IaC + Azure toolchain
+# ─────────────────────────────────────────────
+step "IaC + Azure toolchain"
+brew_install azure-cli    "Azure CLI (az)"
+brew_install terraform    "Terraform"
+brew_install packer       "Packer"
+brew_install ansible      "Ansible" "$SKIP_ANSIBLE"
+
+# Bicep via az
+echo -n "  Installing Bicep via az bicep install..."
+if [ "$DRY_RUN" = false ]; then
+  az bicep install 2>/dev/null && ok "Bicep" || warn "az not on PATH yet — run 'az bicep install' after az setup"
+else
+  echo " [DRY RUN]"
+fi
+
+# ─────────────────────────────────────────────
+# 3. IDE + editor CLIs
+# ─────────────────────────────────────────────
+step "IDE + editor CLIs"
+brew_cask_install visual-studio-code  "VS Code"
+brew_cask_install github              "GitHub Desktop"
+
+# VS Code CLI
+echo -n "  Checking VS Code CLI (code)..."
+if command -v code &>/dev/null; then
+  ok "VS Code CLI (code) on PATH"
+else
+  warn "'code' not on PATH. In VS Code: Cmd+Shift+P → 'Shell Command: Install code in PATH'"
+fi
+
+# Antigravity
+if [ "$SKIP_ANTIGRAVITY" = true ]; then
+  skip "Antigravity"
+else
+  echo -n "  Checking Antigravity CLI..."
+  if command -v antigravity &>/dev/null; then
+    ok "Antigravity CLI on PATH"
+  else
+    warn "Antigravity not in Homebrew. Install from https://antigravity.dev, then re-run to validate."
+  fi
+fi
+
+# ─────────────────────────────────────────────
+# 4. AI assistant CLIs (npm global)
+# ─────────────────────────────────────────────
+step "AI assistant CLIs (npm global)"
+npm_packages=(
+  "@anthropic-ai/claude-code:Claude Code CLI"
+  "@openai/codex:OpenAI Codex CLI"
+  "@google/gemini-cli:Gemini CLI"
+)
+
+for entry in "${npm_packages[@]}"; do
+  pkg=${entry%%:*}
+  name=${entry##*:}
+  echo -n "  Installing $name ($pkg)..."
+  if [ "$DRY_RUN" = true ]; then echo " [DRY RUN]"; continue; fi
+  npm install -g "$pkg" --quiet 2>/dev/null && ok "$name" || warn "$name failed — run: npm install -g $pkg"
+done
+
+# ─────────────────────────────────────────────
+# 5. Container tooling
+# ─────────────────────────────────────────────
+step "Container tooling"
+brew_cask_install docker "Docker Desktop" "$SKIP_DOCKER"
+
+# ─────────────────────────────────────────────
+# 6. VS Code extensions
+# ─────────────────────────────────────────────
+step "VS Code extensions"
+if command -v code &>/dev/null; then
+  extensions=(
+    "GitHub.copilot"
+    "GitHub.copilot-chat"
+    "ms-azuretools.vscode-bicep"
+    "hashicorp.terraform"
+    "ms-vscode.powershell"
+    "ms-azuretools.azure-dev"
+    "ms-azure-devops.azure-pipelines"
+    "eamodio.gitlens"
+    "GitHub.vscode-github-actions"
+    "ms-vscode-remote.remote-containers"
+    "redhat.ansible"
+    "ms-python.python"
+  )
+  for ext in "${extensions[@]}"; do
+    [ "$DRY_RUN" = false ] && code --install-extension "$ext" --force 2>/dev/null
+    ok "Extension: $ext"
+  done
+else
+  warn "VS Code CLI not found — skipping extensions. Add 'code' to PATH first."
+fi
+
+# ─────────────────────────────────────────────
+# 7. Summary
+# ─────────────────────────────────────────────
 echo ""
-echo "Installation complete. Next step: bash scripts/configure_repo.sh"
+echo "=========================================" 
+echo " Installation complete!"
+echo "========================================="
+echo ""
+echo "Next step: pwsh ./scripts/configure_repo.ps1"
+echo "  (or source ./scripts/configure_repo.sh when available)"
 echo ""

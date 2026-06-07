@@ -1,40 +1,140 @@
 {
+  // ─────────────────────────────────────────────────────────────────
+  // HCW Agentic Architect — VS Code Workspace Settings
+  // Compatible with VS Code and Antigravity (reads .vscode/settings.json)
+  // ─────────────────────────────────────────────────────────────────
+
+  // Editor fundamentals
   "editor.formatOnSave": true,
-  "editor.rulers": [120],
+  "editor.formatOnPaste": false,
   "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.rulers": [120],
+  "editor.wordWrap": "off",
+  "editor.minimap.enabled": false,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.inlineSuggest.enabled": true,
+  "editor.suggest.preview": true,
+
+  // File handling
+  "files.eol": "\n",
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
-
-  "github.copilot.enable": { "*": true },
-  "github.copilot.chat.agent.enabled": true,
-
-  "bicep.enableOutputsView": true,
-  "bicep.decompileOnPaste": false,
-
-  "terraform.languageServer.enable": true,
-  "terraform.experimentalFeatures.validateOnSave": true,
-
-  "powershell.powerShellDefaultVersion": "PowerShell (x64)",
-  "powershell.scriptAnalysis.enable": true,
-
-  "[bicep]": { "editor.defaultFormatter": "ms-azuretools.vscode-bicep" },
-  "[terraform]": { "editor.defaultFormatter": "hashicorp.terraform" },
-  "[powershell]": { "editor.defaultFormatter": "ms-vscode.powershell" },
-  "[json]": { "editor.defaultFormatter": "vscode.json-language-features" },
-  "[yaml]": { "editor.defaultFormatter": "redhat.vscode-yaml" },
-  "[markdown]": { "editor.defaultFormatter": "vscode.markdown-language-features" },
-
-  "files.associations": {
-    "*.bicepparam": "bicep",
-    "*.tfvars": "terraform",
-    "AGENTS*.md": "markdown",
-    "CLAUDE.md": "markdown",
-    "GEMINI.md": "markdown"
+  "files.trimFinalNewlines": true,
+  "files.encoding": "utf8",
+  "files.exclude": {
+    "**/.terraform": true,
+    "**/node_modules": true,
+    "**/__pycache__": true,
+    "**/*.pyc": true
   },
 
+  // ─── GitHub Copilot ───────────────────────────────────────────────
+  "github.copilot.enable": {
+    "*": true,
+    "markdown": true,
+    "bicep": true,
+    "terraform": true,
+    "powershell": true,
+    "yaml": true,
+    "json": true
+  },
+  "github.copilot.chat.codeGeneration.instructions": [
+    { "file": "AGENTS.md" }
+  ],
+  "github.copilot.chat.reviewSelection.instructions": [
+    { "file": "AGENTS.md" }
+  ],
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    { "file": "AGENTS.md" }
+  ],
+
+  // ─── Bicep ────────────────────────────────────────────────────────
+  "bicep.enableSurveys": false,
+  "[bicep]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-bicep",
+    "editor.formatOnSave": true
+  },
+
+  // ─── Terraform ────────────────────────────────────────────────────
+  "terraform.languageServer.enable": true,
+  "terraform.validation.enableEnhancedValidation": true,
+  "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  "[terraform-vars]": {
+    "editor.defaultFormatter": "hashicorp.terraform",
+    "editor.formatOnSave": true
+  },
+
+  // ─── PowerShell ───────────────────────────────────────────────────
+  "powershell.powerShellAdditionalExePaths": {},
+  "powershell.scriptAnalysis.enable": true,
+  "powershell.codeFormatting.preset": "OTBS",
+  "[powershell]": {
+    "editor.tabSize": 4,
+    "editor.formatOnSave": true
+  },
+
+  // ─── YAML ─────────────────────────────────────────────────────────
+  "[yaml]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.autoIndent": "advanced"
+  },
+  "yaml.validate": true,
+  "yaml.format.enable": true,
+
+  // ─── JSON ─────────────────────────────────────────────────────────
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.tabSize": 2
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.tabSize": 2
+  },
+
+  // ─── Markdown ─────────────────────────────────────────────────────
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": { "other": true, "comments": false, "strings": false }
+  },
+
+  // ─── Python ───────────────────────────────────────────────────────
+  "python.defaultInterpreterPath": "python",
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.formatOnSave": true
+  },
+
+  // ─── Git ──────────────────────────────────────────────────────────
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "gitlens.hovers.currentLine.over": "line",
+  "gitlens.codeLens.enabled": true,
+
+  // ─── Terminal ─────────────────────────────────────────────────────
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.fontSize": 13,
+
+  // ─── Antigravity compatibility ────────────────────────────────────
+  // Antigravity reads this file natively — no separate config needed.
+  // CLI: antigravity open .
+  // Extension import: use .vsix export from VS Code Extensions panel.
+
+  // ─── Search exclusions ────────────────────────────────────────────
   "search.exclude": {
     "**/.terraform": true,
     "**/node_modules": true,
-    "**/.bicep": true
+    "**/.git": true,
+    "**/dist": true,
+    "**/out": true
   }
 }

@@ -1,17 +1,46 @@
 {
+  // HCW Agentic Architect — Recommended Extensions
+  // VS Code will prompt users to install these on workspace open.
+  // Also used by Antigravity for extension suggestions.
+  // Install all: pwsh ./scripts/install_cli.ps1 (runs code --install-extension for each)
   "recommendations": [
-    "github.copilot",
-    "github.copilot-chat",
+    // ─── AI Assistants ───────────────────────────────────────────────
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+
+    // ─── Azure + IaC ─────────────────────────────────────────────────
     "ms-azuretools.vscode-bicep",
+    "ms-azuretools.azure-dev",
     "hashicorp.terraform",
+    "ms-azure-devops.azure-pipelines",
+
+    // ─── PowerShell ──────────────────────────────────────────────────
     "ms-vscode.powershell",
-    "ms-vscode.azure-account",
-    "ms-azuretools.vscode-azureresourcegroups",
-    "eamodio.gitlens",
-    "github.vscode-github-actions",
-    "ms-vscode-remote.remote-wsl",
+
+    // ─── Containers & Remote ─────────────────────────────────────────
     "ms-vscode-remote.remote-containers",
+    "ms-vscode-remote.remote-wsl",
+    "ms-azuretools.vscode-docker",
+
+    // ─── Ansible ─────────────────────────────────────────────────────
+    "redhat.ansible",
+
+    // ─── Git & GitHub ─────────────────────────────────────────────────
+    "eamodio.gitlens",
+    "GitHub.vscode-github-actions",
+    "GitHub.vscode-pull-request-github",
+
+    // ─── Languages ───────────────────────────────────────────────────
+    "ms-python.python",
+    "ms-python.vscode-pylance",
     "redhat.vscode-yaml",
+
+    // ─── Quality of life ─────────────────────────────────────────────
+    "streetsidesoftware.code-spell-checker",
+    "EditorConfig.EditorConfig",
     "ms-vscode.vscode-node-azure-pack"
-  ]
+  ],
+
+  // Extensions that should NOT be recommended for this workspace type
+  "unwantedRecommendations": []
 }
