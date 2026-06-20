@@ -1,24 +1,44 @@
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 
 namespace HCWMauiApp.ViewModels.Base;
 
 /// <summary>
 /// Base class for all ViewModels providing common functionality.
-/// Uses MVVM Community Toolkit for property change notifications.
 /// </summary>
-public partial class BaseViewModel : ObservableObject
+public abstract class BaseViewModel : INotifyPropertyChanged
 {
-    [ObservableProperty]
-    private bool isLoading;
+    private bool _isLoading;
+    private string _title = string.Empty;
+    private string? _errorMessage;
 
-    [ObservableProperty]
-    private string title = string.Empty;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-    [ObservableProperty]
-    private string? errorMessage;
+    /// <summary>
+    /// Indicates whether the view is currently loading.
+    /// </summary>
+    public bool IsLoading
+    {
+        get => _isLoading;
+        set => SetProperty(ref _isLoading, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the visible title for the view.
+    /// </summary>
+    public string Title
+    {
+        get => _title;
+        set => SetProperty(ref _title, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the current error message.
+    /// </summary>
+    public string? ErrorMessage
+    {
+        get => _errorMessage;
+        set => SetProperty(ref _errorMessage, value);
+    }
 
     /// <summary>
     /// Indicates if the view is currently initializing.
@@ -56,5 +76,17 @@ public partial class BaseViewModel : ObservableObject
     protected void ClearError()
     {
         ErrorMessage = null;
+    }
+
+    protected bool SetProperty<T>(ref T field, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value))
+        {
+            return false;
+        }
+
+        field = value;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        return true;
     }
 }

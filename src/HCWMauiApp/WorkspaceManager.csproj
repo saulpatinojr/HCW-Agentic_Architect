@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net10.0-windows10.0.19041.0;net10.0-maccatalyst</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <UseMaui>true</UseMaui>
+    <SingleProject>true</SingleProject>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>WorkspaceManager</RootNamespace>
+    <AssemblyName>WorkspaceManager</AssemblyName>
+    <ApplicationTitle>Workspace Manager</ApplicationTitle>
+    <ApplicationId>com.workspace.manager</ApplicationId>
+    <WindowsPackageType Condition="'$(TargetFramework)' == 'net10.0-windows10.0.19041.0'">None</WindowsPackageType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.20" />
+  </ItemGroup>
+</Project>

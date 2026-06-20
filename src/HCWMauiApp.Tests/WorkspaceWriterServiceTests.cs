@@ -1,5 +1,5 @@
-using AgenticWorkspaceManager;
-using AgenticWorkspaceManager.Services;
+using WorkspaceManager;
+using WorkspaceManager.Services;
 using System.Text;
 using System.Text.Json;
 

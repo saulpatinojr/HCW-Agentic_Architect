@@ -1,7 +1,7 @@
 #!/bin/bash
-# Agentic Zero-Trust Pre-Commit Hook
+# Workspace Manager Zero-Trust Pre-Commit Hook
 
-echo "🛡️ Initiating Agentic Pre-Commit Scan..."
+echo "[*] Initiating workspace pre-commit scan..."
 
 STAGED_TF=$(git diff --cached --name-only --diff-filter=ACM | grep "\.tf$")
 
@@ -27,5 +27,5 @@ if [[ "$CLAUDE_REVIEW" == *"REJECT:"* ]]; then
     exit 1
 fi
 
-echo "[✓] Agentic Review Passed. Committing code."
+echo "[✓] Workspace review passed. Committing code."
 exit 0

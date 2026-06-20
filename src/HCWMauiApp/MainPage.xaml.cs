@@ -1,38 +1,208 @@
 using System.Collections.ObjectModel;
-using AgenticWorkspaceManager.Services;
+using System.Diagnostics;
+using WorkspaceManager.Services;
 
-namespace AgenticWorkspaceManager;
+namespace WorkspaceManager;
 
 public partial class MainPage : ContentPage
 {
     private readonly WorkspaceCatalogService _workspaceCatalogService;
     private readonly WorkspaceSystemCheckService _workspaceSystemCheckService;
-    private readonly TeamAssemblyService _teamAssemblyService;
-    private string _repoRootPath;
-    public ObservableCollection<AgentViewModel> DiscoveredAgents { get; set; } = new();
+    private readonly WorkspaceActivationService _workspaceActivationService;
+    private readonly WorkspacePackUpdateService _workspacePackUpdateService;
+    private readonly ProviderRegistryService _providerRegistryService;
+    private readonly WorkspaceFolderService _workspaceFolderService;
+    private readonly HelperMcpHealthService _helperMcpHealthService;
+    private string _repoRootPath = string.Empty;
+    private AgentViewModel? _selectedPack;
+    private bool _isCompactLayout;
+
+    public ObservableCollection<AgentViewModel> DiscoveredAgents { get; } = [];
+    public ObservableCollection<ActivityLogEntry> ActivityEntries { get; } = [];
+    public ObservableCollection<ProviderInfo> Providers { get; } = [];
+    public ObservableCollection<ProviderInfo> SelectedProviders { get; } = [];
+    public ObservableCollection<WorkspaceLink> PackLinks { get; } = [];
+    public ObservableCollection<WorkspaceFolderNode> FolderNodes { get; } = [];
+    public ObservableCollection<ManifestToolRequirement> SelectedRequiredTools { get; } = [];
+    public ObservableCollection<ManifestMcpServerRequirement> SelectedMcpServers { get; } = [];
 
     public MainPage(
         WorkspaceCatalogService workspaceCatalogService,
         WorkspaceSystemCheckService workspaceSystemCheckService,
-        TeamAssemblyService teamAssemblyService)
+        WorkspaceActivationService workspaceActivationService,
+        WorkspacePackUpdateService workspacePackUpdateService,
+        ProviderRegistryService providerRegistryService,
+        WorkspaceFolderService workspaceFolderService,
+        HelperMcpHealthService helperMcpHealthService)
     {
         _workspaceCatalogService = workspaceCatalogService;
         _workspaceSystemCheckService = workspaceSystemCheckService;
-        _teamAssemblyService = teamAssemblyService;
+        _workspaceActivationService = workspaceActivationService;
+        _workspacePackUpdateService = workspacePackUpdateService;
+        _providerRegistryService = providerRegistryService;
+        _workspaceFolderService = workspaceFolderService;
+        _helperMcpHealthService = helperMcpHealthService;
+
         InitializeComponent();
-        AgentsCollectionView.ItemsSource = DiscoveredAgents;
+        BindCollections();
         DetermineRepositoryRoot();
+        LoadProviders();
+        RefreshFolderNodes();
+        UpdateSummaryState("Ready");
+        _ = RefreshHelperHealthAsync();
     }
 
-    private void Log(string message)
+    private void BindCollections()
     {
-        ConsoleOutput.Text += $"> {message}\n";
+        AgentsCollectionView.ItemsSource = DiscoveredAgents;
+        ActivityCollectionView.ItemsSource = ActivityEntries;
+        ProvidersCollectionView.ItemsSource = Providers;
+        SelectedProvidersCollectionView.ItemsSource = SelectedProviders;
+        PackLinksCollectionView.ItemsSource = PackLinks;
+        FolderNodesCollectionView.ItemsSource = FolderNodes;
+        RequiredToolsCollectionView.ItemsSource = SelectedRequiredTools;
+        McpServersCollectionView.ItemsSource = SelectedMcpServers;
+    }
+
+    private void LoadProviders()
+    {
+        Providers.Clear();
+        foreach (var provider in _providerRegistryService.GetAll())
+        {
+            Providers.Add(provider);
+        }
+    }
+
+    private void Log(string message, string category = "Workspace", string? detail = null)
+    {
+        var severity = message.Contains("[X]", StringComparison.OrdinalIgnoreCase) || message.StartsWith("[-]", StringComparison.Ordinal)
+            ? "Error"
+            : message.Contains("[!]", StringComparison.OrdinalIgnoreCase) || message.Contains("[WARNING]", StringComparison.OrdinalIgnoreCase)
+                ? "Warning"
+                : message.Contains("[+]", StringComparison.OrdinalIgnoreCase) || message.Contains("[OK]", StringComparison.OrdinalIgnoreCase) || message.Contains("[SYSTEM READY]", StringComparison.OrdinalIgnoreCase)
+                    ? "Success"
+                    : "Info";
+
+        var entry = new ActivityLogEntry
+        {
+            Severity = severity,
+            Category = category,
+            Message = CleanLogMessage(message),
+            Detail = detail ?? ExtractDetail(message)
+        };
+
+        ActivityEntries.Insert(0, entry);
+        LastScanLabel.Text = $"Last update: {DateTime.Now:t}";
+    }
+
+    private static string CleanLogMessage(string message)
+    {
+        return message
+            .Replace("[✓]", string.Empty, StringComparison.Ordinal)
+            .Replace("[X]", string.Empty, StringComparison.Ordinal)
+            .Replace("[x]", string.Empty, StringComparison.Ordinal)
+            .Replace("[*]", string.Empty, StringComparison.Ordinal)
+            .Replace("[+]", string.Empty, StringComparison.Ordinal)
+            .Replace("[-]", string.Empty, StringComparison.Ordinal)
+            .Replace("[!]", string.Empty, StringComparison.Ordinal)
+            .Trim(' ', '.', '-');
+    }
+
+    private static string ExtractDetail(string message)
+    {
+        int index = message.IndexOf(':', StringComparison.Ordinal);
+        return index >= 0 && index + 1 < message.Length ? message[(index + 1)..].Trim() : string.Empty;
     }
 
     private void DetermineRepositoryRoot()
     {
         _repoRootPath = _workspaceCatalogService.DetermineRepositoryRoot(AppDomain.CurrentDomain.BaseDirectory);
-        Log($"Active Root Bound: {Path.GetFileName(_repoRootPath)}");
+        WorkspacePathLabel.Text = $"Workspace: {Path.GetFileName(_repoRootPath)}";
+        Log($"Bound to {_repoRootPath}", "Startup", _repoRootPath);
+    }
+
+    private void UpdateSummaryState(string status)
+    {
+        StatusLabel.Text = status;
+        PackCountLabel.Text = DiscoveredAgents.Count.ToString();
+        SelectionCountLabel.Text = DiscoveredAgents.Count(agent => agent.IsSelected).ToString();
+        ApplyButton.IsEnabled = DiscoveredAgents.Any(agent => agent.IsSelected);
+        UpdateButton.IsEnabled = _selectedPack is not null
+            && !string.Equals(_selectedPack.UpdateState, "Current", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private async Task RefreshHelperHealthAsync()
+    {
+        var health = await _helperMcpHealthService.CheckAsync(_repoRootPath, IncludeHelperMcpSwitch.IsToggled);
+        McpHealthLabel.Text = health.Status;
+        McpHealthLabel.TextColor = Color.FromArgb(health.Status == "Helper ready" ? "#68F7B2" : "#FBBF24");
+        McpSummaryLabel.Text = health.Summary;
+
+        if (!health.ScriptExists)
+        {
+            Log("Helper MCP script is missing.", "MCP", health.ScriptPath);
+        }
+        else if (!health.PythonAvailable)
+        {
+            Log("Helper MCP script exists, but Python was not found on PATH.", "MCP", health.ScriptPath);
+        }
+        else
+        {
+            Log("Helper MCP health check passed.", "MCP", health.Summary);
+        }
+    }
+
+    private void RefreshFolderNodes()
+    {
+        FolderNodes.Clear();
+        foreach (var node in _workspaceFolderService.BuildNodes(_repoRootPath, _selectedPack))
+        {
+            FolderNodes.Add(node);
+        }
+    }
+
+    private void RefreshPackInspector(AgentViewModel? agent)
+    {
+        _selectedPack = agent;
+        SelectedProviders.Clear();
+        PackLinks.Clear();
+        SelectedRequiredTools.Clear();
+        SelectedMcpServers.Clear();
+
+        if (agent is null)
+        {
+            SelectedPackNameLabel.Text = "Select a pack";
+            SelectedPackDescriptionLabel.Text = "Pack metadata, provider links, files, and MCP requirements appear here.";
+            UpdateButton.IsEnabled = false;
+            RefreshFolderNodes();
+            return;
+        }
+
+        SelectedPackNameLabel.Text = $"{agent.FriendlyName}  v{agent.Version}";
+        SelectedPackDescriptionLabel.Text = $"{agent.Category} | {agent.UpdateState}\n{agent.Description}";
+
+        foreach (var provider in _providerRegistryService.Resolve(agent.ProviderIds))
+        {
+            SelectedProviders.Add(provider);
+        }
+
+        foreach (var link in agent.OfficialLinks.Concat(agent.BestPracticeLinks))
+        {
+            PackLinks.Add(link);
+        }
+
+        foreach (var tool in agent.RequiredTools)
+        {
+            SelectedRequiredTools.Add(tool);
+        }
+
+        foreach (var mcp in agent.RequiredMcpServers)
+        {
+            SelectedMcpServers.Add(mcp);
+        }
+
+        UpdateButton.IsEnabled = !string.Equals(agent.UpdateState, "Current", StringComparison.OrdinalIgnoreCase);
+        RefreshFolderNodes();
     }
 
     private void OnScanWorkspaceClicked(object sender, EventArgs e)
@@ -42,57 +212,295 @@ public partial class MainPage : ContentPage
         {
             DiscoveredAgents.Add(agent);
         }
-        Log($"[✓] Discovered {DiscoveredAgents.Count} agent packs.");
+
+        if (DiscoveredAgents.Count > 0)
+        {
+            AgentsCollectionView.SelectedItem = DiscoveredAgents[0];
+            RefreshPackInspector(DiscoveredAgents[0]);
+        }
+        else
+        {
+            RefreshPackInspector(null);
+        }
+
+        UpdateSummaryState("Workspace scanned");
+        Log($"Discovered {DiscoveredAgents.Count} pack(s).", "Scan");
     }
 
-    private async void OnImportPackClicked(object sender, EventArgs e)
+    private async void OnImportWorkspacePackClicked(object sender, EventArgs e)
     {
         try
         {
             var result = await FilePicker.Default.PickAsync(new PickOptions
             {
-                PickerTitle = "Select an Agent Pack (.zip)"
+                PickerTitle = "Select a workspace pack (.zip)"
             });
 
             if (result != null && result.FileName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
             {
                 string packName = _workspaceCatalogService.ImportAgentPack(_repoRootPath, result.FullPath);
-                Log($"[+] Ingested Agent Pack: {packName}");
-                OnScanWorkspaceClicked(null, null);
+                Log($"Imported workspace pack {packName}.", "Import", result.FullPath);
+                OnScanWorkspaceClicked(this, EventArgs.Empty);
             }
         }
-        catch (Exception ex) { Log($"[-] Ingestion failed: {ex.Message}"); }
+        catch (Exception ex)
+        {
+            UpdateSummaryState("Import failed");
+            Log($"Import failed: {ex.Message}", "Import");
+        }
     }
 
-    private async void OnAssembleTeamClicked(object sender, EventArgs e)
+    private async void OnPreviewWorkspaceClicked(object sender, EventArgs e)
+    {
+        await ActivateWorkspaceAsync(forceDryRun: true);
+    }
+
+    private async void OnActivateWorkspaceClicked(object sender, EventArgs e)
+    {
+        await ActivateWorkspaceAsync(forceDryRun: null);
+    }
+
+    private async Task ActivateWorkspaceAsync(bool? forceDryRun)
     {
         var selected = DiscoveredAgents.Where(a => a.IsSelected).ToList();
-        if (!selected.Any()) { Log("[-] Selection Missing: Select an agent first."); return; }
+        SelectionCountLabel.Text = selected.Count.ToString();
+        if (!selected.Any())
+        {
+            UpdateSummaryState("Selection required");
+            Log("Select at least one pack before applying changes.", "Activate");
+            return;
+        }
+
+        bool dryRun = forceDryRun ?? DryRunSwitch.IsToggled;
 
         try
         {
-            var result = await _teamAssemblyService.AssembleTeamAsync(new TeamAssemblyRequest
+            UpdateSummaryState(dryRun ? "Previewing changes" : "Applying selection");
+            var result = await _workspaceActivationService.ActivateAsync(new WorkspaceActivationRequest
             {
                 RepoRootPath = _repoRootPath,
                 SelectedAgents = selected,
-                IsDryRun = DryRunSwitch.IsToggled,
-                IsTokenomicsEnabled = TokenomicsSwitch.IsToggled
+                IsDryRun = dryRun,
+                IncludeHelperMcp = IncludeHelperMcpSwitch.IsToggled
             });
 
             foreach (var line in result.Logs)
             {
-                Log(line);
+                Log(line, dryRun ? "Preview" : "Apply");
             }
+
+            UpdateSummaryState(result.Succeeded ? (dryRun ? "Preview complete" : "Selection applied") : "Action completed with issues");
+            RefreshFolderNodes();
+            await RefreshHelperHealthAsync();
         }
-        catch (Exception ex) { Log($"[-] Orchestration fault: {ex.Message}"); }
+        catch (Exception ex)
+        {
+            UpdateSummaryState("Apply failed");
+            Log($"Apply failed: {ex.Message}", "Apply");
+        }
     }
 
     private async void OnSystemCheckClicked(object sender, EventArgs e)
     {
+        UpdateSummaryState("Checking system");
         var lines = await _workspaceSystemCheckService.RunAsync(_repoRootPath, DiscoveredAgents);
         foreach (var line in lines)
         {
-            Log(line);
+            Log(line, "Preflight");
         }
+
+        int missingCount = lines.Count(line => line.Contains("[X]", StringComparison.Ordinal) || line.Contains("[WARNING]", StringComparison.Ordinal));
+        MissingRequirementsLabel.Text = missingCount.ToString();
+        UpdateSummaryState("System check complete");
+        await RefreshHelperHealthAsync();
+    }
+
+    private void OnCheckUpdatesClicked(object sender, EventArgs e)
+    {
+        OnScanWorkspaceClicked(sender, e);
+        Log("Checked catalog states for local packs.", "Update");
+    }
+
+    private async void OnUpdateSelectedPackClicked(object sender, EventArgs e)
+    {
+        if (_selectedPack is null)
+        {
+            Log("Select a pack before checking for updates.", "Update");
+            return;
+        }
+
+        if (string.Equals(_selectedPack.UpdateState, "Current", StringComparison.OrdinalIgnoreCase))
+        {
+            Log($"{_selectedPack.FriendlyName} is already current.", "Update");
+            return;
+        }
+
+        try
+        {
+            UpdateSummaryState("Updating pack");
+            var result = await _workspacePackUpdateService.UpdateAsync(_repoRootPath, _selectedPack);
+            foreach (var line in result.Logs)
+            {
+                Log(line, "Update");
+            }
+
+            if (result.Succeeded)
+            {
+                Log($"Pack update complete: {result.UpdatedVersion}.", "Update");
+                OnScanWorkspaceClicked(sender, e);
+            }
+            else
+            {
+                UpdateSummaryState("Update failed");
+            }
+        }
+        catch (Exception ex)
+        {
+            UpdateSummaryState("Update failed");
+            Log($"Update failed: {ex.Message}", "Update");
+        }
+    }
+
+    private void OnAgentCheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        UpdateSummaryState("Selection updated");
+    }
+
+    private void OnPackSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        RefreshPackInspector(e.CurrentSelection.FirstOrDefault() as AgentViewModel);
+    }
+
+    private async void OnHelperMcpToggled(object sender, ToggledEventArgs e)
+    {
+        await RefreshHelperHealthAsync();
+    }
+
+    private async void OnFolderNodeSelected(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.CurrentSelection.FirstOrDefault() is not WorkspaceFolderNode node)
+        {
+            return;
+        }
+
+        FolderNodesCollectionView.SelectedItem = null;
+        if (!node.Exists)
+        {
+            Log($"{node.Label} is not present yet.", "Files", node.Path);
+            return;
+        }
+
+        try
+        {
+            OpenLocalPath(node.Path);
+            Log($"Opened {node.Label}.", "Files", node.Path);
+        }
+        catch (Exception ex)
+        {
+            Log($"Unable to open {node.Label}: {ex.Message}", "Files", node.Path);
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async void OnPackLinkClicked(object sender, EventArgs e)
+    {
+        if (sender is not Button { CommandParameter: string url } || string.IsNullOrWhiteSpace(url))
+        {
+            return;
+        }
+
+        try
+        {
+            await Launcher.Default.OpenAsync(url);
+            Log("Opened guidance link.", "Links", url);
+        }
+        catch (Exception ex)
+        {
+            Log($"Unable to open guidance link: {ex.Message}", "Links", url);
+        }
+    }
+
+    private async void OnProviderSelected(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is CollectionView collectionView)
+        {
+            collectionView.SelectedItem = null;
+        }
+
+        if (e.CurrentSelection.FirstOrDefault() is not ProviderInfo provider || string.IsNullOrWhiteSpace(provider.OfficialUrl))
+        {
+            return;
+        }
+
+        try
+        {
+            await Launcher.Default.OpenAsync(provider.OfficialUrl);
+            Log($"Opened {provider.Name}.", "Provider", provider.OfficialUrl);
+        }
+        catch (Exception ex)
+        {
+            Log($"Unable to open {provider.Name}: {ex.Message}", "Provider", provider.OfficialUrl);
+        }
+    }
+
+    private static void OpenLocalPath(string path)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = path,
+            UseShellExecute = true
+        };
+        Process.Start(startInfo);
+    }
+
+    private void OnPageSizeChanged(object sender, EventArgs e)
+    {
+        bool shouldUseCompact = Width < 1060;
+        if (shouldUseCompact == _isCompactLayout)
+        {
+            return;
+        }
+
+        _isCompactLayout = shouldUseCompact;
+        if (_isCompactLayout)
+        {
+            MainContentGrid.ColumnDefinitions = new ColumnDefinitionCollection
+            {
+                new() { Width = GridLength.Star }
+            };
+            MainContentGrid.RowDefinitions = new RowDefinitionCollection
+            {
+                new() { Height = GridLength.Auto },
+                new() { Height = GridLength.Auto },
+                new() { Height = GridLength.Auto }
+            };
+
+            Grid.SetColumn(LeftRail, 0);
+            Grid.SetRow(LeftRail, 0);
+            Grid.SetColumn(CenterPanel, 0);
+            Grid.SetRow(CenterPanel, 1);
+            Grid.SetColumn(InspectorPanel, 0);
+            Grid.SetRow(InspectorPanel, 2);
+            return;
+        }
+
+        MainContentGrid.ColumnDefinitions = new ColumnDefinitionCollection
+        {
+            new() { Width = new GridLength(260) },
+            new() { Width = GridLength.Star },
+            new() { Width = new GridLength(310) }
+        };
+        MainContentGrid.RowDefinitions = new RowDefinitionCollection
+        {
+            new() { Height = GridLength.Auto }
+        };
+
+        Grid.SetColumn(LeftRail, 0);
+        Grid.SetRow(LeftRail, 0);
+        Grid.SetColumn(CenterPanel, 1);
+        Grid.SetRow(CenterPanel, 0);
+        Grid.SetColumn(InspectorPanel, 2);
+        Grid.SetRow(InspectorPanel, 0);
     }
 }

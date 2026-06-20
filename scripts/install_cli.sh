@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# HCW Agentic Architect — macOS Apple Silicon CLI Installer
+# HCW Workspace Manager — macOS Apple Silicon CLI Installer
 # Package manager: Homebrew
 # Platform: macOS (arm64 / Apple silicon primary; Intel compatible)
 #

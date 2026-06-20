@@ -2,7 +2,7 @@
 
 ## Overview
 
-The HCW Agentic Architect MAUI application follows a **clean architecture** pattern with **MVVM** (Model-View-ViewModel) for clear separation of concerns, testability, and maintainability.
+The HCW Workspace Manager MAUI application follows a **clean architecture** pattern with **MVVM** (Model-View-ViewModel) for clear separation of concerns, testability, and maintainability.
 
 ## Core Architectural Principles
 

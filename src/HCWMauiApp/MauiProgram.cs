@@ -1,6 +1,6 @@
-namespace AgenticWorkspaceManager;
+namespace WorkspaceManager;
 
-using AgenticWorkspaceManager.Services;
+using WorkspaceManager.Services;
 
 public static class MauiProgram
 {
@@ -17,11 +17,16 @@ public static class MauiProgram
         builder.Services.AddSingleton<ToolInstallService>();
         builder.Services.AddSingleton<PackManifestService>();
         builder.Services.AddSingleton<ManifestRequirementsMergeService>();
+        builder.Services.AddSingleton<WorkspacePackCatalogService>();
         builder.Services.AddSingleton<WorkspaceCatalogService>();
+        builder.Services.AddSingleton<ProviderRegistryService>();
+        builder.Services.AddSingleton<WorkspaceFolderService>();
+        builder.Services.AddSingleton<HelperMcpHealthService>();
+        builder.Services.AddSingleton<WorkspacePackUpdateService>();
         builder.Services.AddSingleton<WorkspaceMcpConfigBuilderService>();
         builder.Services.AddSingleton<WorkspaceWriterService>();
         builder.Services.AddSingleton<WorkspaceSystemCheckService>();
-        builder.Services.AddSingleton<TeamAssemblyService>();
+        builder.Services.AddSingleton<WorkspaceActivationService>();
         builder.Services.AddSingleton<MainPage>();
         builder.Services.AddSingleton<App>();
 

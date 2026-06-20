@@ -1,5 +1,5 @@
 # Instruction: Cloud & AI Orchestration Guardrails
-**Target Persona:** Agentic AI Architect
+**Target Persona:** Workspace Architect
 **Status:** ALWAYS-ON
 
 ### 1. Zero-Trust Execution

@@ -1,4 +1,4 @@
-# HCW Agentic Architect - Complete Documentation Index
+# HCW Workspace Manager - Complete Documentation Index
 
 ## Quick Navigation
 
@@ -61,7 +61,7 @@
 ## Complete Directory Tree
 
 ```
-HCW-Agentic_Architect/
+HCW-WorkspaceManager/
 │
 ├── 📄 MAUI-QUICK-REFERENCE.md          ← START HERE (examples & patterns)
 ├── 📄 MAUI-COMPLETE-INDEX.md            ← This file (navigation)

@@ -13,6 +13,6 @@
 * **GitHub CLI** (`gh`) — Source control, pull requests, and secure automation gateway.
 
 ### 3. AI Providers
-* **Claude Code CLI** (`claude`) — Agentic terminal loops and context-driven engineering.
+* **Claude Code CLI** (`claude`) — Workspace-driven terminal loops and context-aware engineering.
 * **GitHub Copilot CLI** (`gh copilot`) — Context-aware shell assistance and predictive syntax debugging.
 * **Codex CLI** — Dedicated integration layer for LLM-backed code generation engines.

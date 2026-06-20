@@ -8,5 +8,5 @@ Follow all instructions in ./AGENTS.md.
 - Use extended thinking for architecture decisions
 - When generating Bicep/Terraform, validate against CAF naming in AGENTS.md
 - MCP servers: configure in ~/.claude/claude_desktop_config.json
-  - github: saulpatinojr/HCW-Agentic_Architect
+  - github: saulpatinojr/HCW-WorkspaceManager
   - azure: read-only by default

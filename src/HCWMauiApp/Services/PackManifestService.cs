@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace AgenticWorkspaceManager.Services;
+namespace WorkspaceManager.Services;
 
 public sealed class PackManifestService
 {
@@ -153,6 +153,16 @@ public sealed class PackManifest
 {
     public int SchemaVersion { get; set; }
     public string DisplayName { get; set; } = string.Empty;
+    public string Version { get; set; } = "0.0.0";
+    public string Description { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public List<string> ProviderIds { get; set; } = [];
+    public string IconKey { get; set; } = string.Empty;
+    public List<WorkspaceLink> OfficialLinks { get; set; } = [];
+    public List<WorkspaceLink> BestPracticeLinks { get; set; } = [];
+    public string SourceRepository { get; set; } = string.Empty;
+    public string SourceBranch { get; set; } = "main";
+    public string SourcePath { get; set; } = string.Empty;
     public List<ManifestToolRequirement> RequiredTools { get; set; } = [];
     public List<string> RequiredFiles { get; set; } = [];
     public List<ManifestMcpServerRequirement> RequiredMcpServers { get; set; } = [];

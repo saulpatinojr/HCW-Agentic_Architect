@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace AgenticWorkspaceManager.Services;
+namespace WorkspaceManager.Services;
 
 public sealed class WorkspaceWriterService
 {

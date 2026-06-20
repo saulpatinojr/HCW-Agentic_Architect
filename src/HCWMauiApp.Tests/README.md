@@ -9,7 +9,7 @@ Focused unit tests for services that are independent from MAUI UI/runtime depend
 - `WorkspaceMcpConfigBuilderService` MCP config construction and tokenomics conflict behavior.
 - `ToolInstallService` tool mapping and installer probing behavior via fakes.
 - `WorkspaceWriterService` dry-run and write-mode sync behavior via fake filesystem.
-- `TeamAssemblyService` integration-style orchestration over a temp workspace.
+- `WorkspaceActivationService` integration-style orchestration over a temp workspace.
 
 ## Run tests
 

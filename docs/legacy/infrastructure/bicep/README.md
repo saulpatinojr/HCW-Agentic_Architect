@@ -1,6 +1,6 @@
 # infra/bicep/modules/
 
-This directory contains reusable Bicep modules for the HCW Agentic Architect platform.
+This directory contains reusable Bicep modules for the HCW Workspace Manager platform.
 
 ## Convention
 

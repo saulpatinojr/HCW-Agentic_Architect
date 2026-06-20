@@ -1,6 +1,41 @@
 {
   "schemaVersion": 1,
   "displayName": "Terraform Engineer",
+  "version": "1.0.0",
+  "description": "Terraform-first workspace guidance for infrastructure planning, validation, module structure, provider boundaries, and safe review loops.",
+  "category": "Infrastructure",
+  "providerIds": [
+    "terraform",
+    "azure",
+    "aws",
+    "gcp",
+    "github",
+    "claude"
+  ],
+  "iconKey": "terraform",
+  "sourceRepository": "saulpatinojr/HCW-WorkspaceManager",
+  "sourceBranch": "main",
+  "sourcePath": "workspace-config/agents/tf-engineer",
+  "officialLinks": [
+    {
+      "label": "Terraform Docs",
+      "url": "https://developer.hashicorp.com/terraform/docs"
+    },
+    {
+      "label": "Terraform Registry",
+      "url": "https://registry.terraform.io/"
+    }
+  ],
+  "bestPracticeLinks": [
+    {
+      "label": "Terraform Style Guide",
+      "url": "https://developer.hashicorp.com/terraform/language/style"
+    },
+    {
+      "label": "Azure CAF Naming",
+      "url": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming"
+    }
+  ],
   "requiredTools": [
     {
       "displayName": "Terraform",

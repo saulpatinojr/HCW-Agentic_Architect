@@ -1,6 +1,6 @@
-# HCW Agentic Architect Platform
+# HCW Workspace Manager Platform
 
-Enterprise Azure IaC + AI agent platform for multitenant SaaS workloads.
+Enterprise Azure IaC + AI workspace platform for multitenant SaaS workloads.
 
 **Owner:** [Saul Patino](https://github.com/saulpatinojr)  
 **Stack:** Azure · Bicep · Terraform · PowerShell · GitHub Actions · Azure OpenAI · AI Search

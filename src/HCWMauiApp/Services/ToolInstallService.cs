@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace AgenticWorkspaceManager.Services;
+namespace WorkspaceManager.Services;
 
 public sealed class ToolInstallService
 {

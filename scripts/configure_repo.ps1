@@ -1,7 +1,7 @@
 #Requires -Version 7.0
 <#
 .SYNOPSIS
-    HCW Agentic Architect — Repository Bootstrap & Auth Configuration
+    HCW Workspace Manager — Repository Bootstrap & Auth Configuration
     Writes AGENTS.local.md (gitignored), authenticates CLIs, and validates setup.
 
 .DESCRIPTION
@@ -72,7 +72,7 @@ AZURE_DEFAULT_REGION=$region
 
 ## GitHub
 GITHUB_ORG=saulpatinojr
-GITHUB_REPO=HCW-Agentic_Architect
+GITHUB_REPO=HCW-WorkspaceManager
 
 ## Developer Identity
 GIT_EMAIL=$gitEmail

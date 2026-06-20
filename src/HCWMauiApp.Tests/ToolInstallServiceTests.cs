@@ -1,4 +1,4 @@
-using AgenticWorkspaceManager.Services;
+using WorkspaceManager.Services;
 
 namespace HCWMauiApp.Tests;
 

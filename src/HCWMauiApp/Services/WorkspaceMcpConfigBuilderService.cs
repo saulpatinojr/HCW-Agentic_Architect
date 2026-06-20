@@ -1,4 +1,4 @@
-namespace AgenticWorkspaceManager.Services;
+namespace WorkspaceManager.Services;
 
 public sealed class WorkspaceMcpConfigBuilderService
 {
@@ -19,7 +19,7 @@ public sealed class WorkspaceMcpConfigBuilderService
             };
         }
 
-        if (request.IsTokenomicsEnabled)
+        if (request.IncludeHelperMcp)
         {
             if (mcpConfig.McpServers.ContainsKey("token-compressor"))
             {
@@ -29,7 +29,7 @@ public sealed class WorkspaceMcpConfigBuilderService
 
             string mcpServerPath = Path.Combine(request.RepoRootPath, "workspace-config", "mcp-servers", "token-compressor", "server.py");
             mcpConfig.McpServers.Add("token-compressor", new { command = "python", args = new[] { mcpServerPath } });
-            logs.Add("[+] Agentic Tokenomics Enabled: Token Squeezer MCP linked.");
+            logs.Add("[+] Helper MCP enabled: token-compressor linked.");
         }
 
         return new WorkspaceMcpConfigBuildResult(true, mcpConfig, logs);
@@ -56,7 +56,7 @@ public sealed class WorkspaceMcpConfigBuildRequest
     public string RepoRootPath { get; set; } = string.Empty;
     public IReadOnlyList<AgentViewModel> SelectedAgents { get; set; } = [];
     public MergedManifestRequirements MergedRequirements { get; set; } = new();
-    public bool IsTokenomicsEnabled { get; set; }
+    public bool IncludeHelperMcp { get; set; }
 }
 
 public sealed class WorkspaceMcpConfigBuildResult

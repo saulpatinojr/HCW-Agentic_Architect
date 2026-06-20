@@ -1,69 +1,444 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="AgenticWorkspaceManager.MainPage"
-             BackgroundColor="#0F172A">
-    <ScrollView>
-        <VerticalStackLayout Padding="30" Spacing="20" MaximumWidthRequest="700" HorizontalOptions="CenterAndExpand">
-            
-            <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
-                <Label Text="👷‍♂️👼" FontSize="64" HorizontalOptions="Center" />
-                <Label Text="AGENTIC AI WORKSPACE" FontSize="24" FontAttributes="Bold" TextColor="#38BDF8" HorizontalOptions="Center"/>
-                <Label Text="Cross-platform control plane operational." TextColor="#94A3B8" HorizontalOptions="Center"/>
-            </VerticalStackLayout>
+             x:Class="WorkspaceManager.MainPage"
+             BackgroundColor="#061225"
+             SizeChanged="OnPageSizeChanged">
+    <ContentPage.Resources>
+        <Color x:Key="PanelStroke">#2A4867</Color>
+        <Color x:Key="PanelFill">#D9122742</Color>
+        <Color x:Key="TextPrimary">#F8FBFF</Color>
+        <Color x:Key="TextMuted">#A8BED6</Color>
+    </ContentPage.Resources>
 
-            <Border Stroke="#334155" StrokeThickness="1" HorizontalOptions="FillAndExpand" />
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#07142B" Offset="0" />
+                <GradientStop Color="#082B58" Offset="0.48" />
+                <GradientStop Color="#061225" Offset="1" />
+            </LinearGradientBrush>
+        </Grid.Background>
 
-            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
-                <Button Grid.Column="0" Text="1. Scan Workspace" Clicked="OnScanWorkspaceClicked" BackgroundColor="#0EA5E9" TextColor="White" FontAttributes="Bold" />
-                <Button Grid.Column="1" Text="2. Import Pack (.zip)" Clicked="OnImportPackClicked" BackgroundColor="#8B5CF6" TextColor="White" FontAttributes="Bold" />
-                <Button Grid.Column="2" Text="3. System Check" Clicked="OnSystemCheckClicked" BackgroundColor="#F59E0B" TextColor="White" FontAttributes="Bold" />
-            </Grid>
+        <Grid RowDefinitions="Auto,*" Padding="18" RowSpacing="14">
+            <Border Stroke="#3B6A8F"
+                    StrokeThickness="1"
+                    Padding="18"
+                    Background="#CC0B1A31">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="24" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="#4019D3FF" Offset="0,8" Radius="24" Opacity="0.65" />
+                </Border.Shadow>
 
-            <VerticalStackLayout Spacing="10">
-                <Label Text="Available Agent Packs:" FontSize="16" FontAttributes="Bold" TextColor="#F1F5F9"/>
-                <Border Stroke="#334155" StrokeThickness="1" BackgroundColor="#1E293B" Padding="5">
-                    <CollectionView x:Name="AgentsCollectionView" HeightRequest="200">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Padding="10" ColumnDefinitions="Auto,*">
-                                    <CheckBox IsChecked="{Binding IsSelected}" Color="#38BDF8" VerticalOptions="Center"/>
-                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Padding="10,0,0,0">
-                                        <Label Text="{Binding FriendlyName}" FontAttributes="Bold" TextColor="#F8FAFC" FontSize="14"/>
-                                        <Label Text="{Binding DirectoryName}" FontSize="11" TextColor="#64748B"/>
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
+                    <VerticalStackLayout Spacing="10">
+                        <HorizontalStackLayout Spacing="10">
+                            <Border BackgroundColor="#1A67E8F9" Stroke="#4667E8F9" Padding="10,5">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="999" />
+                                </Border.StrokeShape>
+                                <Label Text="AI workspace control room" TextColor="#A5F3FC" FontSize="12" FontAttributes="Bold" />
+                            </Border>
+                            <Border BackgroundColor="#1A68F7B2" Stroke="#4068F7B2" Padding="10,5">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="999" />
+                                </Border.StrokeShape>
+                                <Label x:Name="StatusLabel" Text="Ready" TextColor="#BFFDE3" FontSize="12" FontAttributes="Bold" />
+                            </Border>
+                        </HorizontalStackLayout>
+
+                        <Label Text="Workspace Manager"
+                               TextColor="{StaticResource TextPrimary}"
+                               FontSize="32"
+                               FontAttributes="Bold" />
+                        <Label Text="Compose packs, validate tooling, inspect generated files, and activate the local workspace from one surface."
+                               TextColor="{StaticResource TextMuted}"
+                               FontSize="14"
+                               LineBreakMode="WordWrap" />
+
+                        <FlexLayout Wrap="Wrap" AlignItems="Center" Direction="Row" JustifyContent="Start">
+                            <Border BackgroundColor="#1419D3FF" Stroke="#3356C7FF" Padding="10,6" Margin="0,0,8,8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="999" />
+                                </Border.StrokeShape>
+                                <Label x:Name="WorkspacePathLabel" Text="Workspace: resolving..." TextColor="#E0F7FF" FontSize="12" />
+                            </Border>
+                            <Border BackgroundColor="#141F7AEC" Stroke="#3360A5FA" Padding="10,6" Margin="0,0,8,8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="999" />
+                                </Border.StrokeShape>
+                                <Label x:Name="LastScanLabel" Text="Last update: not run yet" TextColor="#D9EAFF" FontSize="12" />
+                            </Border>
+                        </FlexLayout>
+                    </VerticalStackLayout>
+
+                    <Grid Grid.Column="1" WidthRequest="128" HeightRequest="128">
+                        <Ellipse Fill="#2219D3FF" />
+                        <Image Source="workspace_architect.svg"
+                               WidthRequest="112"
+                               HeightRequest="112"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <ScrollView Grid.Row="1">
+                <VerticalStackLayout Spacing="14">
+                    <Border Stroke="#2A4867" StrokeThickness="1" Background="#B80B1A31" Padding="12">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="20" />
+                        </Border.StrokeShape>
+                        <FlexLayout Wrap="Wrap" AlignItems="Center" JustifyContent="Start">
+                            <Button Text="Scan"
+                                    Clicked="OnScanWorkspaceClicked"
+                                    ToolTipProperties.Text="Discover local workspace packs"
+                                    BackgroundColor="#2563EB"
+                                    TextColor="White"
+                                    FontAttributes="Bold"
+                                    Padding="18,10"
+                                    Margin="0,0,8,8" />
+                            <Button Text="Import"
+                                    Clicked="OnImportWorkspacePackClicked"
+                                    ToolTipProperties.Text="Import a zipped workspace pack"
+                                    BackgroundColor="#1E3A5F"
+                                    TextColor="White"
+                                    FontAttributes="Bold"
+                                    Padding="18,10"
+                                    Margin="0,0,8,8" />
+                            <Button Text="Preflight"
+                                    Clicked="OnSystemCheckClicked"
+                                    ToolTipProperties.Text="Validate tools, MCP paths, and required files"
+                                    BackgroundColor="#0F766E"
+                                    TextColor="White"
+                                    FontAttributes="Bold"
+                                    Padding="18,10"
+                                    Margin="0,0,8,8" />
+                            <Button Text="Preview"
+                                    Clicked="OnPreviewWorkspaceClicked"
+                                    ToolTipProperties.Text="Run activation in dry-run mode"
+                                    BackgroundColor="#0369A1"
+                                    TextColor="White"
+                                    FontAttributes="Bold"
+                                    Padding="18,10"
+                                    Margin="0,0,8,8" />
+                            <Button Text="Check updates"
+                                    Clicked="OnCheckUpdatesClicked"
+                                    ToolTipProperties.Text="Compare local packs with the catalog"
+                                    BackgroundColor="#4C1D95"
+                                    TextColor="White"
+                                    FontAttributes="Bold"
+                                    Padding="18,10"
+                                    Margin="0,0,8,8" />
+                            <Button x:Name="UpdateButton"
+                                    Text="Update pack"
+                                    Clicked="OnUpdateSelectedPackClicked"
+                                    ToolTipProperties.Text="Download and replace the selected pack from the repository"
+                                    BackgroundColor="#F59E0B"
+                                    TextColor="#111827"
+                                    FontAttributes="Bold"
+                                    Padding="18,10"
+                                    Margin="0,0,8,8" />
+                            <Button x:Name="ApplyButton"
+                                    Text="Apply"
+                                    Clicked="OnActivateWorkspaceClicked"
+                                    ToolTipProperties.Text="Write selected pack files to the workspace"
+                                    BackgroundColor="#10B981"
+                                    TextColor="#03201A"
+                                    FontAttributes="Bold"
+                                    Padding="18,10"
+                                    Margin="0,0,12,8" />
+
+                            <Border BackgroundColor="#1419D3FF" Stroke="#3356C7FF" Padding="12,8" Margin="0,0,8,8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16" />
+                                </Border.StrokeShape>
+                                <HorizontalStackLayout Spacing="10">
+                                    <Switch x:Name="DryRunSwitch" IsToggled="True" OnColor="#38BDF8" ThumbColor="#F8FAFC" />
+                                    <VerticalStackLayout Spacing="1">
+                                        <Label Text="Preview mode" TextColor="#F8FBFF" FontSize="12" FontAttributes="Bold" />
+                                        <Label Text="No file writes" TextColor="#A8BED6" FontSize="11" />
                                     </VerticalStackLayout>
-                                </Grid>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </Border>
-            </VerticalStackLayout>
+                                </HorizontalStackLayout>
+                            </Border>
 
-            <Border Stroke="#334155" StrokeThickness="1" BackgroundColor="#1E293B" Padding="15" Margin="0,10,0,10">
-                <HorizontalStackLayout Spacing="15" VerticalOptions="Center">
-                    <Switch x:Name="TokenomicsSwitch" IsToggled="True" OnColor="#22C55E" ThumbColor="#F8FAFC" />
-                    <VerticalStackLayout VerticalOptions="Center">
-                        <Label Text="Enable Agentic Tokenomics" FontAttributes="Bold" TextColor="#F8FAFC" FontSize="14"/>
-                        <Label Text="Injects the Token Squeezer MCP and KV caching directives into VS Code." FontSize="11" TextColor="#94A3B8"/>
-                    </VerticalStackLayout>
-                </HorizontalStackLayout>
-            </Border>
+                            <Border BackgroundColor="#1468F7B2" Stroke="#3368F7B2" Padding="12,8" Margin="0,0,8,8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16" />
+                                </Border.StrokeShape>
+                                <HorizontalStackLayout Spacing="10">
+                                    <Switch x:Name="IncludeHelperMcpSwitch" IsToggled="True" OnColor="#22C55E" ThumbColor="#F8FAFC" Toggled="OnHelperMcpToggled" />
+                                    <VerticalStackLayout Spacing="1">
+                                        <Label Text="Helper MCP" TextColor="#F8FBFF" FontSize="12" FontAttributes="Bold" />
+                                        <Label Text="Token-aware file reads" TextColor="#A8BED6" FontSize="11" />
+                                    </VerticalStackLayout>
+                                </HorizontalStackLayout>
+                            </Border>
+                        </FlexLayout>
+                    </Border>
 
-            <Border Stroke="#334155" StrokeThickness="1" BackgroundColor="#1E293B" Padding="15" Margin="0,0,0,10">
-                <HorizontalStackLayout Spacing="15" VerticalOptions="Center">
-                    <Switch x:Name="DryRunSwitch" IsToggled="False" OnColor="#F59E0B" ThumbColor="#F8FAFC" />
-                    <VerticalStackLayout VerticalOptions="Center">
-                        <Label Text="Dry-Run Activation" FontAttributes="Bold" TextColor="#F8FAFC" FontSize="14"/>
-                        <Label Text="Previews merge, preflight, and sync actions without writing files or installing tools." FontSize="11" TextColor="#94A3B8"/>
-                    </VerticalStackLayout>
-                </HorizontalStackLayout>
-            </Border>
+                    <Grid x:Name="MainContentGrid"
+                          ColumnDefinitions="260,*,310"
+                          RowDefinitions="Auto"
+                          ColumnSpacing="14"
+                          RowSpacing="14">
+                        <VerticalStackLayout x:Name="LeftRail" Grid.Column="0" Spacing="14">
+                            <Border Stroke="#2A4867" StrokeThickness="1" Background="#B80B1A31" Padding="16">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="20" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout Spacing="12">
+                                    <Label Text="Run State" TextColor="#F8FBFF" FontSize="17" FontAttributes="Bold" />
+                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="10">
+                                        <Label Text="Discovered" TextColor="#A8BED6" FontSize="12" />
+                                        <Label x:Name="PackCountLabel" Grid.Column="1" Text="0" TextColor="#F8FBFF" FontSize="16" FontAttributes="Bold" />
+                                        <Label Grid.Row="1" Text="Selected" TextColor="#A8BED6" FontSize="12" />
+                                        <Label x:Name="SelectionCountLabel" Grid.Row="1" Grid.Column="1" Text="0" TextColor="#F8FBFF" FontSize="16" FontAttributes="Bold" />
+                                        <Label Grid.Row="2" Text="Missing" TextColor="#A8BED6" FontSize="12" />
+                                        <Label x:Name="MissingRequirementsLabel" Grid.Row="2" Grid.Column="1" Text="-" TextColor="#FBBF24" FontSize="16" FontAttributes="Bold" />
+                                        <Label Grid.Row="3" Text="MCP" TextColor="#A8BED6" FontSize="12" />
+                                        <Label x:Name="McpHealthLabel" Grid.Row="3" Grid.Column="1" Text="Checking" TextColor="#67E8F9" FontSize="13" FontAttributes="Bold" />
+                                    </Grid>
+                                    <Label x:Name="McpSummaryLabel" Text="Helper status pending." TextColor="#A8BED6" FontSize="11" LineBreakMode="WordWrap" />
+                                </VerticalStackLayout>
+                            </Border>
 
-            <Button Text="Orchestrate Selected Team to Workspace" Clicked="OnAssembleTeamClicked" BackgroundColor="#22C55E" TextColor="White" FontAttributes="Bold" HeightRequest="50"/>
+                            <Border Stroke="#2A4867" StrokeThickness="1" Background="#A80B1A31" Padding="16">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="20" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout Spacing="12">
+                                    <Label Text="Providers" TextColor="#F8FBFF" FontSize="17" FontAttributes="Bold" />
+                                    <CollectionView x:Name="ProvidersCollectionView"
+                                                    HeightRequest="220"
+                                                    SelectionMode="Single"
+                                                    SelectionChanged="OnProviderSelected">
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Stroke="#244766" StrokeThickness="1" BackgroundColor="#192A4560" Padding="9" Margin="0,0,0,8">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="14" />
+                                                    </Border.StrokeShape>
+                                                    <Grid ColumnDefinitions="32,*" ColumnSpacing="8">
+                                                        <Image Source="{Binding IconAsset}" WidthRequest="28" HeightRequest="28" />
+                                                        <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                                            <Label Text="{Binding Name}" TextColor="#F8FBFF" FontSize="12" FontAttributes="Bold" />
+                                                            <Label Text="{Binding OfficialUrl}" TextColor="#8FB3D6" FontSize="10" LineBreakMode="TailTruncation" />
+                                                        </VerticalStackLayout>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+                                </VerticalStackLayout>
+                            </Border>
+                        </VerticalStackLayout>
 
-            <Label Text="Execution Console:" FontSize="14" FontAttributes="Bold" TextColor="#94A3B8"/>
-            <Editor x:Name="ConsoleOutput" IsReadOnly="True" HeightRequest="150" BackgroundColor="#020617" TextColor="#34D399" FontFamily="Consolas" FontSize="12" />
+                        <VerticalStackLayout x:Name="CenterPanel" Grid.Column="1" Spacing="14">
+                            <Border Stroke="#2A4867" StrokeThickness="1" Background="#B80B1A31" Padding="16">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="20" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout Spacing="12">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                        <VerticalStackLayout Spacing="3">
+                                            <Label Text="Workspace Packs" TextColor="#F8FBFF" FontSize="18" FontAttributes="Bold" />
+                                            <Label Text="Select a pack to inspect providers, files, MCP servers, and update state." TextColor="#A8BED6" FontSize="12" />
+                                        </VerticalStackLayout>
+                                        <Label Grid.Column="1" Text="Click a row for details" TextColor="#67E8F9" FontSize="11" VerticalOptions="End" />
+                                    </Grid>
 
-        </VerticalStackLayout>
-    </ScrollView>
+                                    <CollectionView x:Name="AgentsCollectionView"
+                                                    HeightRequest="310"
+                                                    SelectionMode="Single"
+                                                    SelectionChanged="OnPackSelectionChanged">
+                                        <CollectionView.EmptyView>
+                                            <VerticalStackLayout Padding="30" Spacing="8" HorizontalOptions="Center" VerticalOptions="Center">
+                                                <Label Text="No packs found" TextColor="#F8FBFF" FontAttributes="Bold" FontSize="15" HorizontalOptions="Center" />
+                                                <Label Text="Scan the workspace or import a pack to populate this board." TextColor="#A8BED6" FontSize="12" HorizontalOptions="Center" />
+                                            </VerticalStackLayout>
+                                        </CollectionView.EmptyView>
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Stroke="#244766" StrokeThickness="1" Background="#98101F38" Padding="12" Margin="0,0,0,10">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="16" />
+                                                    </Border.StrokeShape>
+                                                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                                        <CheckBox IsChecked="{Binding IsSelected}" Color="#67E8F9" CheckedChanged="OnAgentCheckedChanged" VerticalOptions="Start" />
+                                                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                                            <HorizontalStackLayout Spacing="8">
+                                                                <Label Text="{Binding FriendlyName}" TextColor="#F8FBFF" FontSize="15" FontAttributes="Bold" />
+                                                                <Border BackgroundColor="#1A67E8F9" Stroke="#3367E8F9" Padding="7,3">
+                                                                    <Border.StrokeShape>
+                                                                        <RoundRectangle CornerRadius="999" />
+                                                                    </Border.StrokeShape>
+                                                                    <Label Text="{Binding Version}" TextColor="#CFFAFE" FontSize="10" />
+                                                                </Border>
+                                                            </HorizontalStackLayout>
+                                                            <Label Text="{Binding Description}" TextColor="#A8BED6" FontSize="12" LineBreakMode="WordWrap" MaxLines="2" />
+                                                            <Label Text="{Binding FullPath}" TextColor="#6F91B4" FontSize="10" LineBreakMode="TailTruncation" />
+                                                        </VerticalStackLayout>
+                                                        <VerticalStackLayout Grid.Column="2" Spacing="6" HorizontalOptions="End">
+                                                            <Label Text="{Binding Category}" TextColor="#D9EAFF" FontSize="11" HorizontalOptions="End" />
+                                                            <Label Text="{Binding UpdateState}" TextColor="#67E8F9" FontSize="11" FontAttributes="Bold" HorizontalOptions="End" />
+                                                        </VerticalStackLayout>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Border Stroke="#2A4867" StrokeThickness="1" Background="#B80B1A31" Padding="16">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="20" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout Spacing="12">
+                                    <Label Text="Activity Feed" TextColor="#F8FBFF" FontSize="18" FontAttributes="Bold" />
+                                    <CollectionView x:Name="ActivityCollectionView" HeightRequest="260" SelectionMode="None">
+                                        <CollectionView.EmptyView>
+                                            <Label Text="Activity appears here after scan, preflight, preview, or apply." TextColor="#A8BED6" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center" />
+                                        </CollectionView.EmptyView>
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Stroke="#1F3C5B" StrokeThickness="1" BackgroundColor="#A0061225" Padding="10" Margin="0,0,0,8">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="14" />
+                                                    </Border.StrokeShape>
+                                                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                                                        <Label Text="{Binding SeverityGlyph}" TextColor="{Binding AccentColor}" FontSize="11" FontAttributes="Bold" VerticalOptions="Start" />
+                                                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                                            <Label Text="{Binding Message}" TextColor="#F8FBFF" FontSize="12" LineBreakMode="WordWrap" />
+                                                            <Label Text="{Binding Detail}" TextColor="#7CA3C6" FontSize="10" LineBreakMode="TailTruncation" />
+                                                        </VerticalStackLayout>
+                                                        <VerticalStackLayout Grid.Column="2" Spacing="2" HorizontalOptions="End">
+                                                            <Label Text="{Binding Category}" TextColor="#67E8F9" FontSize="10" HorizontalOptions="End" />
+                                                            <Label Text="{Binding DisplayTime}" TextColor="#7CA3C6" FontSize="10" HorizontalOptions="End" />
+                                                        </VerticalStackLayout>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+                                </VerticalStackLayout>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout x:Name="InspectorPanel" Grid.Column="2" Spacing="14">
+                            <Border Stroke="#2A4867" StrokeThickness="1" Background="#B80B1A31" Padding="16">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="20" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout Spacing="12">
+                                    <Label Text="Pack Inspector" TextColor="#F8FBFF" FontSize="18" FontAttributes="Bold" />
+                                    <Label x:Name="SelectedPackNameLabel" Text="Select a pack" TextColor="#F8FBFF" FontSize="15" FontAttributes="Bold" />
+                                    <Label x:Name="SelectedPackDescriptionLabel" Text="Pack metadata, provider links, files, and MCP requirements appear here." TextColor="#A8BED6" FontSize="12" LineBreakMode="WordWrap" />
+
+                                    <Label Text="Provider Links" TextColor="#D9EAFF" FontSize="12" FontAttributes="Bold" />
+                                    <CollectionView x:Name="SelectedProvidersCollectionView"
+                                                    HeightRequest="70"
+                                                    SelectionMode="Single"
+                                                    SelectionChanged="OnProviderSelected"
+                                                    ItemsLayout="HorizontalList">
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Stroke="#244766" StrokeThickness="1" Background="#1A67E8F9" Padding="8" Margin="0,0,8,0">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="14" />
+                                                    </Border.StrokeShape>
+                                                    <HorizontalStackLayout Spacing="6">
+                                                        <Image Source="{Binding IconAsset}" WidthRequest="22" HeightRequest="22" />
+                                                        <Label Text="{Binding Name}" TextColor="#F8FBFF" FontSize="11" VerticalOptions="Center" />
+                                                    </HorizontalStackLayout>
+                                                </Border>
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+
+                                    <Label Text="Guidance Links" TextColor="#D9EAFF" FontSize="12" FontAttributes="Bold" />
+                                    <CollectionView x:Name="PackLinksCollectionView" HeightRequest="78" SelectionMode="None">
+                                        <CollectionView.EmptyView>
+                                            <Label Text="No links declared." TextColor="#7CA3C6" FontSize="11" />
+                                        </CollectionView.EmptyView>
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Text="{Binding Label}"
+                                                        Clicked="OnPackLinkClicked"
+                                                        CommandParameter="{Binding Url}"
+                                                        BackgroundColor="#1438BDF8"
+                                                        BorderColor="#3356C7FF"
+                                                        BorderWidth="1"
+                                                        TextColor="#CFFAFE"
+                                                        FontSize="11"
+                                                        Padding="8,5"
+                                                        Margin="0,0,0,6" />
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+
+                                    <Label Text="Required Tools" TextColor="#D9EAFF" FontSize="12" FontAttributes="Bold" />
+                                    <CollectionView x:Name="RequiredToolsCollectionView" HeightRequest="76" SelectionMode="None">
+                                        <CollectionView.EmptyView>
+                                            <Label Text="No required tools declared." TextColor="#7CA3C6" FontSize="11" />
+                                        </CollectionView.EmptyView>
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Label Text="{Binding DisplayName}" TextColor="#A8BED6" FontSize="11" />
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+
+                                    <Label Text="MCP Servers" TextColor="#D9EAFF" FontSize="12" FontAttributes="Bold" />
+                                    <CollectionView x:Name="McpServersCollectionView" HeightRequest="58" SelectionMode="None">
+                                        <CollectionView.EmptyView>
+                                            <Label Text="No pack MCP servers declared." TextColor="#7CA3C6" FontSize="11" />
+                                        </CollectionView.EmptyView>
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Label Text="{Binding Name}" TextColor="#A8BED6" FontSize="11" />
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Border Stroke="#2A4867" StrokeThickness="1" Background="#B80B1A31" Padding="16">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="20" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout Spacing="12">
+                                    <Label Text="Workspace Files" TextColor="#F8FBFF" FontSize="18" FontAttributes="Bold" />
+                                    <CollectionView x:Name="FolderNodesCollectionView"
+                                                    HeightRequest="250"
+                                                    SelectionMode="Single"
+                                                    SelectionChanged="OnFolderNodeSelected">
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Stroke="#1F3C5B" StrokeThickness="1" Background="#80101F38" Padding="9" Margin="0,0,0,8">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="13" />
+                                                    </Border.StrokeShape>
+                                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                                        <VerticalStackLayout Spacing="1">
+                                                            <Label Text="{Binding Label}" TextColor="#F8FBFF" FontSize="12" FontAttributes="Bold" />
+                                                            <Label Text="{Binding Path}" TextColor="#7CA3C6" FontSize="10" LineBreakMode="TailTruncation" />
+                                                        </VerticalStackLayout>
+                                                        <Label Grid.Column="1" Text="{Binding Status}" TextColor="#67E8F9" FontSize="10" VerticalOptions="Center" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+                                </VerticalStackLayout>
+                            </Border>
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
+    </Grid>
 </ContentPage>

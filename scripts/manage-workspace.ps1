@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Interactive Agentic AI Workspace Orchestrator.
+    Interactive Workspace Manager orchestrator.
 .DESCRIPTION
     Launches a custom interactive CLI portal to manage local workspace configurations,
     discover available agent packages, and align them with VS Code configurations.

@@ -1,6 +1,6 @@
 # src/
 
-This directory contains application source code for the HCW Agentic Architect platform.
+This directory contains application source code for the HCW Workspace Manager platform.
 
 ## Planned Structure
 

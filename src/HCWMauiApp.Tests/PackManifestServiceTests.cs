@@ -1,4 +1,4 @@
-using AgenticWorkspaceManager.Services;
+using WorkspaceManager.Services;
 
 namespace HCWMauiApp.Tests;
 
@@ -130,6 +130,38 @@ public sealed class PackManifestServiceTests : IDisposable
         Assert.Single(result.Manifest.RequiredFiles);
         Assert.Single(result.Manifest.RequiredMcpServers);
         Assert.Single(result.Manifest.RequiredEnvVars);
+    }
+
+    [Fact]
+    public void ValidatePack_WhenManifestHasUiMetadata_ReturnsOptionalFields()
+    {
+        string packPath = CreatePackDirectory("pack-metadata");
+        File.WriteAllText(Path.Combine(packPath, "pack.manifest.json"), """
+{
+  "schemaVersion": 1,
+  "displayName": "Terraform Engineer",
+  "version": "1.2.3",
+  "description": "Infrastructure workspace pack.",
+  "category": "Infrastructure",
+  "providerIds": ["terraform", "azure"],
+  "iconKey": "terraform",
+  "officialLinks": [{ "label": "Terraform Docs", "url": "https://developer.hashicorp.com/terraform" }],
+  "bestPracticeLinks": [{ "label": "Style Guide", "url": "https://developer.hashicorp.com/terraform/language/style" }],
+  "sourceRepository": "example/repo",
+  "sourcePath": "workspace-config/agents/tf-engineer"
+}
+""");
+
+        var result = _service.ValidatePack(packPath);
+
+        Assert.True(result.IsValid);
+        Assert.NotNull(result.Manifest);
+        Assert.Equal("1.2.3", result.Manifest!.Version);
+        Assert.Equal("Infrastructure", result.Manifest.Category);
+        Assert.Equal(["terraform", "azure"], result.Manifest.ProviderIds);
+        Assert.Single(result.Manifest.OfficialLinks);
+        Assert.Single(result.Manifest.BestPracticeLinks);
+        Assert.Equal("example/repo", result.Manifest.SourceRepository);
     }
 
     private string CreatePackDirectory(string name)

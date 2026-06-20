@@ -1,4 +1,4 @@
-using AgenticWorkspaceManager.Services;
+using WorkspaceManager.Services;
 using System.IO.Compression;
 
 namespace HCWMauiApp.Tests;

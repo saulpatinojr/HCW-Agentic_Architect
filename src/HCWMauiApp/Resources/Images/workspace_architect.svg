@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="38" y1="24" x2="214" y2="232" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#19D3FF"/>
+      <stop offset="1" stop-color="#073B8F"/>
+    </linearGradient>
+    <linearGradient id="helmet" x1="76" y1="43" x2="182" y2="97" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5F6B7A"/>
+      <stop offset="1" stop-color="#1F2937"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="48" fill="url(#bg)"/>
+  <g opacity=".28" stroke="#E0F7FF" stroke-width="3" fill="none">
+    <path d="M31 64h35m10 0h46M26 92h78"/>
+    <circle cx="190" cy="61" r="21"/>
+    <path d="M169 61h42M190 40v42"/>
+    <path d="M35 202h42m15 0h26"/>
+  </g>
+  <ellipse cx="128" cy="224" rx="82" ry="22" fill="#EAF8FF"/>
+  <path d="M74 205c8-31 28-50 54-50s46 19 54 50" fill="#F8FAFC"/>
+  <rect x="112" y="156" width="32" height="52" rx="13" fill="#F2C7A5"/>
+  <circle cx="128" cy="112" r="55" fill="#F4C9AA"/>
+  <path d="M69 103c4-41 26-65 59-65 34 0 56 24 59 65H69z" fill="url(#helmet)"/>
+  <path d="M69 103h118c-3 10-10 16-24 17H93c-14-1-21-7-24-17z" fill="#111827"/>
+  <circle cx="103" cy="118" r="20" fill="#101827"/>
+  <circle cx="153" cy="118" r="20" fill="#101827"/>
+  <circle cx="103" cy="118" r="10" fill="#F8FAFC"/>
+  <circle cx="153" cy="118" r="10" fill="#F8FAFC"/>
+  <path d="M123 118h10" stroke="#101827" stroke-width="6" stroke-linecap="round"/>
+  <path d="M112 149c9 8 23 8 32 0" stroke="#A15C45" stroke-width="5" stroke-linecap="round"/>
+  <path d="M88 210h80l-11-42-29 23-29-23-11 42z" fill="#172033"/>
+  <path d="M122 184h12l6 26h-24l6-26z" fill="#111827"/>
+  <rect x="67" y="160" width="55" height="34" rx="6" fill="#111827"/>
+  <path d="M84 175c3-8 17-8 20 0 7 0 11 10 4 15H82c-8-6-3-15 2-15z" fill="#EAF8FF"/>
+  <circle cx="198" cy="88" r="7" fill="#EAF8FF"/>
+  <path d="M198 95v44m0-44 31-15m-31 15-28-17" stroke="#EAF8FF" stroke-width="4" stroke-linecap="round"/>
+</svg>

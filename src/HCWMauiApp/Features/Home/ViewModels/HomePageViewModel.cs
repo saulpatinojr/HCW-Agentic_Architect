@@ -1,5 +1,4 @@
 using HCWMauiApp.ViewModels.Base;
-using CommunityToolkit.Mvvm.Input;
 
 namespace HCWMauiApp.Features.Home.ViewModels;
 
@@ -14,7 +13,6 @@ public partial class HomePageViewModel : BaseViewModel
         Title = "Home";
     }
 
-    [RelayCommand]
     public async Task LoadDataAsync()
     {
         try

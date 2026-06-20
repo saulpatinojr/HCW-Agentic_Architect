@@ -1,12 +1,12 @@
-using AgenticWorkspaceManager;
-using AgenticWorkspaceManager.Services;
+using WorkspaceManager;
+using WorkspaceManager.Services;
 
 namespace HCWMauiApp.Tests;
 
 public sealed class WorkspaceMcpConfigBuilderServiceTests
 {
     [Fact]
-    public void Build_WhenTokenomicsDisabled_MapsMergedServersAndActivePersonas()
+    public void Build_WhenHelperMcpDisabled_MapsMergedServersAndActivePersonas()
     {
         var service = new WorkspaceMcpConfigBuilderService();
         var merged = new MergedManifestRequirements();
@@ -25,7 +25,7 @@ public sealed class WorkspaceMcpConfigBuilderServiceTests
                 new AgentViewModel { DirectoryName = "pack-a", FriendlyName = "Pack A", FullPath = "c:\\repo\\workspace-config\\agents\\pack-a" }
             ],
             MergedRequirements = merged,
-            IsTokenomicsEnabled = false
+            IncludeHelperMcp = false
         });
 
         Assert.True(result.Succeeded);
@@ -37,7 +37,7 @@ public sealed class WorkspaceMcpConfigBuilderServiceTests
     }
 
     [Fact]
-    public void Build_WhenTokenomicsEnabled_AddsTokenCompressorServer()
+    public void Build_WhenHelperMcpEnabled_AddsTokenCompressorServer()
     {
         var service = new WorkspaceMcpConfigBuilderService();
 
@@ -49,17 +49,17 @@ public sealed class WorkspaceMcpConfigBuilderServiceTests
                 new AgentViewModel { DirectoryName = "pack-a", FriendlyName = "Pack A", FullPath = "c:\\repo\\workspace-config\\agents\\pack-a" }
             ],
             MergedRequirements = new MergedManifestRequirements(),
-            IsTokenomicsEnabled = true
+            IncludeHelperMcp = true
         });
 
         Assert.True(result.Succeeded);
         Assert.NotNull(result.Config);
         Assert.True(result.Config!.McpServers.ContainsKey("token-compressor"));
-        Assert.Contains(result.Logs, line => line == "[+] Agentic Tokenomics Enabled: Token Squeezer MCP linked.");
+        Assert.Contains(result.Logs, line => line == "[+] Helper MCP enabled: token-compressor linked.");
     }
 
     [Fact]
-    public void Build_WhenTokenomicsServerNameAlreadyExists_ReturnsConflictFailure()
+    public void Build_WhenHelperMcpServerNameAlreadyExists_ReturnsConflictFailure()
     {
         var service = new WorkspaceMcpConfigBuilderService();
         var merged = new MergedManifestRequirements();
@@ -78,7 +78,7 @@ public sealed class WorkspaceMcpConfigBuilderServiceTests
                 new AgentViewModel { DirectoryName = "pack-a", FriendlyName = "Pack A", FullPath = "c:\\repo\\workspace-config\\agents\\pack-a" }
             ],
             MergedRequirements = merged,
-            IsTokenomicsEnabled = true
+            IncludeHelperMcp = true
         });
 
         Assert.False(result.Succeeded);

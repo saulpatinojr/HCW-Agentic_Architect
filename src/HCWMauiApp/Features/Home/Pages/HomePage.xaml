@@ -22,7 +22,7 @@
 
         <!-- Main Content -->
         <Label 
-            Text="Welcome to HCW Agentic Architect"
+            Text="Welcome to HCW Workspace Manager"
             FontSize="24"
             FontAttributes="Bold"
             TextColor="{StaticResource TextColor}" />

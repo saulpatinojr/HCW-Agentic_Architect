@@ -1,6 +1,6 @@
-# HCW-Agentic Architect Documentation
+# HCW Workspace Manager Documentation
 
-Documentation hub for the HCW-Agentic Architect platform—organized by domain for MAUI app development.
+Documentation hub for the HCW Workspace Manager platform, organized by domain for MAUI app development.
 
 ## Quick Navigation
 

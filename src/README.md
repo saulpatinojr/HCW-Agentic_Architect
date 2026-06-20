@@ -1,4 +1,4 @@
-# HCW Agentic Architect - MAUI Application
+# HCW Workspace Manager - MAUI Application
 
 A .NET MAUI application following clean architecture and best practices for cross-platform mobile and desktop development.
 

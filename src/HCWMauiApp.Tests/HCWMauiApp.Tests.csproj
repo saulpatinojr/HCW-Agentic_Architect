@@ -24,10 +24,15 @@
     <Compile Include="..\HCWMauiApp\Models\WorkspaceModels.cs" Link="Models\WorkspaceModels.cs" />
     <Compile Include="..\HCWMauiApp\Services\PackManifestService.cs" Link="Services\PackManifestService.cs" />
     <Compile Include="..\HCWMauiApp\Services\ManifestRequirementsMergeService.cs" Link="Services\ManifestRequirementsMergeService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\WorkspacePackCatalogService.cs" Link="Services\WorkspacePackCatalogService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\WorkspacePackUpdateService.cs" Link="Services\WorkspacePackUpdateService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\ProviderRegistryService.cs" Link="Services\ProviderRegistryService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\WorkspaceFolderService.cs" Link="Services\WorkspaceFolderService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\HelperMcpHealthService.cs" Link="Services\HelperMcpHealthService.cs" />
     <Compile Include="..\HCWMauiApp\Services\ToolInstallService.cs" Link="Services\ToolInstallService.cs" />
     <Compile Include="..\HCWMauiApp\Services\WorkspaceCatalogService.cs" Link="Services\WorkspaceCatalogService.cs" />
     <Compile Include="..\HCWMauiApp\Services\WorkspaceMcpConfigBuilderService.cs" Link="Services\WorkspaceMcpConfigBuilderService.cs" />
     <Compile Include="..\HCWMauiApp\Services\WorkspaceWriterService.cs" Link="Services\WorkspaceWriterService.cs" />
-    <Compile Include="..\HCWMauiApp\Services\TeamAssemblyService.cs" Link="Services\TeamAssemblyService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\WorkspaceActivationService.cs" Link="Services\WorkspaceActivationService.cs" />
   </ItemGroup>
 </Project>

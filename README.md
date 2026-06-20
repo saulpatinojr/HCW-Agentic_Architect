@@ -1,12 +1,12 @@
-# HCW Agentic Architect
+# HCW Workspace Manager
 
 Version: 0.1
 
-HCW Agentic Architect is a workspace orchestration project that combines a .NET MAUI control plane with agent packs, MCP server wiring, and infrastructure-oriented guidance for cloud and AI workflows.
+HCW Workspace Manager is a workspace orchestration project that combines a .NET MAUI desktop app with workspace packs, MCP server wiring, and infrastructure-oriented guidance for cloud and AI workflows.
 
 ## v0.1 Highlights
 
-- Added MAUI-based Agentic Workspace Manager under src/HCWMauiApp.
+- Added MAUI-based Workspace Manager under src/HCWMauiApp.
 - Implemented winget-first CLI preflight installer flow.
 - Added system check and team orchestration flow to workspace activation.
 - Introduced workspace-config layout for agents, instructions, skills, hooks, and MCP servers.
@@ -26,13 +26,13 @@ HCW Agentic Architect is a workspace orchestration project that combines a .NET 
 Windows:
 
 1. Install prerequisites and tooling as needed.
-2. Launch workspace orchestrator:
+2. Launch the workspace manager:
    - boot.cmd
 3. Open the solution folder in VS Code.
 
 ## Current Status
 
-This repository is now aligned to a v0.1 baseline focused on local workspace orchestration and agent-driven setup.
+This repository is now aligned to a v0.1 baseline focused on local workspace orchestration and pack-driven setup.
 
 ## Next Milestones
 

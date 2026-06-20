@@ -1,7 +1,7 @@
 #Requires -Version 7.0
 <#
 .SYNOPSIS
-    HCW Agentic Architect — Windows CLI Installer (Primary)
+    HCW Workspace Manager — Windows CLI Installer (Primary)
     Installs all AI assistant CLIs, IaC tools, and developer utilities via winget.
 
 .DESCRIPTION

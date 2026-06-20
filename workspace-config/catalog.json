@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "saulpatinojr/HCW-WorkspaceManager",
+  "packs": [
+    {
+      "id": "tf-engineer",
+      "version": "1.0.0",
+      "checksum": "",
+      "sourceRepository": "saulpatinojr/HCW-WorkspaceManager",
+      "sourceBranch": "main",
+      "sourcePath": "workspace-config/agents/tf-engineer",
+      "releaseNotes": "Initial Workspace Manager catalog entry for the Terraform Engineer pack."
+    }
+  ]
+}

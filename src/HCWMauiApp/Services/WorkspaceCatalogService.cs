@@ -1,9 +1,23 @@
 using System.IO.Compression;
 
-namespace AgenticWorkspaceManager.Services;
+namespace WorkspaceManager.Services;
 
 public sealed class WorkspaceCatalogService
 {
+    private readonly PackManifestService _packManifestService;
+    private readonly WorkspacePackCatalogService _packCatalogService;
+
+    public WorkspaceCatalogService()
+        : this(new PackManifestService(), new WorkspacePackCatalogService())
+    {
+    }
+
+    public WorkspaceCatalogService(PackManifestService packManifestService, WorkspacePackCatalogService packCatalogService)
+    {
+        _packManifestService = packManifestService;
+        _packCatalogService = packCatalogService;
+    }
+
     public string DetermineRepositoryRoot(string baseDirectory)
     {
         DirectoryInfo? directory = new(baseDirectory);
@@ -28,15 +42,31 @@ public sealed class WorkspaceCatalogService
         foreach (var directory in Directory.GetDirectories(agentsPath))
         {
             string directoryName = Path.GetFileName(directory);
-            string friendlyName = GetFriendlyName(directory, directoryName);
+            var validation = _packManifestService.ValidatePack(directory);
+            var manifest = validation.Manifest;
 
-            agentList.Add(new AgentViewModel
+            var agent = new AgentViewModel
             {
                 DirectoryName = directoryName,
-                FriendlyName = friendlyName,
+                FriendlyName = string.IsNullOrWhiteSpace(manifest?.DisplayName) ? GetFriendlyName(directory, directoryName) : manifest.DisplayName,
                 FullPath = directory,
+                Version = string.IsNullOrWhiteSpace(manifest?.Version) ? "0.0.0" : manifest.Version,
+                Description = string.IsNullOrWhiteSpace(manifest?.Description) ? "No description provided." : manifest.Description,
+                Category = string.IsNullOrWhiteSpace(manifest?.Category) ? "Workspace Pack" : manifest.Category,
+                ProviderIds = manifest?.ProviderIds ?? [],
+                IconKey = string.IsNullOrWhiteSpace(manifest?.IconKey) ? "pack" : manifest.IconKey,
+                OfficialLinks = manifest?.OfficialLinks ?? [],
+                BestPracticeLinks = manifest?.BestPracticeLinks ?? [],
+                RequiredTools = manifest?.RequiredTools ?? [],
+                RequiredMcpServers = manifest?.RequiredMcpServers ?? [],
+                RequiredFiles = manifest?.RequiredFiles ?? [],
+                SourceRepository = string.IsNullOrWhiteSpace(manifest?.SourceRepository) ? "saulpatinojr/HCW-WorkspaceManager" : manifest.SourceRepository,
+                SourceBranch = string.IsNullOrWhiteSpace(manifest?.SourceBranch) ? "main" : manifest.SourceBranch,
+                SourcePath = string.IsNullOrWhiteSpace(manifest?.SourcePath) ? $"workspace-config/agents/{directoryName}" : manifest.SourcePath,
                 IsSelected = false
-            });
+            };
+            agent.UpdateState = _packCatalogService.GetUpdateState(repoRootPath, agent);
+            agentList.Add(agent);
         }
 
         return agentList;

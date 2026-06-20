@@ -1,5 +1,5 @@
-# AGENTS.md — HCW Agentic Architect Platform
-# Owner: Saul Patino (@saulpatinojr) | Repo: HCW-Agentic_Architect
+# AGENTS.md — HCW Workspace Manager Platform
+# Owner: Saul Patino (@saulpatinojr) | Repo: HCW-WorkspaceManager
 # All AI tools (Claude, Copilot, Gemini, Codex, Antigravity) read this file.
 # Tool-specific files are thin delegates that point back here.
 
@@ -13,7 +13,7 @@ Enterprise Azure IaC + AI agent platform. Primary concerns:
 
 ## Repo Structure
 ```
-HCW-Agentic_Architect/
+HCW-WorkspaceManager/
 ├── AGENTS.md                          ← This file (universal)
 ├── CLAUDE.md                          ← Delegates to AGENTS.md
 ├── GEMINI.md                          ← Delegates to AGENTS.md
@@ -61,7 +61,7 @@ terraform -chdir=infra/terraform apply tfplan
 pwsh ./scripts/<script>.ps1
 
 # GitHub CLI
-gh repo view saulpatinojr/HCW-Agentic_Architect
+gh repo view saulpatinojr/HCW-WorkspaceManager
 gh pr create --fill
 gh workflow run <workflow-name>
 
@@ -171,7 +171,7 @@ tags = {
   workload    = "hcw"           # short project token
   owner       = "saul.patino"   # responsible engineer
   costCenter  = "CLOUD-001"     # FinOps cost center
-  project     = "HCW-Agentic"   # full project name
+  project     = "HCW-Workspace"  # full project name
   managedBy   = "terraform"     # terraform | bicep | manual | arm
   createdDate = "2026-06-07"    # ISO 8601
 }

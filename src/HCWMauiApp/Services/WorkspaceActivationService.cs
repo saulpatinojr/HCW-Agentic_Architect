@@ -1,6 +1,6 @@
-namespace AgenticWorkspaceManager.Services;
+namespace WorkspaceManager.Services;
 
-public sealed class TeamAssemblyService
+public sealed class WorkspaceActivationService
 {
     private const string ConflictPolicy = "fail-fast on merged manifest conflicts; do not overwrite conflicting MCP server names";
 
@@ -10,7 +10,7 @@ public sealed class TeamAssemblyService
     private readonly WorkspaceMcpConfigBuilderService _workspaceMcpConfigBuilderService;
     private readonly WorkspaceWriterService _workspaceWriterService;
 
-    public TeamAssemblyService(
+    public WorkspaceActivationService(
         ToolInstallService toolInstallService,
         PackManifestService packManifestService,
         ManifestRequirementsMergeService mergeService,
@@ -24,7 +24,7 @@ public sealed class TeamAssemblyService
         _workspaceWriterService = workspaceWriterService;
     }
 
-    public async Task<TeamAssemblyResult> AssembleTeamAsync(TeamAssemblyRequest request)
+    public async Task<WorkspaceActivationResult> ActivateAsync(WorkspaceActivationRequest request)
     {
         var logs = new List<string>();
 
@@ -59,7 +59,7 @@ public sealed class TeamAssemblyService
             }
 
             logs.Add("[-] Activation halted: one or more selected packs have invalid pack.manifest.json files.");
-            return new TeamAssemblyResult(false, logs);
+            return new WorkspaceActivationResult(false, logs);
         }
 
         var validManifestCount = manifestResults.Count(r => r.Validation.HasManifest);
@@ -71,7 +71,7 @@ public sealed class TeamAssemblyService
         {
             foreach (var error in merged.Errors) { logs.Add($"[-] {error}"); }
             logs.Add("[-] Activation halted: merged manifest requirements contain conflicts or missing files.");
-            return new TeamAssemblyResult(false, logs);
+            return new WorkspaceActivationResult(false, logs);
         }
 
         logs.Add($"[+] Merged requirements: tools={merged.RequiredTools.Count}, files={merged.RequiredFiles.Count}, mcp={merged.RequiredMcpServers.Count}, env={merged.RequiredEnvVars.Count}.");
@@ -95,12 +95,12 @@ public sealed class TeamAssemblyService
             RepoRootPath = request.RepoRootPath,
             SelectedAgents = request.SelectedAgents,
             MergedRequirements = merged,
-            IsTokenomicsEnabled = request.IsTokenomicsEnabled
+            IncludeHelperMcp = request.IncludeHelperMcp
         });
         logs.AddRange(mcpBuild.Logs);
         if (!mcpBuild.Succeeded || mcpBuild.Config is null)
         {
-            return new TeamAssemblyResult(false, logs);
+            return new WorkspaceActivationResult(false, logs);
         }
 
         var writerLogs = await _workspaceWriterService.ApplyAsync(new WorkspaceWriteRequest
@@ -112,6 +112,6 @@ public sealed class TeamAssemblyService
         });
         logs.AddRange(writerLogs);
 
-        return new TeamAssemblyResult(true, logs);
+        return new WorkspaceActivationResult(true, logs);
     }
 }

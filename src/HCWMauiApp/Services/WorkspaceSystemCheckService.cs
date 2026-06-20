@@ -1,4 +1,4 @@
-namespace AgenticWorkspaceManager.Services;
+namespace WorkspaceManager.Services;
 
 public sealed class WorkspaceSystemCheckService
 {

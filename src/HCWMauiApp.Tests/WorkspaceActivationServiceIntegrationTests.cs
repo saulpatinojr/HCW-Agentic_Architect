@@ -1,26 +1,26 @@
-using AgenticWorkspaceManager;
-using AgenticWorkspaceManager.Services;
+using WorkspaceManager;
+using WorkspaceManager.Services;
 
 namespace HCWMauiApp.Tests;
 
-public sealed class TeamAssemblyServiceIntegrationTests : IDisposable
+public sealed class WorkspaceActivationServiceIntegrationTests : IDisposable
 {
     private readonly string _repoRoot;
 
-    public TeamAssemblyServiceIntegrationTests()
+    public WorkspaceActivationServiceIntegrationTests()
     {
-        _repoRoot = Path.Combine(Path.GetTempPath(), "hcw-team-assembly-tests", Guid.NewGuid().ToString("N"));
+        _repoRoot = Path.Combine(Path.GetTempPath(), "hcw-workspace-activation-tests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_repoRoot);
     }
 
     [Fact]
-    public async Task AssembleTeamAsync_WhenDryRun_DoesNotWriteWorkspaceFiles()
+    public async Task ActivateAsync_WhenDryRun_DoesNotWriteWorkspaceFiles()
     {
         string agentPath = CreateAgentPack("pack-a", includeToolchainFiles: true);
         CreateMcpServerScript();
 
         var service = CreateService(isWindows: true, availableCommands: ["terraform"]);
-        var request = new TeamAssemblyRequest
+        var request = new WorkspaceActivationRequest
         {
             RepoRootPath = _repoRoot,
             SelectedAgents =
@@ -28,10 +28,10 @@ public sealed class TeamAssemblyServiceIntegrationTests : IDisposable
                 new AgentViewModel { DirectoryName = "pack-a", FriendlyName = "Pack A", FullPath = agentPath }
             ],
             IsDryRun = true,
-            IsTokenomicsEnabled = true
+            IncludeHelperMcp = true
         };
 
-        var result = await service.AssembleTeamAsync(request);
+        var result = await service.ActivateAsync(request);
 
         Assert.True(result.Succeeded);
         Assert.Contains(result.Logs, line => line.Contains("[DRY-RUN] Would write MCP config to:"));
@@ -40,13 +40,13 @@ public sealed class TeamAssemblyServiceIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task AssembleTeamAsync_WhenWriteMode_WritesWorkspaceArtifacts()
+    public async Task ActivateAsync_WhenWriteMode_WritesWorkspaceArtifacts()
     {
         string agentPath = CreateAgentPack("pack-a", includeToolchainFiles: true);
         CreateMcpServerScript();
 
         var service = CreateService(isWindows: true, availableCommands: ["terraform"]);
-        var request = new TeamAssemblyRequest
+        var request = new WorkspaceActivationRequest
         {
             RepoRootPath = _repoRoot,
             SelectedAgents =
@@ -54,10 +54,10 @@ public sealed class TeamAssemblyServiceIntegrationTests : IDisposable
                 new AgentViewModel { DirectoryName = "pack-a", FriendlyName = "Pack A", FullPath = agentPath }
             ],
             IsDryRun = false,
-            IsTokenomicsEnabled = true
+            IncludeHelperMcp = true
         };
 
-        var result = await service.AssembleTeamAsync(request);
+        var result = await service.ActivateAsync(request);
 
         Assert.True(result.Succeeded);
         Assert.True(File.Exists(Path.Combine(_repoRoot, ".vscode", "mcp.json")));
@@ -66,7 +66,7 @@ public sealed class TeamAssemblyServiceIntegrationTests : IDisposable
         Assert.Contains(result.Logs, line => line == "[✓] Team synchronized to workspace.");
     }
 
-    private TeamAssemblyService CreateService(bool isWindows, IEnumerable<string> availableCommands)
+    private WorkspaceActivationService CreateService(bool isWindows, IEnumerable<string> availableCommands)
     {
         var executor = new FakeToolCommandExecutor();
         foreach (var command in availableCommands)
@@ -80,7 +80,7 @@ public sealed class TeamAssemblyServiceIntegrationTests : IDisposable
         var mcpBuilder = new WorkspaceMcpConfigBuilderService();
         var writerService = new WorkspaceWriterService(new DefaultWorkspaceFileSystem());
 
-        return new TeamAssemblyService(toolInstallService, packManifestService, mergeService, mcpBuilder, writerService);
+        return new WorkspaceActivationService(toolInstallService, packManifestService, mergeService, mcpBuilder, writerService);
     }
 
     private string CreateAgentPack(string directoryName, bool includeToolchainFiles)
