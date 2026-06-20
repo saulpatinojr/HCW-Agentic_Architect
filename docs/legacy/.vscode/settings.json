@@ -129,7 +129,7 @@
   },
 
   // ─── Workbench ─────────────────────────────────────────────────
-  "workbench.colorTheme": "Default Dark Modern",
+  "workbench.colorTheme": "Dark Modern",
   "workbench.iconTheme": "vs-seti",
   "workbench.editor.enablePreview": false,
   "workbench.startupEditor": "none"
