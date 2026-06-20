@@ -1,10 +1,14 @@
 # Local-only agent config (NEVER commit)
-AGENTS.local.md
+
+# --- Agentic Workspaces & Secrets ---
 .env
 .env.*
 *.local
+*.tfstate
+*.tfstate.backup
 
-# Terraform
+
+# --- Terraform ---
 **/.terraform/
 *.tfstate
 *.tfstate.*
@@ -19,11 +23,13 @@ override.tf.json
 terraform.rc
 .terraform.lock.hcl
 
-# Azure / Bicep
+
+# --- Agentic Azure / Bicep ---
 *.compiled.json
 .bicep/
 
-# Secrets & credentials
+
+# --- Agentic Secrets & credentials ---
 *.pem
 *.pfx
 *.key
@@ -31,25 +37,42 @@ terraform.rc
 **/credentials
 serviceaccount.json
 
-# OS
-.DS_Store
-Thumbs.db
-desktop.ini
 
-# Node
+# --- Agentic Node ---
 node_modules/
 npm-debug.log*
 
-# Python / Ansible
+# --- .NET MAUI / Visual Studio Bloat ---
+bin/
+obj/
+*.suo
+*.user
+*.sln.docstates
+.vs/
+.CodeAnalysisLogs/
+
+
+# --- Python / MCP Cache ---
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+.pytest_cache/
 .venv/
 venv/
+ENV/
 
-# VS Code workspace state
+
+# --- VS Code workspace state ---
 .vscode/*.log
 
-# Logs
+
+# --- Logs ---
 logs/
 *.log
+
+
+# --- Local Operating System Artifacts ---
+.DS_Store
+Thumbs.db
+Desktop.ini
