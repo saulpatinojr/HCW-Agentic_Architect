@@ -1,0 +1,44 @@
+<!-- Home Feature Page -->
+<ContentPage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="HCWMauiApp.Features.Home.Pages.HomePage"
+    Title="{Binding Title}">
+
+    <VerticalStackLayout Padding="30" Spacing="20">
+        
+        <!-- Loading Indicator -->
+        <ActivityIndicator 
+            IsRunning="{Binding IsLoading}"
+            IsVisible="{Binding IsLoading}"
+            Color="{StaticResource PrimaryColor}" />
+
+        <!-- Error Message -->
+        <Label 
+            Text="{Binding ErrorMessage}"
+            IsVisible="{Binding ErrorMessage, StringFormat='{0}', Converter={StaticResource StringNullOrEmptyToBoolConverter}, ConverterParameter=True}"
+            TextColor="Red"
+            FontSize="14" />
+
+        <!-- Main Content -->
+        <Label 
+            Text="Welcome to HCW Agentic Architect"
+            FontSize="24"
+            FontAttributes="Bold"
+            TextColor="{StaticResource TextColor}" />
+
+        <Label 
+            Text="This is a sample MAUI application page. Replace this content with your feature implementation."
+            FontSize="14"
+            TextColor="{StaticResource TextColor}" />
+
+        <!-- Action Button -->
+        <Button 
+            Text="Load Data"
+            Command="{Binding LoadDataCommand}"
+            IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
+            Background="{StaticResource PrimaryColor}" />
+
+    </VerticalStackLayout>
+
+</ContentPage>
