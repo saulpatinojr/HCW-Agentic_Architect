@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="6.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\HCWMauiApp\Models\WorkspaceModels.cs" Link="Models\WorkspaceModels.cs" />
+    <Compile Include="..\HCWMauiApp\Services\PackManifestService.cs" Link="Services\PackManifestService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\ManifestRequirementsMergeService.cs" Link="Services\ManifestRequirementsMergeService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\ToolInstallService.cs" Link="Services\ToolInstallService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\WorkspaceCatalogService.cs" Link="Services\WorkspaceCatalogService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\WorkspaceMcpConfigBuilderService.cs" Link="Services\WorkspaceMcpConfigBuilderService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\WorkspaceWriterService.cs" Link="Services\WorkspaceWriterService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\TeamAssemblyService.cs" Link="Services\TeamAssemblyService.cs" />
+  </ItemGroup>
+</Project>

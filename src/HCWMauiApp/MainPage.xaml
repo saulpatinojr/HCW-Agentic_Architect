@@ -49,6 +49,16 @@
                 </HorizontalStackLayout>
             </Border>
 
+            <Border Stroke="#334155" StrokeThickness="1" BackgroundColor="#1E293B" Padding="15" Margin="0,0,0,10">
+                <HorizontalStackLayout Spacing="15" VerticalOptions="Center">
+                    <Switch x:Name="DryRunSwitch" IsToggled="False" OnColor="#F59E0B" ThumbColor="#F8FAFC" />
+                    <VerticalStackLayout VerticalOptions="Center">
+                        <Label Text="Dry-Run Activation" FontAttributes="Bold" TextColor="#F8FAFC" FontSize="14"/>
+                        <Label Text="Previews merge, preflight, and sync actions without writing files or installing tools." FontSize="11" TextColor="#94A3B8"/>
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Border>
+
             <Button Text="Orchestrate Selected Team to Workspace" Clicked="OnAssembleTeamClicked" BackgroundColor="#22C55E" TextColor="White" FontAttributes="Bold" HeightRequest="50"/>
 
             <Label Text="Execution Console:" FontSize="14" FontAttributes="Bold" TextColor="#94A3B8"/>

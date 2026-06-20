@@ -1,9 +1,13 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace AgenticWorkspaceManager.Services;
 
 public sealed class ToolInstallService
 {
+    private readonly IToolCommandExecutor _commandExecutor;
+    private readonly IToolPlatform _toolPlatform;
+
     private sealed record ToolConfig(string DisplayName, string Command, string? WingetId);
 
     private static readonly IReadOnlyList<ToolConfig> RequiredTools =
@@ -22,14 +26,31 @@ public sealed class ToolInstallService
         new("Codex CLI", "codex", null)
     ];
 
+    public ToolInstallService()
+        : this(new ProcessToolCommandExecutor(), new DefaultToolPlatform())
+    {
+    }
+
+    public ToolInstallService(IToolCommandExecutor commandExecutor, IToolPlatform toolPlatform)
+    {
+        _commandExecutor = commandExecutor;
+        _toolPlatform = toolPlatform;
+    }
+
     public IReadOnlyList<string> GetMissingTools()
     {
+        return GetMissingTools(null);
+    }
+
+    public IReadOnlyList<string> GetMissingTools(IEnumerable<ManifestToolRequirement>? additionalTools)
+    {
         var missing = new List<string>();
-        foreach (var tool in RequiredTools)
+        var statuses = GetToolStatusesAsync(additionalTools).GetAwaiter().GetResult();
+        foreach (var status in statuses)
         {
-            if (!IsCommandAvailable(tool.Command).GetAwaiter().GetResult())
+            if (!status.IsAvailable)
             {
-                missing.Add(tool.Command);
+                missing.Add(status.Command);
             }
         }
 
@@ -38,29 +59,58 @@ public sealed class ToolInstallService
 
     public IReadOnlyList<string> GetToolStatusLabels()
     {
+        return GetToolStatusLabels(null);
+    }
+
+    public IReadOnlyList<string> GetToolStatusLabels(IEnumerable<ManifestToolRequirement>? additionalTools)
+    {
+        var statuses = GetToolStatusesAsync(additionalTools).GetAwaiter().GetResult();
         var lines = new List<string>();
-        foreach (var tool in RequiredTools)
+        foreach (var status in statuses)
         {
-            var exists = IsCommandAvailable(tool.Command).GetAwaiter().GetResult();
-            lines.Add($"{(exists ? "[✓]" : "[X]")} {tool.DisplayName} ({tool.Command})");
+            lines.Add($"{(status.IsAvailable ? "[✓]" : "[X]")} {status.DisplayName} ({status.Command})");
         }
 
         return lines;
     }
 
+    public async Task<IReadOnlyList<ToolCheckStatus>> GetToolStatusesAsync(IEnumerable<ManifestToolRequirement>? additionalTools)
+    {
+        var statuses = new List<ToolCheckStatus>();
+        var effectiveTools = BuildEffectiveToolList(additionalTools);
+
+        foreach (var tool in effectiveTools)
+        {
+            var exists = await _commandExecutor.IsCommandAvailable(tool.Command, _toolPlatform.IsWindowsPlatform);
+            statuses.Add(new ToolCheckStatus(tool.DisplayName, tool.Command, exists, !string.IsNullOrWhiteSpace(tool.WingetId), tool.WingetId));
+        }
+
+        var ghAvailable = statuses.FirstOrDefault(s => s.Command.Equals("gh", StringComparison.OrdinalIgnoreCase))?.IsAvailable == true;
+        bool ghCopilotAvailable = ghAvailable && await _commandExecutor.IsCommandSubcommandAvailable("gh", "copilot");
+        statuses.Add(new ToolCheckStatus("GitHub Copilot CLI", "gh copilot", ghCopilotAvailable, false, null));
+
+        return statuses;
+    }
+
     public async Task<IReadOnlyList<string>> InstallMissingToolsAsync()
     {
-        var logs = new List<string>();
+        return await InstallMissingToolsAsync(null);
+    }
 
-        if (DeviceInfo.Platform != DevicePlatform.WinUI)
+    public async Task<IReadOnlyList<string>> InstallMissingToolsAsync(IEnumerable<ManifestToolRequirement>? additionalTools)
+    {
+        var logs = new List<string>();
+        var effectiveTools = BuildEffectiveToolList(additionalTools);
+
+        if (!_toolPlatform.IsWindowsPlatform)
         {
             logs.Add("[!] Winget auto-install is only enabled on Windows.");
             return logs;
         }
 
-        foreach (var tool in RequiredTools)
+        foreach (var tool in effectiveTools)
         {
-            if (await IsCommandAvailable(tool.Command))
+            if (await _commandExecutor.IsCommandAvailable(tool.Command, _toolPlatform.IsWindowsPlatform))
             {
                 continue;
             }
@@ -71,7 +121,7 @@ public sealed class ToolInstallService
                 continue;
             }
 
-            var installed = await InstallWithWingetAsync(tool);
+            var installed = await _commandExecutor.InstallWithWingetAsync(tool.WingetId!);
             logs.Add(installed
                 ? $"[+] {tool.DisplayName}: installed via winget."
                 : $"[-] {tool.DisplayName}: winget install failed.");
@@ -80,7 +130,83 @@ public sealed class ToolInstallService
         return logs;
     }
 
-    private static async Task<bool> InstallWithWingetAsync(ToolConfig tool)
+    private static IReadOnlyList<ToolConfig> BuildEffectiveToolList(IEnumerable<ManifestToolRequirement>? additionalTools)
+    {
+        var merged = RequiredTools
+            .ToDictionary(
+                t => t.Command,
+                t => t,
+                StringComparer.OrdinalIgnoreCase);
+
+        if (additionalTools is null)
+        {
+            return merged.Values.ToList();
+        }
+
+        foreach (var extra in additionalTools)
+        {
+            if (string.IsNullOrWhiteSpace(extra.Command))
+            {
+                continue;
+            }
+
+            if (!merged.TryGetValue(extra.Command, out var existing))
+            {
+                merged[extra.Command] = new ToolConfig(
+                    string.IsNullOrWhiteSpace(extra.DisplayName) ? extra.Command : extra.DisplayName,
+                    extra.Command,
+                    string.IsNullOrWhiteSpace(extra.WingetId) ? null : extra.WingetId);
+                continue;
+            }
+
+            if (string.IsNullOrWhiteSpace(existing.WingetId) && !string.IsNullOrWhiteSpace(extra.WingetId))
+            {
+                merged[extra.Command] = existing with { WingetId = extra.WingetId };
+            }
+        }
+
+        return merged.Values.ToList();
+    }
+}
+
+public sealed class ToolCheckStatus
+{
+    public ToolCheckStatus(string displayName, string command, bool isAvailable, bool canAutoInstall, string? wingetId)
+    {
+        DisplayName = displayName;
+        Command = command;
+        IsAvailable = isAvailable;
+        CanAutoInstall = canAutoInstall;
+        WingetId = wingetId;
+    }
+
+    public string DisplayName { get; }
+    public string Command { get; }
+    public bool IsAvailable { get; }
+    public bool CanAutoInstall { get; }
+    public string? WingetId { get; }
+}
+
+public interface IToolPlatform
+{
+    bool IsWindowsPlatform { get; }
+}
+
+public sealed class DefaultToolPlatform : IToolPlatform
+{
+    public bool IsWindowsPlatform => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+}
+
+public interface IToolCommandExecutor
+{
+    Task<bool> IsCommandAvailable(string command, bool isWindows);
+    Task<bool> IsCommandSubcommandAvailable(string command, string subcommand);
+    Task<bool> InstallWithWingetAsync(string wingetId);
+}
+
+public sealed class ProcessToolCommandExecutor : IToolCommandExecutor
+{
+    public async Task<bool> IsCommandAvailable(string command, bool isWindows)
     {
         try
         {
@@ -88,8 +214,35 @@ public sealed class ToolInstallService
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "winget",
-                    Arguments = $"install --id {tool.WingetId} --accept-package-agreements --accept-source-agreements --silent",
+                    FileName = isWindows ? "cmd" : "bash",
+                    Arguments = isWindows ? $"/c where {command}" : $"-c \"which {command}\"",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+            string output = await process.StandardOutput.ReadToEndAsync();
+            await process.WaitForExitAsync();
+            return !string.IsNullOrWhiteSpace(output);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<bool> IsCommandSubcommandAvailable(string command, string subcommand)
+    {
+        try
+        {
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = command,
+                    Arguments = $"{subcommand} --help",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -107,27 +260,26 @@ public sealed class ToolInstallService
         }
     }
 
-    private static async Task<bool> IsCommandAvailable(string command)
+    public async Task<bool> InstallWithWingetAsync(string wingetId)
     {
         try
         {
-            bool isWindows = DeviceInfo.Platform == DevicePlatform.WinUI;
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = isWindows ? "cmd" : "bash",
-                    Arguments = isWindows ? $"/c where {command}" : $"-c \"which {command}\"",
+                    FileName = "winget",
+                    Arguments = $"install --id {wingetId} --accept-package-agreements --accept-source-agreements --silent",
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 }
             };
 
             process.Start();
-            string output = await process.StandardOutput.ReadToEndAsync();
             await process.WaitForExitAsync();
-            return !string.IsNullOrWhiteSpace(output);
+            return process.ExitCode == 0;
         }
         catch
         {

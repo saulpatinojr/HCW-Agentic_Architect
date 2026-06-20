@@ -15,6 +15,13 @@ public static class MauiProgram
             });
 
         builder.Services.AddSingleton<ToolInstallService>();
+        builder.Services.AddSingleton<PackManifestService>();
+        builder.Services.AddSingleton<ManifestRequirementsMergeService>();
+        builder.Services.AddSingleton<WorkspaceCatalogService>();
+        builder.Services.AddSingleton<WorkspaceMcpConfigBuilderService>();
+        builder.Services.AddSingleton<WorkspaceWriterService>();
+        builder.Services.AddSingleton<WorkspaceSystemCheckService>();
+        builder.Services.AddSingleton<TeamAssemblyService>();
         builder.Services.AddSingleton<MainPage>();
         builder.Services.AddSingleton<App>();
 

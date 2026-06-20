@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Terraform Engineer",
+  "requiredTools": [
+    {
+      "displayName": "Terraform",
+      "command": "terraform",
+      "wingetId": "Hashicorp.Terraform"
+    },
+    {
+      "displayName": "GitHub CLI",
+      "command": "gh",
+      "wingetId": "GitHub.cli"
+    },
+    {
+      "displayName": "Claude CLI",
+      "command": "claude",
+      "wingetId": ""
+    }
+  ],
+  "requiredFiles": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    ".github/copilot-instructions.md",
+    ".codex/instructions.md"
+  ],
+  "requiredMcpServers": [
+    {
+      "name": "local-cloud-query",
+      "command": "python",
+      "args": [
+        "workspace-config/mcp-servers/local-cloud-query/server.py"
+      ]
+    }
+  ]
+}

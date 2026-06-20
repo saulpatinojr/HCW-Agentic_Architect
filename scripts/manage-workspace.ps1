@@ -90,7 +90,7 @@ function Import-AgentPack {
     Pause
 }
 
-function Bind-AgentToolchain {
+function Update-AgentToolchain {
     param([string]$AgentPackFolder)
     
     $SourceDir = Join-Path $AgentDir $AgentPackFolder
@@ -153,7 +153,7 @@ function Invoke-TeamAssembling {
         $McpConfig | ConvertTo-Json -Depth 10 | Out-File $McpPath -Encoding utf8
         
         # Link Toolchains locally
-        Bind-AgentToolchain $Picked.DirectoryName
+        Update-AgentToolchain $Picked.DirectoryName
         
         # Map to Runtime appdata
         $AppDataRoaming = [Environment]::GetFolderPath("ApplicationData")
@@ -187,7 +187,9 @@ function Invoke-SystemCheck {
             @{ Name="GitHub CLI"; Cmd="gh" }
         )
         "AI Providers"      = @(
-            @{ Name="Claude Code CLI"; Cmd="claude" }
+            @{ Name="Claude Code CLI"; Cmd="claude" },
+            @{ Name="GitHub Copilot CLI"; Cmd="gh copilot" },
+            @{ Name="Codex CLI"; Cmd="codex" }
         )
     }
 
@@ -195,7 +197,13 @@ function Invoke-SystemCheck {
     foreach ($Category in $Toolchain.Keys) {
         Write-Host "`n  [$Category]" -ForegroundColor Yellow
         foreach ($Tool in $Toolchain[$Category]) {
-            $CommandExists = Get-Command $Tool.Cmd -ErrorAction SilentlyContinue
+            if ($Tool.Cmd -eq "gh copilot") {
+                $null = & gh copilot --help 2>$null
+                $CommandExists = $LASTEXITCODE -eq 0
+            } else {
+                $CommandExists = Get-Command $Tool.Cmd -ErrorAction SilentlyContinue
+            }
+
             if ($CommandExists) {
                 Write-Host "   [✓] $($Tool.Name.PadRight(20)) -> $($Tool.Cmd)" -ForegroundColor Green
             } else {
