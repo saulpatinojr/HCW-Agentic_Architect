@@ -1,79 +1,48 @@
-# HCW Workspace Manager Documentation
+# AI Architect Agents Documentation
 
-Documentation hub for the HCW Workspace Manager platform, organized by domain for MAUI app development.
+Documentation hub for the AI Architect Agents workspace.
 
 ## Quick Navigation
 
-### 📋 Project
+### Project
 
-- [AGENTS.md](project/AGENTS.md) - Agent configurations and references
-- [CLAUDE.md](project/CLAUDE.md) - Claude tool configurations
-- [GEMINI.md](project/GEMINI.md) - Gemini tool configurations
-- [Project Overview](project/README.md) - Main project details
+- [Project overview](project/README.md)
+- [Agent guidance](project/AGENTS.md)
+- [Claude guidance](project/CLAUDE.md)
+- [Gemini guidance](project/GEMINI.md)
 
-### 🏗️ Architecture
+### Application
 
-- [Architecture Review Guidelines](architecture/architecture-review.md) - Review best practices
-- [Draw.io Guidance](architecture/drawio.md) - Diagram and visualization reference
-- **ADR (Architecture Decision Records)**
-  - [ADR Overview](architecture/adr/adr.md)
-  - [ADR Review Process](architecture/adr/adr-review.md)
+- [MAUI architecture](application/MAUI-ARCHITECTURE.md)
+- [MAUI complete index](MAUI-COMPLETE-INDEX.md)
+- [MAUI quick reference](MAUI-QUICK-REFERENCE.md)
+- [App source guide](../src/HCWMauiApp/README.md)
+- [Tests guide](../src/HCWMauiApp.Tests/README.md)
 
-### 🚀 Infrastructure
+### Workspace Config
 
-- [Infrastructure Agents](infrastructure/AGENTS.md) - IaC agent configs
-- [Bicep Modules](infrastructure/bicep/README.md) - Azure Bicep documentation
-- [Terraform](infrastructure/terraform/README.md) - Terraform documentation
+- [Workspace manifest](../workspace-config/manifest.md)
+- [AI architect overview](../workspace-config/ai-architect.md)
+- [Orchestration guardrails](../workspace-config/instructions/orchestration-guardrails.md)
+- [MCP scaffold skill](../workspace-config/skills/scaffold-mcp-server.md)
 
-### 📱 Application
+### Legacy Reference
 
-- [Application Source](application/README.md) - Application code documentation
+Historical architecture and infrastructure material now lives under `docs/legacy`. Keep new app and workspace-pack documentation in the active docs listed above.
 
-## Complete Structure
+## Current App Surface
 
-```
-docs/
-├── README.md              # This file
-├── project/               # Core project and agent configurations
-│   ├── AGENTS.md
-│   ├── CLAUDE.md
-│   ├── GEMINI.md
-│   └── README.md
-├── architecture/          # Architecture decisions, diagrams, reviews
-│   ├── architecture-review.md
-│   ├── drawio.md
-│   └── adr/
-│       ├── adr.md
-│       └── adr-review.md
-├── infrastructure/        # IaC and cloud infrastructure
-│   ├── AGENTS.md
-│   ├── bicep/
-│   │   └── README.md
-│   └── terraform/
-│       └── README.md
-└── application/           # Application-specific documentation
-    └── README.md
-```
+The desktop app is a Windows-first MAUI control room for local AI architecture packs. It includes:
 
-## ADR (Architecture Decision Record) Naming
+- Command bar: Scan, Import, Preflight, Preview, Check updates, Update pack, Apply.
+- Provider groups: Cloud Providers, Service Providers, AI Providers.
+- Pack inspector with provider links, guidance links, tools, and MCP servers.
+- Workspace files panel for generated local artifacts.
+- Structured activity feed for startup, validation, MCP, update, and apply events.
 
-```
-docs/architecture/adr/adr-NNNN-<short-title>.md
-```
+## Documentation Rules
 
-Example: `adr-0001-use-bicep-for-azure-iac.md`
-
-## System Files (Not Here)
-
-Tool integration files remain in their system locations:
-
-- `.github/instructions/` - GitHub instruction files
-- `.github/copilot-instructions.md` - VS Code Copilot config
-- `.agents/` - Agent configurations
-- `.claude/commands/` - Claude command configs
-
-## Key References
-
-- **Azure CAF Naming**: See [Project AGENTS.md](project/AGENTS.md#caf-naming-quick-reference)
-- **Security Posture**: See `/.agents/security.md`
-- **IaC Conventions**: See `/.agents/iac.md`
+- Root-level docs should describe the product and operational workflow.
+- `src/HCWMauiApp` docs should describe app implementation details.
+- `workspace-config` docs should describe pack authoring, agent instructions, and MCP behavior.
+- Legacy docs should not be updated unless intentionally preserving historical context.

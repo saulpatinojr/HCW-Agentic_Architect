@@ -1,4 +1,4 @@
-# HCW Workspace Manager - Complete Documentation Index
+# AI Architect Agents - MAUI Documentation Index
 
 ## Quick Navigation
 
@@ -10,14 +10,14 @@
    - XAML binding examples
    - Testing patterns
 
-2. **[src/HCWMauiApp/README.md](src/HCWMauiApp/README.md)** - Architecture overview
+2. **[src/HCWMauiApp/README.md](../src/HCWMauiApp/README.md)** - App overview
    - Project structure
    - Quick start guide
    - Key files
    - Naming conventions
 
 ### 📚 **Detailed Architecture**
-- **[docs/application/MAUI-ARCHITECTURE.md](docs/application/MAUI-ARCHITECTURE.md)** - Complete architecture guide
+- **[docs/application/MAUI-ARCHITECTURE.md](application/MAUI-ARCHITECTURE.md)** - Architecture guide
   - MVVM pattern explained
   - Feature organization
   - Service patterns with examples
@@ -26,7 +26,7 @@
   - Performance tips
   - Common pitfalls
 
-- **[src/README.md](src/README.md)** - Full directory structure guide
+- **[src/README.md](../src/README.md)** - Source directory guide
   - What belongs where
   - File organization
   - Architecture principles
@@ -38,19 +38,19 @@
 #### Application Structure
 | Directory | Purpose | README |
 |-----------|---------|--------|
-| **Features/** | Feature modules by domain | [Features/README.md](src/HCWMauiApp/Features/README.md) |
-| **Services/** | Business logic & APIs | [Services/README.md](src/HCWMauiApp/Services/README.md) |
-| **ViewModels/** | MVVM presentation layer | [ViewModels/README.md](src/HCWMauiApp/ViewModels/README.md) |
-| **Models/** | Domain entities & DTOs | [Models/README.md](src/HCWMauiApp/Models/README.md) |
-| **Resources/** | Images, fonts, styles | [Resources/README.md](src/HCWMauiApp/Resources/README.md) |
-| **Converters/** | XAML value converters | [Converters/README.md](src/HCWMauiApp/Converters/README.md) |
-| **Behaviors/** | Reusable UI behaviors | [Behaviors/README.md](src/HCWMauiApp/Behaviors/README.md) |
-| **Utilities/** | Helpers & extensions | [Utilities/README.md](src/HCWMauiApp/Utilities/README.md) |
-| **Platforms/** | Platform-specific code | [Platforms/README.md](src/HCWMauiApp/Platforms/README.md) |
-| **Tests/** | Unit & integration tests | [tests/README.md](tests/README.md) |
+| **Features/** | Feature modules by domain | [Features/README.md](../src/HCWMauiApp/Features/README.md) |
+| **Services/** | Workspace business logic | [Services/README.md](../src/HCWMauiApp/Services/README.md) |
+| **ViewModels/** | Reserved presentation helpers | [ViewModels/README.md](../src/HCWMauiApp/ViewModels/README.md) |
+| **Models/** | Pack, provider, update, and activity models | [Models/README.md](../src/HCWMauiApp/Models/README.md) |
+| **Resources/** | App and provider image assets | [Resources/README.md](../src/HCWMauiApp/Resources/README.md) |
+| **Converters/** | XAML value converters | [Converters/README.md](../src/HCWMauiApp/Converters/README.md) |
+| **Behaviors/** | Reusable UI behaviors | [Behaviors/README.md](../src/HCWMauiApp/Behaviors/README.md) |
+| **Utilities/** | Helpers and extensions | [Utilities/README.md](../src/HCWMauiApp/Utilities/README.md) |
+| **Platforms/** | Platform-specific code | [Platforms/README.md](../src/HCWMauiApp/Platforms/README.md) |
+| **Tests/** | Unit and future integration tests | [tests/README.md](../tests/README.md) |
 
 ### 📋 **Summary Documents**
-- **[src/HCWMauiApp/SETUP-SUMMARY.md](src/HCWMauiApp/SETUP-SUMMARY.md)** - What's been created and next steps
+- **[src/HCWMauiApp/SETUP-SUMMARY.md](../src/HCWMauiApp/SETUP-SUMMARY.md)** - Initial setup notes
   - Complete file structure
   - Templates provided
   - High priority next steps

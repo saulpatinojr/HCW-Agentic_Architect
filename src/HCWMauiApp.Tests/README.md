@@ -17,4 +17,4 @@ Focused unit tests for services that are independent from MAUI UI/runtime depend
 dotnet test src/HCWMauiApp.Tests/HCWMauiApp.Tests.csproj
 ```
 
-If the .NET SDK is not installed on the machine, install it first.
+Current expected result: all tests pass. One existing `xUnit2031` analyzer warning remains in `ToolInstallServiceTests.cs`.

@@ -1,4 +1,4 @@
-# AGENTS.md — HCW Workspace Manager Platform
+# AGENTS.md - AI Architect Agents Project
 # Owner: Saul Patino (@saulpatinojr) | Repo: HCW-WorkspaceManager
 # All AI tools (Claude, Copilot, Gemini, Codex, Antigravity) read this file.
 # Tool-specific files are thin delegates that point back here.

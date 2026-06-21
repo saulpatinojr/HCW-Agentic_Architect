@@ -1,41 +1,56 @@
-# HCW Workspace Manager
+# AI Architect Agents
 
-Version: 0.1
+Version: 0.2
 
-HCW Workspace Manager is a workspace orchestration project that combines a .NET MAUI desktop app with workspace packs, MCP server wiring, and infrastructure-oriented guidance for cloud and AI workflows.
+AI Architect Agents is a local .NET MAUI desktop app for composing, validating, updating, and activating AI architecture agent packs in this workspace. The app combines a Windows desktop control surface with pack manifests, MCP helper wiring, provider metadata, and workspace file inspection.
 
-## v0.1 Highlights
+## Current Highlights
 
-- Added MAUI-based Workspace Manager under src/HCWMauiApp.
-- Implemented winget-first CLI preflight installer flow.
-- Added system check and team orchestration flow to workspace activation.
-- Introduced workspace-config layout for agents, instructions, skills, hooks, and MCP servers.
-- Added legacy documentation archive under docs/legacy.
-- Added operational TODO tracking in TODO.md.
+- Renamed the desktop experience to AI Architect Agents.
+- Added a Windows-first command bar for Scan, Import, Preflight, Preview, Check updates, Update pack, and Apply.
+- Added provider groups for Cloud Providers, Service Providers, and AI Providers with local image assets and official links.
+- Added structured activity entries, a pack inspector, workspace file shortcuts, MCP helper health, and pack update states.
+- Added explicit MAUI image packaging so local PNG/SVG provider assets are included in Windows builds.
+- Removed ISO from the provider list because it is not a selected provider.
 
 ## Repository Structure
 
-- docs: project, architecture, and legacy docs.
-- scripts: bootstrap and workspace management scripts.
-- src: MAUI app source and architecture documentation.
-- tests: test structure and guidance.
-- workspace-config: active agent packs, instructions, skills, hooks, and MCP server assets.
+- `docs`: project, application, MAUI, and legacy reference docs.
+- `scripts`: bootstrap and workspace management scripts.
+- `src`: MAUI app source and unit tests.
+- `tests`: test guidance and future integration-test structure.
+- `workspace-config`: active agent packs, instructions, skills, hooks, and MCP server assets.
 
-## Getting Started
+## Run On Windows
 
-Windows:
+```powershell
+dotnet build src\HCWMauiApp\WorkspaceManager.csproj -f net10.0-windows10.0.19041.0
+dotnet run --project src\HCWMauiApp\WorkspaceManager.csproj -f net10.0-windows10.0.19041.0
+```
 
-1. Install prerequisites and tooling as needed.
-2. Launch the workspace manager:
-   - boot.cmd
-3. Open the solution folder in VS Code.
+The app is configured for unpackaged Windows desktop execution with `.NET 10`.
 
-## Current Status
+## Validate
 
-This repository is now aligned to a v0.1 baseline focused on local workspace orchestration and pack-driven setup.
+```powershell
+dotnet test src\HCWMauiApp.Tests\HCWMauiApp.Tests.csproj
+```
+
+Current expected result: all unit tests pass. One existing `xUnit2031` analyzer warning remains in `ToolInstallServiceTests.cs`.
+
+## Provider Assets
+
+Provider icons live under `src/HCWMauiApp/Resources/Images`. The project explicitly includes that folder as `MauiImage` resources, and the UI references Windows-emitted PNG resource names such as `provider_azure.png`.
+
+Selected provider groups:
+
+- Cloud Providers: AWS, Azure, Google Cloud, VMware.
+- Service Providers: Ansible, Docker, FinOps Foundation, GitHub, Kubernetes, Terraform.
+- AI Providers: Claude, Codex, GitHub Copilot.
 
 ## Next Milestones
 
-- Structured pack.manifest.json support and validation.
-- Requirement merge logic across selected packs.
-- Activation hardening and test coverage.
+- Finish visual polish after confirming image rendering on the target desktop.
+- Add a dedicated app icon package for Windows shell/taskbar surfaces.
+- Expand pack catalog update flows beyond the local repository source.
+- Resolve the existing `xUnit2031` analyzer warning.

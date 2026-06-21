@@ -8,10 +8,15 @@
     <Nullable>enable</Nullable>
     <RootNamespace>WorkspaceManager</RootNamespace>
     <AssemblyName>WorkspaceManager</AssemblyName>
-    <ApplicationTitle>Workspace Manager</ApplicationTitle>
-    <ApplicationId>com.workspace.manager</ApplicationId>
+    <ApplicationTitle>AI Architect Agents</ApplicationTitle>
+    <ApplicationId>com.aiarchitect.agents</ApplicationId>
     <WindowsPackageType Condition="'$(TargetFramework)' == 'net10.0-windows10.0.19041.0'">None</WindowsPackageType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <MauiImage Include="Resources\Images\*.*" />
+    <MauiImage Remove="Resources\Images\provider_iso.png" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />

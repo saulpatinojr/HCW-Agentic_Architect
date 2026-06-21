@@ -19,7 +19,7 @@ public partial class MainPage : ContentPage
 
     public ObservableCollection<AgentViewModel> DiscoveredAgents { get; } = [];
     public ObservableCollection<ActivityLogEntry> ActivityEntries { get; } = [];
-    public ObservableCollection<ProviderInfo> Providers { get; } = [];
+    public ObservableCollection<ProviderGroup> Providers { get; } = [];
     public ObservableCollection<ProviderInfo> SelectedProviders { get; } = [];
     public ObservableCollection<WorkspaceLink> PackLinks { get; } = [];
     public ObservableCollection<WorkspaceFolderNode> FolderNodes { get; } = [];
@@ -67,9 +67,9 @@ public partial class MainPage : ContentPage
     private void LoadProviders()
     {
         Providers.Clear();
-        foreach (var provider in _providerRegistryService.GetAll())
+        foreach (var providerGroup in _providerRegistryService.GetGroups())
         {
-            Providers.Add(provider);
+            Providers.Add(providerGroup);
         }
     }
 
@@ -135,7 +135,7 @@ public partial class MainPage : ContentPage
     {
         var health = await _helperMcpHealthService.CheckAsync(_repoRootPath, IncludeHelperMcpSwitch.IsToggled);
         McpHealthLabel.Text = health.Status;
-        McpHealthLabel.TextColor = Color.FromArgb(health.Status == "Helper ready" ? "#68F7B2" : "#FBBF24");
+        McpHealthLabel.TextColor = Color.FromArgb(health.Status == "Helper ready" ? "#107C10" : "#D83B01");
         McpSummaryLabel.Text = health.Summary;
 
         if (!health.ScriptExists)
@@ -487,9 +487,9 @@ public partial class MainPage : ContentPage
 
         MainContentGrid.ColumnDefinitions = new ColumnDefinitionCollection
         {
-            new() { Width = new GridLength(260) },
+            new() { Width = new GridLength(300) },
             new() { Width = GridLength.Star },
-            new() { Width = new GridLength(310) }
+            new() { Width = new GridLength(330) }
         };
         MainContentGrid.RowDefinitions = new RowDefinitionCollection
         {

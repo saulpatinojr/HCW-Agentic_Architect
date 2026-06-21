@@ -1,71 +1,59 @@
-# HCW Workspace Manager Platform
+# AI Architect Agents Project
 
-Enterprise Azure IaC + AI workspace platform for multitenant SaaS workloads.
+AI Architect Agents is a local desktop control surface for AI architecture workspace packs. It focuses on making local agent packs discoverable, inspectable, validated, updateable, and safely applied to the active workspace.
 
 **Owner:** [Saul Patino](https://github.com/saulpatinojr)  
-**Stack:** Azure · Bicep · Terraform · PowerShell · GitHub Actions · Azure OpenAI · AI Search
-
----
+**Stack:** .NET MAUI · Windows desktop · C# · MCP · PowerShell · workspace packs
 
 ## Quick Start
 
-### Windows (primary)
 ```powershell
-# 1. Install all CLIs
-.\scripts\install_cli.ps1
-
-# 2. Configure auth and local settings
-.\scripts\configure_repo.ps1
-
-# 3. Open in VS Code
-code .
+dotnet build src\HCWMauiApp\WorkspaceManager.csproj -f net10.0-windows10.0.19041.0
+dotnet run --project src\HCWMauiApp\WorkspaceManager.csproj -f net10.0-windows10.0.19041.0
 ```
 
-### macOS (Apple Silicon)
-```bash
-# 1. Install all CLIs
-bash scripts/install_cli.sh
+## App Responsibilities
 
-# 2. Open in VS Code
-code .
-```
+- Discover local packs from `workspace-config/agents`.
+- Import zipped workspace packs.
+- Validate host tools, required files, MCP helper health, and manifest compatibility.
+- Preview or apply selected pack changes.
+- Show provider groups with local icons and official links.
+- Inspect generated workspace files and open local paths.
+- Compare local packs against the repository catalog foundation.
 
----
+## Provider Groups
+
+| Group | Providers |
+| --- | --- |
+| Cloud Providers | AWS, Azure, Google Cloud, VMware |
+| Service Providers | Ansible, Docker, FinOps Foundation, GitHub, Kubernetes, Terraform |
+| AI Providers | Claude, Codex, GitHub Copilot |
+
+ISO is intentionally not registered as a provider.
+
+## Workspace Pack Files
+
+Each pack should keep its root files directly under `workspace-config/agents/<pack-id>/`:
+
+- `pack.manifest.json`
+- `AGENTS.md`
+- `CLAUDE.md`
+- `.codex/instructions.md`
+- `.github/copilot-instructions.md`
+
+Avoid nested pack roots such as `workspace-config/agents/<pack-id>/<pack-id>/`.
 
 ## AI Agent Files
 
 | File | Scope | Readers |
-|------|-------|---------|
-| `AGENTS.md` | Universal | Claude, Copilot, Gemini, Codex, Antigravity |
-| `CLAUDE.md` | Claude / MCP config | Claude Code |
-| `GEMINI.md` | Gemini CLI config | Gemini CLI |
-| `.github/copilot-instructions.md` | Copilot config | GitHub Copilot |
-| `.agents/azure.md` | Azure naming & tagging | All AI tools |
-| `.agents/iac.md` | Bicep + Terraform rules | All AI tools |
-| `.agents/security.md` | Zero-trust / WAF rules | All AI tools |
-| `.agents/ai.md` | RAG + Azure AI rules | All AI tools |
-| `.agents/cicd.md` | GitHub Actions rules | All AI tools |
-
----
-
-## Naming Convention
-
-Pattern: `<resource-type>-<workload>-<environment>-<region>-<instance>`  
-Full standard with abbreviations table: see `AGENTS.md`
-
----
+| --- | --- | --- |
+| `docs/project/AGENTS.md` | Project agent guidance | Claude, Copilot, Gemini, Codex |
+| `docs/project/CLAUDE.md` | Claude project context | Claude Code |
+| `docs/project/GEMINI.md` | Gemini project context | Gemini CLI |
+| `workspace-config/agents/*/AGENTS.md` | Pack-specific agent behavior | Agent runtimes |
+| `workspace-config/agents/*/CLAUDE.md` | Pack-specific Claude behavior | Claude Code |
 
 ## Sensitive Values
 
-Never committed. Created locally by `configure_repo.ps1`:
-```
-AGENTS.local.md   <- Azure tenant/subscription IDs, region defaults
-```
-
----
-
-## References
-
-- [CAF Naming Convention](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming)
-- [CAF Resource Abbreviations](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations)
-- [Azure Naming Rules](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules)
+Do not commit local tenant IDs, subscription IDs, credentials, tokens, or generated secrets. Keep local overrides outside committed pack files.

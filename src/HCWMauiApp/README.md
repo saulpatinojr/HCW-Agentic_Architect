@@ -1,44 +1,60 @@
-# Workspace Manager
+# AI Architect Agents MAUI App
 
-Desktop MAUI app for inspecting a local workspace, importing packs, checking required tools, and applying selected packs into the workspace config.
-
-## What It Does
-
-- Scans the repository for `workspace-config/agents/*`
-- Imports a pack from a `.zip`
-- Runs a local environment and tool check
-- Validates pack manifests
-- Merges requirements from the selected packs
-- Writes the workspace MCP configuration
+Windows desktop MAUI app for inspecting local workspace packs, validating requirements, checking updates, and applying selected AI architecture agent packs.
 
 ## Main Screen
 
-- `Scan workspace` refreshes the local pack list
-- `Import workspace pack` adds a new pack from a zip file
-- `Run system check` reports missing tools or config issues
-- `Apply selected packs` performs the workspace update
-- `Dry run` previews changes without writing files
-- `Include helper MCP` keeps the local helper MCP in the generated config
+- `Scan` refreshes local packs from `workspace-config/agents`.
+- `Import` adds a zipped workspace pack.
+- `Preflight` validates tools, required files, MCP helper state, and manifest compatibility.
+- `Preview` runs activation without file writes.
+- `Check updates` compares local packs with catalog metadata.
+- `Update pack` replaces a selected pack after validation.
+- `Apply` writes selected pack outputs to the local workspace.
+
+The screen also includes:
+
+- Run state summary.
+- Provider groups with official links.
+- Workspace pack list.
+- Pack inspector.
+- Structured activity feed.
+- Workspace files panel.
 
 ## Core Services
 
-- `WorkspaceCatalogService` discovers packs and imports archives
-- `WorkspaceSystemCheckService` reports the current host/tool state
-- `WorkspaceActivationService` validates, merges, and applies selected packs
-- `WorkspaceMcpConfigBuilderService` builds the MCP config payload
-- `WorkspaceWriterService` writes updated workspace files
-- `ToolInstallService` preflights required CLI tools
-- `PackManifestService` validates `pack.manifest.json`
-- `ManifestRequirementsMergeService` combines requirements across packs
+- `WorkspaceCatalogService` discovers packs and imports archives.
+- `WorkspaceSystemCheckService` reports host/tool state.
+- `WorkspaceActivationService` validates, merges, and applies selected packs.
+- `WorkspaceMcpConfigBuilderService` builds MCP config payloads.
+- `WorkspaceWriterService` writes updated workspace files.
+- `ToolInstallService` preflights required CLI tools.
+- `PackManifestService` validates `pack.manifest.json`.
+- `ManifestRequirementsMergeService` combines requirements across packs.
+- `ProviderRegistryService` supplies provider groups, icons, colors, and official URLs.
+
+## Image Assets
+
+Provider and app logo files live in `Resources/Images`.
+
+The project explicitly includes those files as `MauiImage` resources. On Windows, MAUI emits scaled PNG assets, so runtime references use names such as:
+
+- `ai_architect_agents.png`
+- `provider_azure.png`
+- `provider_aws.png`
+- `provider_gcp.png`
+
+Do not add ISO back to `ProviderRegistryService`; it is not a selected provider.
 
 ## Run
 
-```bash
-dotnet build src/HCWMauiApp/WorkspaceManager.csproj -f net10.0-windows10.0.19041.0
-dotnet run --project src/HCWMauiApp/WorkspaceManager.csproj -f net10.0-windows10.0.19041.0
+```powershell
+dotnet build src\HCWMauiApp\WorkspaceManager.csproj -f net10.0-windows10.0.19041.0
+dotnet run --project src\HCWMauiApp\WorkspaceManager.csproj -f net10.0-windows10.0.19041.0
 ```
 
 ## Notes
 
-- The app is configured for an unpackaged Windows desktop run target.
-- The UI is intentionally operational: workspace status, selected packs, and activity log are all on one screen.
+- The app is configured for unpackaged Windows desktop execution.
+- The app name and window title are `AI Architect Agents`.
+- Default window sizing is tuned for the expanded three-column desktop layout.

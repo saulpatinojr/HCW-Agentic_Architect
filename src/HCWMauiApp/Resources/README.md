@@ -1,107 +1,37 @@
 # Resources
 
-This folder contains **app-wide resources** (images, fonts, colors, styles).
+App-wide assets for AI Architect Agents.
 
 ## Structure
 
-```
+```text
 Resources/
-├── AppResources.xaml       # Colors, sizes, strings
-├── Styles/
-│   ├── Colors.xaml         # Color definitions
-│   ├── Fonts.xaml          # Typography settings
-│   └── Styles.xaml         # Control styles
-├── Images/
-│   ├── icon.png            # App icon
-│   ├── splash.png          # Splash screen
-│   └── [other images]
-└── Fonts/
-    ├── custom-font.ttf
-    └── [other fonts]
+├── Images/    # App logo and provider icons
+├── Styles/    # Shared MAUI styles when extracted from page resources
+└── Fonts/     # Local fonts, if added later
 ```
 
-## Best Practices
+## Image Packaging
 
-✅ Centralize theme colors and dimensions
-✅ Use consistent naming conventions
-✅ Define styles for common controls
-✅ Store app strings in resource files (for localization)
-✅ Organize images by category/size
-✅ Use vector graphics (SVG) when possible
+`WorkspaceManager.csproj` explicitly includes `Resources\Images\*.*` as `MauiImage` resources. This is required so provider icons are emitted into the Windows build output.
 
-## Resource Naming Conventions
+On Windows, MAUI converts both SVG and PNG sources into scaled PNG resources. Runtime references should use `.png` names in XAML and bound model values, for example:
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| Colors | `[Usage]Color` | `PrimaryColor`, `TextColor`, `ErrorColor` |
-| Fonts | `[Usage]Font` | `TitleFont`, `BodyFont` |
-| Sizes | `[Usage]Size` | `TitleFontSize`, `IconSize` |
-| Images | descriptive | `user_avatar.png`, `add_icon.svg` |
+- `ai_architect_agents.png`
+- `provider_azure.png`
+- `provider_aws.png`
+- `provider_vmware.png`
 
-## Example AppResources.xaml
+## Provider Asset Rules
 
-```xml
-<ResourceDictionary>
-    <!-- Colors -->
-    <Color x:Key="PrimaryColor">#512BD4</Color>
-    <Color x:Key="SecondaryColor">#DFD8F7</Color>
-    <Color x:Key="TertiaryColor">#3B4E72</Color>
-    <Color x:Key="TextColor">#212121</Color>
-    <Color x:Key="LightTextColor">#666666</Color>
-    <Color x:Key="ErrorColor">#F44336</Color>
-    <Color x:Key="SuccessColor">#4CAF50</Color>
+- Keep provider images local; do not live-load remote logos.
+- Use descriptive lowercase names: `provider_<id>.<ext>`.
+- Register providers in `Services/ProviderRegistryService.cs`.
+- Do not register ISO as a provider.
+- If a source SVG fails to render after packaging, replace it with a local PNG and keep the same logical provider id.
 
-    <!-- Font Sizes -->
-    <x:Double x:Key="FontSizeHeading">32</x:Double>
-    <x:Double x:Key="FontSizeTitle">24</x:Double>
-    <x:Double x:Key="FontSizeSubtitle">18</x:Double>
-    <x:Double x:Key="FontSizeBody">14</x:Double>
-    <x:Double x:Key="FontSizeSmall">12</x:Double>
+## Current Provider Groups
 
-    <!-- Spacing -->
-    <x:Double x:Key="SpacingXSmall">4</x:Double>
-    <x:Double x:Key="SpacingSmall">8</x:Double>
-    <x:Double x:Key="SpacingMedium">16</x:Double>
-    <x:Double x:Key="SpacingLarge">24</x:Double>
-
-    <!-- Styles -->
-    <Style TargetType="Label" x:Key="HeadingLabel">
-        <Setter Property="FontSize" Value="{StaticResource FontSizeHeading}" />
-        <Setter Property="TextColor" Value="{StaticResource TextColor}" />
-        <Setter Property="FontAttributes" Value="Bold" />
-    </Style>
-
-    <Style TargetType="Label" x:Key="BodyLabel">
-        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
-        <Setter Property="TextColor" Value="{StaticResource TextColor}" />
-        <Setter Property="LineHeight" Value="1.5" />
-    </Style>
-
-    <Style TargetType="Button" x:Key="PrimaryButton">
-        <Setter Property="Background" Value="{StaticResource PrimaryColor}" />
-        <Setter Property="TextColor" Value="White" />
-        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
-        <Setter Property="Padding" Value="16,12" />
-        <Setter Property="CornerRadius" Value="8" />
-    </Style>
-</ResourceDictionary>
-```
-
-## Using Resources in XAML
-
-```xml
-<Label 
-    Text="Welcome"
-    FontSize="{StaticResource FontSizeTitle}"
-    TextColor="{StaticResource PrimaryColor}" />
-
-<Button 
-    Text="Click Me"
-    Style="{StaticResource PrimaryButton}" />
-```
-
-## Using Resources in Code
-
-```csharp
-var primaryColor = Application.Current?.Resources["PrimaryColor"] as Color;
-```
+- Cloud Providers: AWS, Azure, Google Cloud, VMware.
+- Service Providers: Ansible, Docker, FinOps Foundation, GitHub, Kubernetes, Terraform.
+- AI Providers: Claude, Codex, GitHub Copilot.

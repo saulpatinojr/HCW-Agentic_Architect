@@ -2,7 +2,7 @@
 
 ## Overview
 
-The HCW Workspace Manager MAUI application follows a **clean architecture** pattern with **MVVM** (Model-View-ViewModel) for clear separation of concerns, testability, and maintainability.
+The AI Architect Agents MAUI application follows a service-oriented desktop architecture with direct XAML event handlers, focused services, and model-driven UI state. Earlier scaffold guidance referenced MVVM broadly, but the current app keeps orchestration in `MainPage.xaml.cs` and delegates workspace behavior to testable services.
 
 ## Core Architectural Principles
 

@@ -34,9 +34,16 @@ public sealed class ProviderInfo
 {
     public string Id { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
+    public string Group { get; set; } = "Service Providers";
     public string IconAsset { get; set; } = string.Empty;
     public string AccentColor { get; set; } = "#38BDF8";
     public string OfficialUrl { get; set; } = string.Empty;
+}
+
+public sealed class ProviderGroup
+{
+    public string Name { get; set; } = string.Empty;
+    public List<ProviderInfo> Providers { get; set; } = [];
 }
 
 public sealed class WorkspaceFolderNode
@@ -65,10 +72,10 @@ public sealed class ActivityLogEntry
     };
     public string AccentColor => Severity switch
     {
-        "Success" => "#68F7B2",
-        "Warning" => "#FBBF24",
-        "Error" => "#F87171",
-        _ => "#67E8F9"
+        "Success" => "#107C10",
+        "Warning" => "#D83B01",
+        "Error" => "#A4262C",
+        _ => "#0078D4"
     };
 }
 

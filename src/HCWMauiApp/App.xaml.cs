@@ -14,10 +14,11 @@ public partial class App : Application
     {
         return new Window(_mainPage)
         {
-            Width = 1040,
-            Height = 720,
-            MinimumWidth = 900,
-            MinimumHeight = 620
+            Title = "AI Architect Agents",
+            Width = 1420,
+            Height = 900,
+            MinimumWidth = 1180,
+            MinimumHeight = 760
         };
     }
 }
