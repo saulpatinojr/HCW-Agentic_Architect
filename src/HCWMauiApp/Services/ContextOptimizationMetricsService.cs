@@ -5,9 +5,22 @@ namespace WorkspaceManager.Services;
 
 public sealed class ContextOptimizationMetricsService
 {
+    private const double HighOverheadThresholdMs = 30;
+    private const double LowPartnerSavingsThresholdPct = 3;
+
     private readonly object _sync = new();
+    private readonly ContextOptimizationHistoryStore _historyStore;
+    private readonly PartnerAdapterHealthService _healthService;
     private CompressionSnapshot _lastKnownSnapshot = new();
     private string _repoRootPath = string.Empty;
+
+    public ContextOptimizationMetricsService(
+        ContextOptimizationHistoryStore historyStore,
+        PartnerAdapterHealthService healthService)
+    {
+        _historyStore = historyStore;
+        _healthService = healthService;
+    }
 
     public void SetRepoRootPath(string repoRootPath)
     {
@@ -40,6 +53,13 @@ public sealed class ContextOptimizationMetricsService
         }
 
         var snapshot = ParseSnapshot(output);
+        _historyStore.SaveSnapshot(snapshot);
+        snapshot.DayTrend = _historyStore.GetDayTrend();
+        snapshot.WeekTrend = _historyStore.GetWeekTrend();
+        snapshot.MonthTrend = _historyStore.GetMonthTrend();
+        snapshot.PartnerHealth = _healthService.GetHealth();
+        snapshot.Alerts = BuildAlerts(snapshot);
+
         lock (_sync)
         {
             _lastKnownSnapshot = snapshot;
@@ -114,6 +134,51 @@ public sealed class ContextOptimizationMetricsService
             ObservedTtlBuckets = ttlBuckets,
             History = history
         };
+    }
+
+    private static IReadOnlyList<CompressionAlertItem> BuildAlerts(
+        CompressionSnapshot snapshot)
+    {
+        var alerts = new List<CompressionAlertItem>();
+
+        if (snapshot.OverheadMsAverage > HighOverheadThresholdMs)
+        {
+            alerts.Add(new CompressionAlertItem
+            {
+                Severity = "Warning",
+                Message = "High optimization overhead",
+                Detail =
+                    $"Average overhead is {snapshot.OverheadMsAverage:N1} ms (threshold {HighOverheadThresholdMs:N0} ms)."
+            });
+        }
+
+        foreach (var partner in snapshot.PartnerSavings)
+        {
+            if (partner.PercentOfTotal >= LowPartnerSavingsThresholdPct)
+            {
+                continue;
+            }
+
+            alerts.Add(new CompressionAlertItem
+            {
+                Severity = "Info",
+                Message = $"Low savings contribution for {partner.Partner}",
+                Detail =
+                    $"{partner.PercentOfTotal:N1}% of total savings. Consider partner-specific compression profile tuning."
+            });
+        }
+
+        if (alerts.Count == 0)
+        {
+            alerts.Add(new CompressionAlertItem
+            {
+                Severity = "Info",
+                Message = "No active threshold alerts",
+                Detail = "Overhead and partner savings are within configured ranges."
+            });
+        }
+
+        return alerts;
     }
 
     private static int ReadInt(JsonElement root, string section, string key)

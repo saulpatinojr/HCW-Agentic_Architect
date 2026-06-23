@@ -25,6 +25,10 @@ This document tracks the context optimization capabilities added to the app for 
 - Replaced mocked dashboard data with direct MCP stats reads by invoking:
   - `python workspace-config/mcp-servers/token-compressor/server.py --stats-json`
 - Added auto-refresh polling and JSON export in the dashboard page.
+- Added CSV export and BI schema export for ingestion pipelines.
+- Added threshold alert panel for high overhead and low partner savings.
+- Added lightweight partner adapter health panel.
+- Added day/week/month trend panel backed by SQLite history.
 
 ## PR-inspired features incorporated
 
@@ -38,13 +42,15 @@ The implementation includes practical equivalents of high-value patterns from re
 
 ## Added service/model components
 
-- `ContextOptimizationMetricsService` (mocked live metrics generator for UI iteration)
+- `ContextOptimizationMetricsService` (live MCP stats reader + alert/trend synthesis)
 - `DashboardWindowService` (detachable windows)
-- `CompressionDashboardModels.cs` (snapshot, partner savings, TTL buckets, history)
+- `ContextOptimizationHistoryStore` (SQLite persistence and trend aggregation)
+- `ContextOptimizationExportService` (JSON, CSV, BI schema export)
+- `PartnerAdapterHealthService` (Codex/Claude/GitHub/Copilot/Antigravity/VS Code health checks)
+- `CompressionDashboardModels.cs` (snapshot, partner savings, TTL buckets, history, alerts, health, trends)
 
 ## Next implementation candidates
 
-- Add CSV export alongside JSON export.
-- Add SQLite-backed long-term history and day/week/month aggregations.
-- Add alert thresholds for high overhead and low savings.
-- Add partner-specific health cards for Codex, Claude, GitHub, Copilot, Antigravity, and VS Code adapters.
+- Add configurable thresholds in settings (instead of hardcoded values).
+- Add optional remote write pipeline (Prometheus or OTLP) for centralized ops dashboards.
+- Add adapter-specific remediation hints for unhealthy partner integrations.

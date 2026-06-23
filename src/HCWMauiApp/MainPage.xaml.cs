@@ -16,6 +16,7 @@ public partial class MainPage : ContentPage
     private readonly HelperMcpHealthService _helperMcpHealthService;
     private readonly ContextOptimizationMetricsService _contextOptimizationMetricsService;
     private readonly DashboardWindowService _dashboardWindowService;
+    private readonly ContextOptimizationExportService _contextOptimizationExportService;
     private readonly ContextOptimizationDashboardPage _contextOptimizationDashboardPage;
     private string _repoRootPath = string.Empty;
     private AgentViewModel? _selectedPack;
@@ -40,6 +41,7 @@ public partial class MainPage : ContentPage
         HelperMcpHealthService helperMcpHealthService,
         ContextOptimizationMetricsService contextOptimizationMetricsService,
         DashboardWindowService dashboardWindowService,
+        ContextOptimizationExportService contextOptimizationExportService,
         ContextOptimizationDashboardPage contextOptimizationDashboardPage)
     {
         _workspaceCatalogService = workspaceCatalogService;
@@ -51,6 +53,7 @@ public partial class MainPage : ContentPage
         _helperMcpHealthService = helperMcpHealthService;
         _contextOptimizationMetricsService = contextOptimizationMetricsService;
         _dashboardWindowService = dashboardWindowService;
+        _contextOptimizationExportService = contextOptimizationExportService;
         _contextOptimizationDashboardPage = contextOptimizationDashboardPage;
 
         InitializeComponent();
@@ -481,7 +484,10 @@ public partial class MainPage : ContentPage
 
     private void OnDetachDashboardClicked(object sender, EventArgs e)
     {
-        var detachedPage = new ContextOptimizationDashboardPage(_contextOptimizationMetricsService, _dashboardWindowService);
+        var detachedPage = new ContextOptimizationDashboardPage(
+            _contextOptimizationMetricsService,
+            _dashboardWindowService,
+            _contextOptimizationExportService);
         _dashboardWindowService.OpenDashboardWindow(detachedPage);
         Log("Opened detached context optimization dashboard.", "Dashboard");
     }

@@ -18,7 +18,9 @@
             <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
                 <Button Text="Refresh" Clicked="OnRefreshClicked" />
                 <Button x:Name="AutoRefreshButton" Text="Auto refresh: on" Clicked="OnAutoRefreshClicked" />
-                <Button Text="Export JSON" Clicked="OnExportClicked" />
+                <Button Text="Export JSON" Clicked="OnExportJsonClicked" />
+                <Button Text="Export CSV" Clicked="OnExportCsvClicked" />
+                <Button Text="Export BI Schema" Clicked="OnExportSchemaClicked" />
                 <Button Text="Detach" Clicked="OnDetachClicked" />
             </HorizontalStackLayout>
         </Grid>
@@ -96,10 +98,71 @@
                         <Border Stroke="#D8E0EA" BackgroundColor="#FFFFFF" Padding="12">
                             <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
                             <VerticalStackLayout Spacing="8">
-                                <Label Text="Recent Trend (Snapshot)" FontAttributes="Bold" TextColor="#1B1F24" />
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <Label Text="Trend Panel" FontAttributes="Bold" TextColor="#1B1F24" />
+                                    <Picker x:Name="TrendPeriodPicker"
+                                            Grid.Column="1"
+                                            WidthRequest="110"
+                                            SelectedIndexChanged="OnTrendPeriodChanged"
+                                            SelectedIndex="0">
+                                        <Picker.Items>
+                                            <x:String>Day</x:String>
+                                            <x:String>Week</x:String>
+                                            <x:String>Month</x:String>
+                                        </Picker.Items>
+                                    </Picker>
+                                </Grid>
                                 <Label x:Name="TrendLabel" TextColor="#334155" FontSize="12" />
                                 <Label x:Name="OutputSavingsLabel" TextColor="#334155" FontSize="12" />
+                                <CollectionView x:Name="TrendCollectionView" HeightRequest="90" SelectionMode="None">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="*,Auto" Padding="0,2">
+                                                <Label Text="{Binding Label}" TextColor="#334155" FontSize="11" />
+                                                <Label Grid.Column="1" Text="{Binding TokensSaved}" TextColor="#0F172A" FontSize="11" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
                                 <Label x:Name="UpdatedLabel" TextColor="#64748B" FontSize="11" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Stroke="#D8E0EA" BackgroundColor="#FFFFFF" Padding="12">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                            <VerticalStackLayout Spacing="8">
+                                <Label Text="Threshold Alerts" FontAttributes="Bold" TextColor="#1B1F24" />
+                                <CollectionView x:Name="AlertsCollectionView" HeightRequest="120" SelectionMode="None">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Stroke="#E2E8F0" BackgroundColor="#F8FAFC" Padding="8" Margin="0,0,0,4">
+                                                <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+                                                <VerticalStackLayout Spacing="2">
+                                                    <Label Text="{Binding Message}" TextColor="{Binding AccentColor}" FontAttributes="Bold" FontSize="11" />
+                                                    <Label Text="{Binding Detail}" TextColor="#475569" FontSize="10" />
+                                                </VerticalStackLayout>
+                                            </Border>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Stroke="#D8E0EA" BackgroundColor="#FFFFFF" Padding="12">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                            <VerticalStackLayout Spacing="8">
+                                <Label Text="Partner Adapter Health" FontAttributes="Bold" TextColor="#1B1F24" />
+                                <CollectionView x:Name="PartnerHealthCollectionView" HeightRequest="150" SelectionMode="None">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="Auto,*,Auto" Padding="0,3">
+                                                <Label Text="{Binding Partner}" TextColor="#334155" FontAttributes="Bold" />
+                                                <Label Grid.Column="1" Text="{Binding Detail}" TextColor="#64748B" FontSize="10" />
+                                                <Label Grid.Column="2" Text="{Binding Status}" TextColor="{Binding AccentColor}" FontAttributes="Bold" FontSize="10" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
                             </VerticalStackLayout>
                         </Border>
                     </VerticalStackLayout>

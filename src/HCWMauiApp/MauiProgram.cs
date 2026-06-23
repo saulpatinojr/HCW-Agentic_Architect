@@ -28,6 +28,9 @@ public static class MauiProgram
         builder.Services.AddSingleton<WorkspaceWriterService>();
         builder.Services.AddSingleton<WorkspaceSystemCheckService>();
         builder.Services.AddSingleton<WorkspaceActivationService>();
+        builder.Services.AddSingleton<ContextOptimizationHistoryStore>();
+        builder.Services.AddSingleton<PartnerAdapterHealthService>();
+        builder.Services.AddSingleton<ContextOptimizationExportService>();
         builder.Services.AddSingleton<ContextOptimizationMetricsService>();
         builder.Services.AddSingleton<DashboardWindowService>();
         builder.Services.AddTransient<ContextOptimizationDashboardPage>();
