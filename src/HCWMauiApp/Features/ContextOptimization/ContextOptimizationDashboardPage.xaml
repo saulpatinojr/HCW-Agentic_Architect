@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WorkspaceManager.Features.ContextOptimization.ContextOptimizationDashboardPage"
+             Title="Context Optimization Dashboard"
+             BackgroundColor="#F3F6FA">
+    <Grid RowDefinitions="Auto,*" Padding="18" RowSpacing="12">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Context Optimization Dashboard"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       TextColor="#1B1F24" />
+                <Label Text="Live metrics mockup for Codex, Claude, GitHub, Copilot, Antigravity, and VS Code workflows."
+                       FontSize="12"
+                       TextColor="#4E5D6C" />
+            </VerticalStackLayout>
+            <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                <Button Text="Refresh" Clicked="OnRefreshClicked" />
+                <Button x:Name="AutoRefreshButton" Text="Auto refresh: on" Clicked="OnAutoRefreshClicked" />
+                <Button Text="Export JSON" Clicked="OnExportJsonClicked" />
+                <Button Text="Export CSV" Clicked="OnExportCsvClicked" />
+                <Button Text="Export BI Schema" Clicked="OnExportSchemaClicked" />
+                <Button Text="Detach" Clicked="OnDetachClicked" />
+            </HorizontalStackLayout>
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="12">
+                <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                    <Border Stroke="#D8E0EA" BackgroundColor="#FFFFFF" Padding="12">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                        <VerticalStackLayout>
+                            <Label Text="Tokens Saved" FontSize="11" TextColor="#4E5D6C" />
+                            <Label x:Name="TokensSavedLabel" FontSize="24" FontAttributes="Bold" TextColor="#0F172A" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1" Stroke="#D8E0EA" BackgroundColor="#FFFFFF" Padding="12">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                        <VerticalStackLayout>
+                            <Label Text="Compression" FontSize="11" TextColor="#4E5D6C" />
+                            <Label x:Name="SavingsPercentLabel" FontSize="24" FontAttributes="Bold" TextColor="#0F172A" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="2" Stroke="#D8E0EA" BackgroundColor="#FFFFFF" Padding="12">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                        <VerticalStackLayout>
+                            <Label Text="Estimated Cost Saved" FontSize="11" TextColor="#4E5D6C" />
+                            <Label x:Name="CostSavedLabel" FontSize="24" FontAttributes="Bold" TextColor="#0F172A" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="3" Stroke="#D8E0EA" BackgroundColor="#FFFFFF" Padding="12">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                        <VerticalStackLayout>
+                            <Label Text="Overhead" FontSize="11" TextColor="#4E5D6C" />
+                            <Label x:Name="OverheadLabel" FontSize="24" FontAttributes="Bold" TextColor="#0F172A" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <Grid ColumnDefinitions="1.2*,*" ColumnSpacing="10">
+                    <Border Stroke="#D8E0EA" BackgroundColor="#FFFFFF" Padding="12">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Partner Savings Breakdown" FontAttributes="Bold" TextColor="#1B1F24" />
+                            <CollectionView x:Name="PartnerSavingsCollectionView" SelectionMode="None" HeightRequest="280">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="*,Auto,Auto" Padding="0,3">
+                                            <Label Text="{Binding Partner}" TextColor="#334155" FontAttributes="Bold" />
+                                            <Label Grid.Column="1" Text="{Binding TokensSaved}" TextColor="#0F172A" />
+                                            <Label Grid.Column="2" Text="{Binding PercentOfTotal, StringFormat='{0}%'}" TextColor="#64748B" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="10">
+                        <Border Stroke="#D8E0EA" BackgroundColor="#FFFFFF" Padding="12">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                            <VerticalStackLayout Spacing="8">
+                                <Label Text="Observed TTL Buckets" FontAttributes="Bold" TextColor="#1B1F24" />
+                                <CollectionView x:Name="TtlBucketsCollectionView" HeightRequest="95" SelectionMode="None">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="Auto,*" Padding="0,4">
+                                                <Label Text="{Binding Label}" TextColor="#334155" FontAttributes="Bold" />
+                                                <Label Grid.Column="1" Text="{Binding WriteMixPercent, StringFormat='Write mix: {0}%'}" TextColor="#64748B" HorizontalOptions="End" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Stroke="#D8E0EA" BackgroundColor="#FFFFFF" Padding="12">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                            <VerticalStackLayout Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <Label Text="Trend Panel" FontAttributes="Bold" TextColor="#1B1F24" />
+                                    <Picker x:Name="TrendPeriodPicker"
+                                            Grid.Column="1"
+                                            WidthRequest="110"
+                                            SelectedIndexChanged="OnTrendPeriodChanged"
+                                            SelectedIndex="0">
+                                        <Picker.Items>
+                                            <x:String>Day</x:String>
+                                            <x:String>Week</x:String>
+                                            <x:String>Month</x:String>
+                                        </Picker.Items>
+                                    </Picker>
+                                </Grid>
+                                <Label x:Name="TrendLabel" TextColor="#334155" FontSize="12" />
+                                <Label x:Name="OutputSavingsLabel" TextColor="#334155" FontSize="12" />
+                                <CollectionView x:Name="TrendCollectionView" HeightRequest="90" SelectionMode="None">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="*,Auto" Padding="0,2">
+                                                <Label Text="{Binding Label}" TextColor="#334155" FontSize="11" />
+                                                <Label Grid.Column="1" Text="{Binding TokensSaved}" TextColor="#0F172A" FontSize="11" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                                <Label x:Name="UpdatedLabel" TextColor="#64748B" FontSize="11" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Stroke="#D8E0EA" BackgroundColor="#FFFFFF" Padding="12">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                            <VerticalStackLayout Spacing="8">
+                                <Label Text="Threshold Alerts" FontAttributes="Bold" TextColor="#1B1F24" />
+                                <CollectionView x:Name="AlertsCollectionView" HeightRequest="120" SelectionMode="None">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Stroke="#E2E8F0" BackgroundColor="#F8FAFC" Padding="8" Margin="0,0,0,4">
+                                                <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+                                                <VerticalStackLayout Spacing="2">
+                                                    <Label Text="{Binding Message}" TextColor="{Binding AccentColor}" FontAttributes="Bold" FontSize="11" />
+                                                    <Label Text="{Binding Detail}" TextColor="#475569" FontSize="10" />
+                                                </VerticalStackLayout>
+                                            </Border>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Stroke="#D8E0EA" BackgroundColor="#FFFFFF" Padding="12">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                            <VerticalStackLayout Spacing="8">
+                                <Label Text="Partner Adapter Health" FontAttributes="Bold" TextColor="#1B1F24" />
+                                <CollectionView x:Name="PartnerHealthCollectionView" HeightRequest="150" SelectionMode="None">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="Auto,*,Auto" Padding="0,3">
+                                                <Label Text="{Binding Partner}" TextColor="#334155" FontAttributes="Bold" />
+                                                <Label Grid.Column="1" Text="{Binding Detail}" TextColor="#64748B" FontSize="10" />
+                                                <Label Grid.Column="2" Text="{Binding Status}" TextColor="{Binding AccentColor}" FontAttributes="Bold" FontSize="10" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                </Grid>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

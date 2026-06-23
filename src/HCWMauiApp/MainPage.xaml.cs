@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using WorkspaceManager.Services;
+using WorkspaceManager.Features.ContextOptimization;
 
 namespace WorkspaceManager;
 
@@ -13,9 +14,15 @@ public partial class MainPage : ContentPage
     private readonly ProviderRegistryService _providerRegistryService;
     private readonly WorkspaceFolderService _workspaceFolderService;
     private readonly HelperMcpHealthService _helperMcpHealthService;
+    private readonly ContextOptimizationMetricsService _contextOptimizationMetricsService;
+    private readonly OptionalFeatureSetupService _optionalFeatureSetupService;
+    private readonly DashboardWindowService _dashboardWindowService;
+    private readonly ContextOptimizationExportService _contextOptimizationExportService;
+    private readonly ContextOptimizationDashboardPage _contextOptimizationDashboardPage;
     private string _repoRootPath = string.Empty;
     private AgentViewModel? _selectedPack;
     private bool _isCompactLayout;
+    private OptionalFeaturePromptState _optionalTrackState = new();
 
     public ObservableCollection<AgentViewModel> DiscoveredAgents { get; } = [];
     public ObservableCollection<ActivityLogEntry> ActivityEntries { get; } = [];
@@ -33,7 +40,12 @@ public partial class MainPage : ContentPage
         WorkspacePackUpdateService workspacePackUpdateService,
         ProviderRegistryService providerRegistryService,
         WorkspaceFolderService workspaceFolderService,
-        HelperMcpHealthService helperMcpHealthService)
+        HelperMcpHealthService helperMcpHealthService,
+        ContextOptimizationMetricsService contextOptimizationMetricsService,
+        OptionalFeatureSetupService optionalFeatureSetupService,
+        DashboardWindowService dashboardWindowService,
+        ContextOptimizationExportService contextOptimizationExportService,
+        ContextOptimizationDashboardPage contextOptimizationDashboardPage)
     {
         _workspaceCatalogService = workspaceCatalogService;
         _workspaceSystemCheckService = workspaceSystemCheckService;
@@ -42,6 +54,11 @@ public partial class MainPage : ContentPage
         _providerRegistryService = providerRegistryService;
         _workspaceFolderService = workspaceFolderService;
         _helperMcpHealthService = helperMcpHealthService;
+        _contextOptimizationMetricsService = contextOptimizationMetricsService;
+        _optionalFeatureSetupService = optionalFeatureSetupService;
+        _dashboardWindowService = dashboardWindowService;
+        _contextOptimizationExportService = contextOptimizationExportService;
+        _contextOptimizationDashboardPage = contextOptimizationDashboardPage;
 
         InitializeComponent();
         BindCollections();
@@ -49,7 +66,55 @@ public partial class MainPage : ContentPage
         LoadProviders();
         RefreshFolderNodes();
         UpdateSummaryState("Ready");
+        RefreshDashboardPreview();
+        _ = InitializeOptionalTracksAsync();
         _ = RefreshHelperHealthAsync();
+    }
+
+    private async Task InitializeOptionalTracksAsync()
+    {
+        _optionalTrackState = await _optionalFeatureSetupService.EvaluateAsync(_repoRootPath);
+        ApplyOptionalTrackState(_optionalTrackState);
+    }
+
+    private void ApplyOptionalTrackState(OptionalFeaturePromptState state)
+    {
+        OptionalSetupBanner.IsVisible = state.ShouldPrompt;
+        NeverAskAgainCheckBox.IsChecked = state.NeverAskAgain;
+
+        var dashboard = state.Tracks.FirstOrDefault(t => t.Key == "dashboard");
+        var sqlite = state.Tracks.FirstOrDefault(t => t.Key == "sqlite");
+        var mcp = state.Tracks.FirstOrDefault(t => t.Key == "mcp");
+
+        if (dashboard is not null)
+        {
+            DashboardTrackCheckBox.IsChecked = dashboard.IsSelected;
+            DashboardTrackStatusLabel.Text = dashboard.Detail;
+        }
+
+        if (sqlite is not null)
+        {
+            SqliteTrackCheckBox.IsChecked = sqlite.IsSelected;
+            SqliteTrackStatusLabel.Text = sqlite.Detail;
+        }
+
+        if (mcp is not null)
+        {
+            McpTrackCheckBox.IsChecked = mcp.IsSelected;
+            McpTrackStatusLabel.Text = mcp.Detail;
+        }
+    }
+
+    private void RefreshDashboardPreview()
+    {
+        var snapshot = _contextOptimizationMetricsService.GetSnapshot();
+        DashboardPreviewSavedLabel.Text = $"Tokens saved: {snapshot.TokensSaved:N0}";
+        DashboardPreviewEfficiencyLabel.Text = $"Compression: {snapshot.SavingsPercent:N1}%";
+
+        var topPartner = snapshot.PartnerSavings.FirstOrDefault();
+        DashboardPreviewPartnerLabel.Text = topPartner is null
+            ? "Top: n/a"
+            : $"Top: {topPartner.Partner} ({topPartner.PercentOfTotal:N1}%)";
     }
 
     private void BindCollections()
@@ -117,6 +182,7 @@ public partial class MainPage : ContentPage
     private void DetermineRepositoryRoot()
     {
         _repoRootPath = _workspaceCatalogService.DetermineRepositoryRoot(AppDomain.CurrentDomain.BaseDirectory);
+        _contextOptimizationMetricsService.SetRepoRootPath(_repoRootPath);
         WorkspacePathLabel.Text = $"Workspace: {Path.GetFileName(_repoRootPath)}";
         Log($"Bound to {_repoRootPath}", "Startup", _repoRootPath);
     }
@@ -442,6 +508,68 @@ public partial class MainPage : ContentPage
         {
             Log($"Unable to open {provider.Name}: {ex.Message}", "Provider", provider.OfficialUrl);
         }
+    }
+
+    private void OnRefreshDashboardClicked(object sender, EventArgs e)
+    {
+        RefreshDashboardPreview();
+        Log("Context optimization preview refreshed.", "Dashboard");
+    }
+
+    private async void OnOpenDashboardClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushModalAsync(_contextOptimizationDashboardPage);
+    }
+
+    private void OnDetachDashboardClicked(object sender, EventArgs e)
+    {
+        var detachedPage = new ContextOptimizationDashboardPage(
+            _contextOptimizationMetricsService,
+            _dashboardWindowService,
+            _contextOptimizationExportService);
+        _dashboardWindowService.OpenDashboardWindow(detachedPage);
+        Log("Opened detached context optimization dashboard.", "Dashboard");
+    }
+
+    private async void OnInstallOptionalTracksClicked(object sender, EventArgs e)
+    {
+        var request = new OptionalFeatureInstallRequest
+        {
+            InstallDashboard = DashboardTrackCheckBox.IsChecked,
+            InstallSqlite = SqliteTrackCheckBox.IsChecked,
+            InstallMcp = McpTrackCheckBox.IsChecked,
+            NeverAskAgain = NeverAskAgainCheckBox.IsChecked
+        };
+
+        var result = await _optionalFeatureSetupService.InstallAsync(_repoRootPath, request);
+        foreach (var line in result.Logs)
+        {
+            Log(line, "Optional setup");
+        }
+
+        _optionalTrackState = result.State;
+        ApplyOptionalTrackState(_optionalTrackState);
+
+        if (result.Succeeded)
+        {
+            Log("Optional track setup completed.", "Optional setup");
+            await RefreshHelperHealthAsync();
+        }
+        else
+        {
+            Log("Optional track setup completed with warnings.", "Optional setup");
+        }
+    }
+
+    private async void OnSkipOptionalTracksClicked(object sender, EventArgs e)
+    {
+        await _optionalFeatureSetupService.SetNeverAskAgainAsync(NeverAskAgainCheckBox.IsChecked);
+        OptionalSetupBanner.IsVisible = false;
+        Log(
+            NeverAskAgainCheckBox.IsChecked
+                ? "Optional setup prompt disabled."
+                : "Skipped optional setup for this run.",
+            "Optional setup");
     }
 
     private static void OpenLocalPath(string path)

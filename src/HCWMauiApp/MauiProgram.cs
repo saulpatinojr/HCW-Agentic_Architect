@@ -1,6 +1,7 @@
 namespace WorkspaceManager;
 
 using WorkspaceManager.Services;
+using WorkspaceManager.Features.ContextOptimization;
 
 public static class MauiProgram
 {
@@ -27,6 +28,13 @@ public static class MauiProgram
         builder.Services.AddSingleton<WorkspaceWriterService>();
         builder.Services.AddSingleton<WorkspaceSystemCheckService>();
         builder.Services.AddSingleton<WorkspaceActivationService>();
+        builder.Services.AddSingleton<OptionalFeatureSetupService>();
+        builder.Services.AddSingleton<ContextOptimizationHistoryStore>();
+        builder.Services.AddSingleton<PartnerAdapterHealthService>();
+        builder.Services.AddSingleton<ContextOptimizationExportService>();
+        builder.Services.AddSingleton<ContextOptimizationMetricsService>();
+        builder.Services.AddSingleton<DashboardWindowService>();
+        builder.Services.AddTransient<ContextOptimizationDashboardPage>();
         builder.Services.AddSingleton<MainPage>();
         builder.Services.AddSingleton<App>();
 

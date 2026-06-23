@@ -89,7 +89,7 @@ public sealed class HelperMcpHealth
     public string Status => ScriptExists && PythonAvailable && PackageCheckPassed
         ? "Helper ready"
         : "Helper needs attention";
-    public string Summary => $"read_compressed_file | json, tf, yaml | {(IsLinked ? "linked" : "not linked")}";
+    public string Summary => $"read_compressed_file + compress_context + optimization_stats | {(IsLinked ? "linked" : "not linked")}";
 }
 
 public sealed class WorkspaceActivationRequest
