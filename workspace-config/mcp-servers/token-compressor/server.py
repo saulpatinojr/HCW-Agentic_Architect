@@ -29,4 +29,4 @@ def read_compressed_file(filepath: str) -> str:
 </context_block>"""
 
 if __name__ == "__main__":
-    mcp.run_stdio()
+    mcp.run()
