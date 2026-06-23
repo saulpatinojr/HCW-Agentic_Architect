@@ -1,4 +1,6 @@
 using System.IO.Compression;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace WorkspaceManager.Services;
 
@@ -36,11 +38,31 @@ public sealed class WorkspacePackUpdateService
             ? catalogEntry?.SourcePath ?? $"workspace-config/agents/{pack.DirectoryName}"
             : pack.SourcePath;
 
+        string checksum = string.IsNullOrWhiteSpace(catalogEntry?.Checksum)
+            ? string.Empty
+            : catalogEntry!.Checksum;
+
         if (string.IsNullOrWhiteSpace(sourceRepository) || string.IsNullOrWhiteSpace(sourcePath))
         {
             return new WorkspacePackUpdateResult(false, logs)
             {
                 Message = "Pack source metadata is missing."
+            };
+        }
+
+        if (!IsValidRepositoryFormat(sourceRepository))
+        {
+            return new WorkspacePackUpdateResult(false, logs)
+            {
+                Message = $"Invalid source repository format '{sourceRepository}'."
+            };
+        }
+
+        if (sourcePath.Contains("..", StringComparison.Ordinal))
+        {
+            return new WorkspacePackUpdateResult(false, logs)
+            {
+                Message = "Invalid source path in pack metadata."
             };
         }
 
@@ -63,6 +85,14 @@ public sealed class WorkspacePackUpdateService
 
             await ExtractPackFromArchiveAsync(downloadPath, sourceRepository, sourceBranch, sourcePath, extractedPackPath, cancellationToken);
 
+            if (!Directory.EnumerateFiles(extractedPackPath, "*", SearchOption.AllDirectories).Any())
+            {
+                return new WorkspacePackUpdateResult(false, logs)
+                {
+                    Message = "Downloaded archive does not contain the requested pack path."
+                };
+            }
+
             var validation = _packManifestService.ValidatePack(extractedPackPath);
             if (!validation.IsValid)
             {
@@ -75,6 +105,21 @@ public sealed class WorkspacePackUpdateService
                 {
                     Message = "Downloaded pack failed validation."
                 };
+            }
+
+            if (!string.IsNullOrWhiteSpace(checksum))
+            {
+                string computedChecksum = ComputePackChecksum(extractedPackPath);
+                if (!checksum.Equals(computedChecksum, StringComparison.OrdinalIgnoreCase))
+                {
+                    logs.Add($"[-] Checksum mismatch: expected {checksum}, got {computedChecksum}.");
+                    return new WorkspacePackUpdateResult(false, logs)
+                    {
+                        Message = "Downloaded pack checksum verification failed."
+                    };
+                }
+
+                logs.Add("[+] Checksum verification passed.");
             }
 
             string targetDir = Path.Combine(repoRootPath, "workspace-config", "agents", pack.DirectoryName);
@@ -146,6 +191,38 @@ public sealed class WorkspacePackUpdateService
         }
 
         return $"https://codeload.github.com/{segments[0]}/{segments[1]}/zip/refs/heads/{sourceBranch}";
+    }
+
+    private static bool IsValidRepositoryFormat(string sourceRepository)
+    {
+        string[] segments = sourceRepository.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        return segments.Length == 2 && segments.All(segment => !string.IsNullOrWhiteSpace(segment));
+    }
+
+    internal static string ComputePackChecksum(string packRootPath)
+    {
+        var relativeFilePaths = Directory
+            .EnumerateFiles(packRootPath, "*", SearchOption.AllDirectories)
+            .Select(path => Path.GetRelativePath(packRootPath, path).Replace('\\', '/'))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToList();
+
+        using var sha = SHA256.Create();
+        using var memory = new MemoryStream();
+
+        foreach (var relativePath in relativeFilePaths)
+        {
+            byte[] pathBytes = Encoding.UTF8.GetBytes(relativePath + "\n");
+            memory.Write(pathBytes, 0, pathBytes.Length);
+
+            byte[] contentBytes = File.ReadAllBytes(Path.Combine(packRootPath, relativePath.Replace('/', Path.DirectorySeparatorChar)));
+            memory.Write(contentBytes, 0, contentBytes.Length);
+            memory.WriteByte((byte)'\n');
+        }
+
+        memory.Position = 0;
+        byte[] hash = sha.ComputeHash(memory);
+        return Convert.ToHexString(hash).ToLowerInvariant();
     }
 
     private static async Task ExtractPackFromArchiveAsync(

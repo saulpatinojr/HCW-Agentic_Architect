@@ -65,7 +65,69 @@ public sealed class WorkspacePackUpdateServiceTests : IDisposable
         Assert.Contains("\"version\": \"1.0.0\"", File.ReadAllText(Path.Combine(_repoRoot, "workspace-config", "agents", "tf-engineer", "pack.manifest.json")));
     }
 
-    private void WriteCatalog(string version)
+    [Fact]
+    public async Task UpdateAsync_WhenChecksumMatches_UpdatesPack()
+    {
+        WriteLocalPack("1.0.0");
+
+        string stagedPack = Path.Combine(_repoRoot, "staging", "tf-engineer");
+        Directory.CreateDirectory(stagedPack);
+        File.WriteAllText(Path.Combine(stagedPack, "pack.manifest.json"), $$"""
+{
+  "schemaVersion": 1,
+  "displayName": "Terraform Engineer",
+  "version": "1.1.0",
+  "sourceRepository": "saulpatinojr/HCW-WorkspaceManager",
+  "sourceBranch": "main",
+  "sourcePath": "workspace-config/agents/tf-engineer"
+}
+""");
+
+        string checksum = WorkspacePackUpdateService.ComputePackChecksum(stagedPack);
+        WriteCatalog("1.1.0", checksum);
+
+        var client = CreateHttpClient(CreateRepoArchiveZip("1.1.0"));
+        var service = new WorkspacePackUpdateService(client, new PackManifestService(), new WorkspacePackCatalogService());
+
+        var result = await service.UpdateAsync(_repoRoot, new AgentViewModel
+        {
+            DirectoryName = "tf-engineer",
+            FriendlyName = "Terraform Engineer",
+            Version = "1.0.0",
+            SourceRepository = "saulpatinojr/HCW-WorkspaceManager",
+            SourceBranch = "main",
+            SourcePath = "workspace-config/agents/tf-engineer"
+        });
+
+        Assert.True(result.Succeeded);
+        Assert.Contains(result.Logs, line => line.Contains("Checksum verification passed", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains("\"version\": \"1.1.0\"", File.ReadAllText(Path.Combine(_repoRoot, "workspace-config", "agents", "tf-engineer", "pack.manifest.json")));
+    }
+
+    [Fact]
+    public async Task UpdateAsync_WhenChecksumMismatch_ReturnsFailureAndKeepsLocalPack()
+    {
+        WriteCatalog("1.1.0", "deadbeef");
+        WriteLocalPack("1.0.0");
+        var client = CreateHttpClient(CreateRepoArchiveZip("1.1.0"));
+        var service = new WorkspacePackUpdateService(client, new PackManifestService(), new WorkspacePackCatalogService());
+
+        var result = await service.UpdateAsync(_repoRoot, new AgentViewModel
+        {
+            DirectoryName = "tf-engineer",
+            FriendlyName = "Terraform Engineer",
+            Version = "1.0.0",
+            SourceRepository = "saulpatinojr/HCW-WorkspaceManager",
+            SourceBranch = "main",
+            SourcePath = "workspace-config/agents/tf-engineer"
+        });
+
+        Assert.False(result.Succeeded);
+        Assert.Contains(result.Logs, line => line.Contains("Checksum mismatch", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains("\"version\": \"1.0.0\"", File.ReadAllText(Path.Combine(_repoRoot, "workspace-config", "agents", "tf-engineer", "pack.manifest.json")));
+    }
+
+    private void WriteCatalog(string version, string checksum = "")
     {
         File.WriteAllText(Path.Combine(_repoRoot, "workspace-config", "catalog.json"), $$"""
 {
@@ -73,6 +135,7 @@ public sealed class WorkspacePackUpdateServiceTests : IDisposable
     {
       "id": "tf-engineer",
       "version": "{{version}}",
+            "checksum": "{{checksum}}",
       "sourceRepository": "saulpatinojr/HCW-WorkspaceManager",
       "sourceBranch": "main",
       "sourcePath": "workspace-config/agents/tf-engineer"
