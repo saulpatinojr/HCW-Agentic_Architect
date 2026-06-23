@@ -13,6 +13,8 @@ This document tracks the context optimization capabilities added to the app for 
   - `compress_context`
   - `retrieve_context`
   - `optimization_stats`
+- Added `--stats-json` CLI mode so the app can read `optimization_stats` directly.
+- Added persisted stats storage (`optimization-stats.json`) to retain metrics across process restarts.
 
 ## Dashboard mockups inside the MAUI app
 
@@ -20,6 +22,9 @@ This document tracks the context optimization capabilities added to the app for 
 - Added full dashboard page mockup at:
   - `src/HCWMauiApp/Features/ContextOptimization/ContextOptimizationDashboardPage.xaml`
 - Added detachable window support so users can pop out dashboards.
+- Replaced mocked dashboard data with direct MCP stats reads by invoking:
+  - `python workspace-config/mcp-servers/token-compressor/server.py --stats-json`
+- Added auto-refresh polling and JSON export in the dashboard page.
 
 ## PR-inspired features incorporated
 
@@ -39,7 +44,7 @@ The implementation includes practical equivalents of high-value patterns from re
 
 ## Next implementation candidates
 
-- Wire `ContextOptimizationMetricsService` to `optimization_stats()` from the MCP runtime over local transport.
-- Add export actions (JSON/CSV) for dashboard snapshots.
-- Add historical persistence (SQLite) for trend timelines.
-- Add alerts for high overhead and low savings thresholds.
+- Add CSV export alongside JSON export.
+- Add SQLite-backed long-term history and day/week/month aggregations.
+- Add alert thresholds for high overhead and low savings.
+- Add partner-specific health cards for Codex, Claude, GitHub, Copilot, Antigravity, and VS Code adapters.

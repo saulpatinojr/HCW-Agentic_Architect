@@ -17,6 +17,8 @@
             </VerticalStackLayout>
             <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
                 <Button Text="Refresh" Clicked="OnRefreshClicked" />
+                <Button x:Name="AutoRefreshButton" Text="Auto refresh: on" Clicked="OnAutoRefreshClicked" />
+                <Button Text="Export JSON" Clicked="OnExportClicked" />
                 <Button Text="Detach" Clicked="OnDetachClicked" />
             </HorizontalStackLayout>
         </Grid>

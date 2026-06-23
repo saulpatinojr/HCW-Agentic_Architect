@@ -1,11 +1,18 @@
 from mcp.server.fastmcp import FastMCP
+import argparse
+import json
 import os
 import re
+import sys
 import time
 import uuid
 
 
 mcp = FastMCP("Context Optimization Engine")
+_stats_file = os.path.join(
+    os.path.dirname(__file__),
+    "optimization-stats.json",
+)
 
 _context_cache: dict[str, str] = {}
 _session_stats = {
@@ -25,6 +32,61 @@ _session_stats = {
         "vscode": 0,
     },
 }
+
+
+def _load_stats() -> None:
+    if not os.path.exists(_stats_file):
+        return
+
+    try:
+        with open(_stats_file, "r", encoding="utf-8") as file_handle:
+            loaded = json.load(file_handle)
+    except (OSError, ValueError, json.JSONDecodeError):
+        return
+
+    if not isinstance(loaded, dict):
+        return
+
+    for key in (
+        "requests_total",
+        "tokens_original",
+        "tokens_optimized",
+        "tokens_saved",
+        "output_tokens_saved",
+        "overhead_ms_total",
+    ):
+        if isinstance(loaded.get(key), int):
+            _session_stats[key] = loaded[key]
+
+    if isinstance(loaded.get("projects"), dict):
+        for project, value in loaded["projects"].items():
+            if (
+                project in _session_stats["projects"]
+                and isinstance(value, int)
+            ):
+                _session_stats["projects"][project] = value
+
+    if isinstance(loaded.get("history"), list):
+        history = [
+            item for item in loaded["history"] if isinstance(item, dict)
+        ]
+        _session_stats["history"] = history[-200:]
+
+
+def _save_stats() -> None:
+    payload = {
+        "requests_total": _session_stats["requests_total"],
+        "tokens_original": _session_stats["tokens_original"],
+        "tokens_optimized": _session_stats["tokens_optimized"],
+        "tokens_saved": _session_stats["tokens_saved"],
+        "output_tokens_saved": _session_stats["output_tokens_saved"],
+        "overhead_ms_total": _session_stats["overhead_ms_total"],
+        "history": _session_stats["history"],
+        "projects": _session_stats["projects"],
+    }
+
+    with open(_stats_file, "w", encoding="utf-8") as file_handle:
+        json.dump(payload, file_handle)
 
 
 def _token_estimate(content: str) -> int:
@@ -78,6 +140,8 @@ def _record_stats(
     history.append(event)
     if len(history) > 200:
         del history[0]
+
+    _save_stats()
 
     return event
 
@@ -176,5 +240,18 @@ def optimization_stats() -> dict[str, object]:
     }
 
 
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--stats-json", action="store_true")
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
+    _load_stats()
+    args = _parse_args()
+    if args.stats_json:
+        json.dump(optimization_stats(), sys.stdout)
+        sys.stdout.write("\n")
+        raise SystemExit(0)
+
     mcp.run()

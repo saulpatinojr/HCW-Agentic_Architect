@@ -140,6 +140,7 @@ public partial class MainPage : ContentPage
     private void DetermineRepositoryRoot()
     {
         _repoRootPath = _workspaceCatalogService.DetermineRepositoryRoot(AppDomain.CurrentDomain.BaseDirectory);
+        _contextOptimizationMetricsService.SetRepoRootPath(_repoRootPath);
         WorkspacePathLabel.Text = $"Workspace: {Path.GetFileName(_repoRootPath)}";
         Log($"Bound to {_repoRootPath}", "Startup", _repoRootPath);
     }
