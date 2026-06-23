@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using WorkspaceManager.Services;
+using WorkspaceManager.Features.ContextOptimization;
 
 namespace WorkspaceManager;
 
@@ -13,6 +14,9 @@ public partial class MainPage : ContentPage
     private readonly ProviderRegistryService _providerRegistryService;
     private readonly WorkspaceFolderService _workspaceFolderService;
     private readonly HelperMcpHealthService _helperMcpHealthService;
+    private readonly ContextOptimizationMetricsService _contextOptimizationMetricsService;
+    private readonly DashboardWindowService _dashboardWindowService;
+    private readonly ContextOptimizationDashboardPage _contextOptimizationDashboardPage;
     private string _repoRootPath = string.Empty;
     private AgentViewModel? _selectedPack;
     private bool _isCompactLayout;
@@ -33,7 +37,10 @@ public partial class MainPage : ContentPage
         WorkspacePackUpdateService workspacePackUpdateService,
         ProviderRegistryService providerRegistryService,
         WorkspaceFolderService workspaceFolderService,
-        HelperMcpHealthService helperMcpHealthService)
+        HelperMcpHealthService helperMcpHealthService,
+        ContextOptimizationMetricsService contextOptimizationMetricsService,
+        DashboardWindowService dashboardWindowService,
+        ContextOptimizationDashboardPage contextOptimizationDashboardPage)
     {
         _workspaceCatalogService = workspaceCatalogService;
         _workspaceSystemCheckService = workspaceSystemCheckService;
@@ -42,6 +49,9 @@ public partial class MainPage : ContentPage
         _providerRegistryService = providerRegistryService;
         _workspaceFolderService = workspaceFolderService;
         _helperMcpHealthService = helperMcpHealthService;
+        _contextOptimizationMetricsService = contextOptimizationMetricsService;
+        _dashboardWindowService = dashboardWindowService;
+        _contextOptimizationDashboardPage = contextOptimizationDashboardPage;
 
         InitializeComponent();
         BindCollections();
@@ -49,7 +59,20 @@ public partial class MainPage : ContentPage
         LoadProviders();
         RefreshFolderNodes();
         UpdateSummaryState("Ready");
+        RefreshDashboardPreview();
         _ = RefreshHelperHealthAsync();
+    }
+
+    private void RefreshDashboardPreview()
+    {
+        var snapshot = _contextOptimizationMetricsService.GetSnapshot();
+        DashboardPreviewSavedLabel.Text = $"Tokens saved: {snapshot.TokensSaved:N0}";
+        DashboardPreviewEfficiencyLabel.Text = $"Compression: {snapshot.SavingsPercent:N1}%";
+
+        var topPartner = snapshot.PartnerSavings.FirstOrDefault();
+        DashboardPreviewPartnerLabel.Text = topPartner is null
+            ? "Top: n/a"
+            : $"Top: {topPartner.Partner} ({topPartner.PercentOfTotal:N1}%)";
     }
 
     private void BindCollections()
@@ -442,6 +465,24 @@ public partial class MainPage : ContentPage
         {
             Log($"Unable to open {provider.Name}: {ex.Message}", "Provider", provider.OfficialUrl);
         }
+    }
+
+    private void OnRefreshDashboardClicked(object sender, EventArgs e)
+    {
+        RefreshDashboardPreview();
+        Log("Context optimization preview refreshed.", "Dashboard");
+    }
+
+    private async void OnOpenDashboardClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushModalAsync(_contextOptimizationDashboardPage);
+    }
+
+    private void OnDetachDashboardClicked(object sender, EventArgs e)
+    {
+        var detachedPage = new ContextOptimizationDashboardPage(_contextOptimizationMetricsService, _dashboardWindowService);
+        _dashboardWindowService.OpenDashboardWindow(detachedPage);
+        Log("Opened detached context optimization dashboard.", "Dashboard");
     }
 
     private static void OpenLocalPath(string path)

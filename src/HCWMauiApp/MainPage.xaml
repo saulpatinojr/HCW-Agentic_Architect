@@ -19,7 +19,7 @@
         <Color x:Key="Warning">#D83B01</Color>
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,Auto,*" Padding="20" RowSpacing="12">
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="20" RowSpacing="12">
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#F7FAFD" Offset="0" />
@@ -176,7 +176,38 @@
             </FlexLayout>
         </Border>
 
-        <Grid Grid.Row="2" RowDefinitions="Auto,*" RowSpacing="12">
+        <Border Grid.Row="2"
+                Stroke="{StaticResource Stroke}"
+                StrokeThickness="1"
+                BackgroundColor="{StaticResource Surface}"
+                Padding="10">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <HorizontalStackLayout Spacing="16">
+                    <VerticalStackLayout Spacing="1">
+                        <Label Text="Context optimization" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                        <Label x:Name="DashboardPreviewSavedLabel" Text="Tokens saved: 0" TextColor="{StaticResource TextSecondary}" FontSize="11" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Spacing="1">
+                        <Label Text="Efficiency" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                        <Label x:Name="DashboardPreviewEfficiencyLabel" Text="Compression: 0%" TextColor="{StaticResource TextSecondary}" FontSize="11" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Spacing="1">
+                        <Label Text="Partner leader" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                        <Label x:Name="DashboardPreviewPartnerLabel" Text="Top: n/a" TextColor="{StaticResource TextSecondary}" FontSize="11" />
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Grid.Column="1" Spacing="8" HorizontalOptions="End">
+                    <Button Text="Refresh dashboard" Clicked="OnRefreshDashboardClicked" Padding="12,6" />
+                    <Button Text="Open dashboard" Clicked="OnOpenDashboardClicked" Padding="12,6" />
+                    <Button Text="Detach" Clicked="OnDetachDashboardClicked" Padding="12,6" />
+                </HorizontalStackLayout>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="3" RowDefinitions="Auto,*" RowSpacing="12">
                 <Border Stroke="{StaticResource Stroke}" StrokeThickness="1" BackgroundColor="{StaticResource Surface}" Padding="10">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="10" />
