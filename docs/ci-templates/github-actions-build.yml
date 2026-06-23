@@ -1,0 +1,23 @@
+name: CI - Build and Test (Windows)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore
+        run: dotnet restore
+      - name: Build HCWMauiApp (Windows target)
+        run: dotnet build src/HCWMauiApp/WorkspaceManager.csproj -f net10.0-windows10.0.19041.0 --configuration Release --no-restore
+      - name: Run tests
+        run: dotnet test src/HCWMauiApp.Tests/HCWMauiApp.Tests.csproj --configuration Release --no-build --verbosity minimal

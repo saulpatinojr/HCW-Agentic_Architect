@@ -1,0 +1,2 @@
+<!-- Sample: reference the GitHub Actions build template at docs/ci-templates/github-actions-build.yml -->
+See `docs/ci-templates/github-actions-build.yml` for a Windows-only build/test example.

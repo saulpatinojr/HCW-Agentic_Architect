@@ -1,0 +1,22 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '8.0.x'
+
+- script: dotnet restore
+  displayName: 'Restore'
+
+- script: dotnet build src/HCWMauiApp/WorkspaceManager.csproj -f net10.0-windows10.0.19041.0 --configuration Release --no-restore
+  displayName: 'Build'
+
+- script: dotnet test src/HCWMauiApp.Tests/HCWMauiApp.Tests.csproj --configuration Release --no-build --verbosity minimal
+  displayName: 'Test'
