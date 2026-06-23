@@ -19,7 +19,7 @@
         <Color x:Key="Warning">#D83B01</Color>
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="20" RowSpacing="12">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Padding="20" RowSpacing="12">
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#F7FAFD" Offset="0" />
@@ -176,7 +176,99 @@
             </FlexLayout>
         </Border>
 
-        <Border Grid.Row="2"
+        <Border x:Name="OptionalSetupBanner"
+                Grid.Row="2"
+                IsVisible="False"
+                Stroke="#E7C27B"
+                StrokeThickness="1"
+                BackgroundColor="#FFF8E8"
+                Padding="12">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
+            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="8" ColumnSpacing="10">
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="Optional feature tracks"
+                           FontSize="13"
+                           FontAttributes="Bold"
+                           TextColor="#7A4F01" />
+                    <Label Text="Install tracks once, skip already-installed items automatically, and optionally never ask again."
+                           FontSize="11"
+                           TextColor="#805C1A" />
+                </VerticalStackLayout>
+                <Border Grid.Column="1" BackgroundColor="#FFF1D6" Stroke="#E7C27B" Padding="8,4">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="999" />
+                    </Border.StrokeShape>
+                    <Label Text="Startup Setup"
+                           FontSize="10"
+                           TextColor="#7A4F01"
+                           FontAttributes="Bold" />
+                </Border>
+
+                <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <Border Stroke="#E7C27B" BackgroundColor="#FFFDF5" Padding="8">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="4">
+                            <HorizontalStackLayout Spacing="8">
+                                <CheckBox x:Name="DashboardTrackCheckBox" IsChecked="True" />
+                                <Label Text="Dashboard" FontSize="11" TextColor="#6B4A14" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                            <Label x:Name="DashboardTrackStatusLabel" Text="Bundled in app build" FontSize="10" TextColor="#8A6A2E" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1" Stroke="#E7C27B" BackgroundColor="#FFFDF5" Padding="8">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="4">
+                            <HorizontalStackLayout Spacing="8">
+                                <CheckBox x:Name="SqliteTrackCheckBox" IsChecked="True" />
+                                <Label Text="SQLite trends" FontSize="11" TextColor="#6B4A14" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                            <Label x:Name="SqliteTrackStatusLabel" Text="Bundled in app build" FontSize="10" TextColor="#8A6A2E" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="2" Stroke="#E7C27B" BackgroundColor="#FFFDF5" Padding="8">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="4">
+                            <HorizontalStackLayout Spacing="8">
+                                <CheckBox x:Name="McpTrackCheckBox" IsChecked="True" />
+                                <Label Text="MCP runtime" FontSize="11" TextColor="#6B4A14" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                            <Label x:Name="McpTrackStatusLabel" Text="Checking Python dependencies..." FontSize="10" TextColor="#8A6A2E" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <Grid Grid.Row="2" Grid.ColumnSpan="2" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                    <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                        <CheckBox x:Name="NeverAskAgainCheckBox" IsChecked="False" />
+                        <Label Text="Never ask again" FontSize="11" TextColor="#6B4A14" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Grid.Column="1" Spacing="8" HorizontalOptions="End">
+                        <Button Text="Skip"
+                                Clicked="OnSkipOptionalTracksClicked"
+                                BackgroundColor="#FFFFFF"
+                                BorderColor="#DAB47A"
+                                BorderWidth="1"
+                                TextColor="#805C1A"
+                                Padding="12,6" />
+                        <Button Text="Install selected"
+                                Clicked="OnInstallOptionalTracksClicked"
+                                BackgroundColor="#A86F00"
+                                TextColor="White"
+                                Padding="12,6" />
+                    </HorizontalStackLayout>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="3"
                 Stroke="{StaticResource Stroke}"
                 StrokeThickness="1"
                 BackgroundColor="{StaticResource Surface}"
@@ -207,7 +299,7 @@
             </Grid>
         </Border>
 
-        <Grid Grid.Row="3" RowDefinitions="Auto,*" RowSpacing="12">
+        <Grid Grid.Row="4" RowDefinitions="Auto,*" RowSpacing="12">
                 <Border Stroke="{StaticResource Stroke}" StrokeThickness="1" BackgroundColor="{StaticResource Surface}" Padding="10">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="10" />

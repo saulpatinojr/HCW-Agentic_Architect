@@ -15,12 +15,14 @@ public partial class MainPage : ContentPage
     private readonly WorkspaceFolderService _workspaceFolderService;
     private readonly HelperMcpHealthService _helperMcpHealthService;
     private readonly ContextOptimizationMetricsService _contextOptimizationMetricsService;
+    private readonly OptionalFeatureSetupService _optionalFeatureSetupService;
     private readonly DashboardWindowService _dashboardWindowService;
     private readonly ContextOptimizationExportService _contextOptimizationExportService;
     private readonly ContextOptimizationDashboardPage _contextOptimizationDashboardPage;
     private string _repoRootPath = string.Empty;
     private AgentViewModel? _selectedPack;
     private bool _isCompactLayout;
+    private OptionalFeaturePromptState _optionalTrackState = new();
 
     public ObservableCollection<AgentViewModel> DiscoveredAgents { get; } = [];
     public ObservableCollection<ActivityLogEntry> ActivityEntries { get; } = [];
@@ -40,6 +42,7 @@ public partial class MainPage : ContentPage
         WorkspaceFolderService workspaceFolderService,
         HelperMcpHealthService helperMcpHealthService,
         ContextOptimizationMetricsService contextOptimizationMetricsService,
+        OptionalFeatureSetupService optionalFeatureSetupService,
         DashboardWindowService dashboardWindowService,
         ContextOptimizationExportService contextOptimizationExportService,
         ContextOptimizationDashboardPage contextOptimizationDashboardPage)
@@ -52,6 +55,7 @@ public partial class MainPage : ContentPage
         _workspaceFolderService = workspaceFolderService;
         _helperMcpHealthService = helperMcpHealthService;
         _contextOptimizationMetricsService = contextOptimizationMetricsService;
+        _optionalFeatureSetupService = optionalFeatureSetupService;
         _dashboardWindowService = dashboardWindowService;
         _contextOptimizationExportService = contextOptimizationExportService;
         _contextOptimizationDashboardPage = contextOptimizationDashboardPage;
@@ -63,7 +67,42 @@ public partial class MainPage : ContentPage
         RefreshFolderNodes();
         UpdateSummaryState("Ready");
         RefreshDashboardPreview();
+        _ = InitializeOptionalTracksAsync();
         _ = RefreshHelperHealthAsync();
+    }
+
+    private async Task InitializeOptionalTracksAsync()
+    {
+        _optionalTrackState = await _optionalFeatureSetupService.EvaluateAsync(_repoRootPath);
+        ApplyOptionalTrackState(_optionalTrackState);
+    }
+
+    private void ApplyOptionalTrackState(OptionalFeaturePromptState state)
+    {
+        OptionalSetupBanner.IsVisible = state.ShouldPrompt;
+        NeverAskAgainCheckBox.IsChecked = state.NeverAskAgain;
+
+        var dashboard = state.Tracks.FirstOrDefault(t => t.Key == "dashboard");
+        var sqlite = state.Tracks.FirstOrDefault(t => t.Key == "sqlite");
+        var mcp = state.Tracks.FirstOrDefault(t => t.Key == "mcp");
+
+        if (dashboard is not null)
+        {
+            DashboardTrackCheckBox.IsChecked = dashboard.IsSelected;
+            DashboardTrackStatusLabel.Text = dashboard.Detail;
+        }
+
+        if (sqlite is not null)
+        {
+            SqliteTrackCheckBox.IsChecked = sqlite.IsSelected;
+            SqliteTrackStatusLabel.Text = sqlite.Detail;
+        }
+
+        if (mcp is not null)
+        {
+            McpTrackCheckBox.IsChecked = mcp.IsSelected;
+            McpTrackStatusLabel.Text = mcp.Detail;
+        }
     }
 
     private void RefreshDashboardPreview()
@@ -490,6 +529,47 @@ public partial class MainPage : ContentPage
             _contextOptimizationExportService);
         _dashboardWindowService.OpenDashboardWindow(detachedPage);
         Log("Opened detached context optimization dashboard.", "Dashboard");
+    }
+
+    private async void OnInstallOptionalTracksClicked(object sender, EventArgs e)
+    {
+        var request = new OptionalFeatureInstallRequest
+        {
+            InstallDashboard = DashboardTrackCheckBox.IsChecked,
+            InstallSqlite = SqliteTrackCheckBox.IsChecked,
+            InstallMcp = McpTrackCheckBox.IsChecked,
+            NeverAskAgain = NeverAskAgainCheckBox.IsChecked
+        };
+
+        var result = await _optionalFeatureSetupService.InstallAsync(_repoRootPath, request);
+        foreach (var line in result.Logs)
+        {
+            Log(line, "Optional setup");
+        }
+
+        _optionalTrackState = result.State;
+        ApplyOptionalTrackState(_optionalTrackState);
+
+        if (result.Succeeded)
+        {
+            Log("Optional track setup completed.", "Optional setup");
+            await RefreshHelperHealthAsync();
+        }
+        else
+        {
+            Log("Optional track setup completed with warnings.", "Optional setup");
+        }
+    }
+
+    private async void OnSkipOptionalTracksClicked(object sender, EventArgs e)
+    {
+        await _optionalFeatureSetupService.SetNeverAskAgainAsync(NeverAskAgainCheckBox.IsChecked);
+        OptionalSetupBanner.IsVisible = false;
+        Log(
+            NeverAskAgainCheckBox.IsChecked
+                ? "Optional setup prompt disabled."
+                : "Skipped optional setup for this run.",
+            "Optional setup");
     }
 
     private static void OpenLocalPath(string path)
