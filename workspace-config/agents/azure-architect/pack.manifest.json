@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "azure-architect",
+  "version": "1.0.0",
+  "checksum": "",
+  "sourceRepository": "saulpatinojr/HCW-WorkspaceManager",
+  "sourceBranch": "main",
+  "sourcePath": "workspace-config/agents/azure-architect",
+  "releaseNotes": "Initial Workspace Manager catalog entry for the Azure Certified Architect pack.",
+  "description": "Senior Azure solutions architect and administrator agent aligned to AZ-305 and AZ-104 certification domains. Covers identity, governance, storage, compute, networking, BC/DR, and monitoring.",
+  "tools": [
+    "read",
+    "search/codebase",
+    "web/fetch",
+    "edit",
+    "agent",
+    "microsoft-learn/*",
+    "drawio/*"
+  ],
+  "handoffs": [
+    {
+      "label": "Switch to AWS Architect",
+      "agent": "aws-architect"
+    },
+    {
+      "label": "Switch to Terraform Engineer",
+      "agent": "tf-engineer"
+    }
+  ]
+}

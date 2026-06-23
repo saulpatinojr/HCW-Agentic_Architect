@@ -10,6 +10,24 @@
       "sourceBranch": "main",
       "sourcePath": "workspace-config/agents/tf-engineer",
       "releaseNotes": "Initial Workspace Manager catalog entry for the Terraform Engineer pack."
+    },
+    {
+      "id": "aws-architect",
+      "version": "1.0.0",
+      "checksum": "",
+      "sourceRepository": "saulpatinojr/HCW-WorkspaceManager",
+      "sourceBranch": "main",
+      "sourcePath": "workspace-config/agents/aws-architect",
+      "releaseNotes": "Initial Workspace Manager catalog entry for the AWS Certified Architect pack."
+    },
+    {
+      "id": "azure-architect",
+      "version": "1.0.0",
+      "checksum": "",
+      "sourceRepository": "saulpatinojr/HCW-WorkspaceManager",
+      "sourceBranch": "main",
+      "sourcePath": "workspace-config/agents/azure-architect",
+      "releaseNotes": "Initial Workspace Manager catalog entry for the Azure Certified Architect pack."
     }
   ]
 }

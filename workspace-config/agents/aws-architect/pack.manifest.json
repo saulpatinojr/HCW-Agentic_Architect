@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "aws-architect",
+  "version": "1.0.0",
+  "checksum": "",
+  "sourceRepository": "saulpatinojr/HCW-WorkspaceManager",
+  "sourceBranch": "main",
+  "sourcePath": "workspace-config/agents/aws-architect",
+  "releaseNotes": "Initial Workspace Manager catalog entry for the AWS Certified Architect pack.",
+  "description": "Senior AWS solutions architect agent aligned to SAA-C03 certification domains. Covers secure, resilient, high-performing, and cost-optimized AWS architectures.",
+  "tools": [
+    "read",
+    "search/codebase",
+    "web/fetch",
+    "edit",
+    "agent",
+    "drawio/*"
+  ],
+  "handoffs": [
+    {
+      "label": "Switch to Azure Architect",
+      "agent": "azure-architect"
+    },
+    {
+      "label": "Switch to Terraform Engineer",
+      "agent": "tf-engineer"
+    }
+  ]
+}
