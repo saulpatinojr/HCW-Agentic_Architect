@@ -33,7 +33,7 @@ Nine detailed README files:
   - File naming conventions
 
 #### Architectural Guide
-- **docs/application/MAUI-ARCHITECTURE.md** (400+ lines)
+- **wiki/MAUI-ARCHITECTURE.md** (400+ lines)
   - MVVM pattern explanation
   - Feature organization
   - Service patterns
@@ -81,7 +81,7 @@ Unit tests mirror source structure with mocking of dependencies
 
 ### **For New Developers**
 1. Read `src/HCWMauiApp/README.md` for overview
-2. Read `docs/application/MAUI-ARCHITECTURE.md` for patterns
+2. Read `wiki/MAUI-ARCHITECTURE.md` for patterns
 3. Look at template code in each directory
 4. Use directory READMEs as implementation guides
 
@@ -230,7 +230,7 @@ src/HCWMauiApp/
 
 | Purpose | Location |
 |---------|----------|
-| Architecture guide | `docs/application/MAUI-ARCHITECTURE.md` |
+| Architecture guide | `wiki/MAUI-ARCHITECTURE.md` |
 | Main README | `src/HCWMauiApp/README.md` |
 | Detailed structure | `src/README.md` |
 | Base classes | `src/HCWMauiApp/ViewModels/Base/BaseViewModel.cs` |

@@ -16,11 +16,22 @@ AI Architect Agents is a local .NET MAUI desktop app for composing, validating, 
 
 ## Repository Structure
 
-- `docs`: project, application, MAUI, and legacy reference docs.
+- `wiki`: canonical documentation source for project and MAUI references.
+- `.ci`: CI configuration assets for GitHub Actions and Azure DevOps.
 - `scripts`: bootstrap and workspace management scripts.
 - `src`: MAUI app source and unit tests.
 - `tests`: test guidance and future integration-test structure.
 - `workspace-config`: active agent packs, instructions, skills, hooks, and MCP server assets.
+
+## GitHub Wiki
+
+Documentation now lives in `wiki` and is organized to mirror GitHub Wiki pages.
+
+- Start page source: `wiki/Home.md`
+- Wiki navigation source: `wiki/_Sidebar.md`
+
+To publish these pages to the repository wiki, push/copy the files from `wiki` into
+the GitHub wiki repository (`HCW-Agentic_Architect.wiki.git`).
 
 ## Run On Windows
 

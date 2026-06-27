@@ -17,7 +17,7 @@
    - Naming conventions
 
 ### 📚 **Detailed Architecture**
-- **[docs/application/MAUI-ARCHITECTURE.md](application/MAUI-ARCHITECTURE.md)** - Architecture guide
+- **[MAUI-ARCHITECTURE.md](MAUI-ARCHITECTURE.md)** - Architecture guide
   - MVVM pattern explained
   - Feature organization
   - Service patterns with examples
@@ -66,10 +66,11 @@ HCW-WorkspaceManager/
 ├── 📄 MAUI-QUICK-REFERENCE.md          ← START HERE (examples & patterns)
 ├── 📄 MAUI-COMPLETE-INDEX.md            ← This file (navigation)
 │
-├── docs/
-│   ├── application/
-│   │   └── 📘 MAUI-ARCHITECTURE.md     (detailed architecture guide)
-│   └── [other docs...]
+├── wiki/
+│   ├── 📘 MAUI-ARCHITECTURE.md         (detailed architecture guide)
+│   ├── 📘 MAUI-COMPLETE-INDEX.md       (navigation)
+│   ├── 📘 MAUI-QUICK-REFERENCE.md      (hands-on patterns)
+│   └── [other wiki pages...]
 │
 ├── src/
 │   ├── 📘 README.md                    (directory structure explanation)
@@ -154,14 +155,14 @@ HCW-WorkspaceManager/
 |------|----------|
 | **Create a new feature** | [MAUI-QUICK-REFERENCE.md](MAUI-QUICK-REFERENCE.md#starting-a-new-feature) + [Features/README.md](src/HCWMauiApp/Features/README.md) |
 | **Create a service** | [MAUI-QUICK-REFERENCE.md](MAUI-QUICK-REFERENCE.md#creating-a-service) + [Services/README.md](src/HCWMauiApp/Services/README.md) |
-| **Understand MVVM** | [docs/application/MAUI-ARCHITECTURE.md](docs/application/MAUI-ARCHITECTURE.md#mvvm-pattern) |
+| **Understand MVVM** | [MAUI-ARCHITECTURE.md](MAUI-ARCHITECTURE.md#mvvm-pattern) |
 | **Add a new service to DI** | [MAUI-QUICK-REFERENCE.md](MAUI-QUICK-REFERENCE.md#step-3-register-in-mauiprogramcs) |
 | **Learn dependency injection** | [Services/README.md](src/HCWMauiApp/Services/README.md#service-lifetimes) |
 | **Build a XAML page** | [MAUI-QUICK-REFERENCE.md](MAUI-QUICK-REFERENCE.md#xaml-binding-patterns) |
 | **Use data binding** | [MAUI-QUICK-REFERENCE.md](MAUI-QUICK-REFERENCE.md#xaml-binding-patterns) |
 | **Create a converter** | [Converters/README.md](src/HCWMauiApp/Converters/README.md) |
 | **Create a behavior** | [Behaviors/README.md](src/HCWMauiApp/Behaviors/README.md) |
-| **Handle errors** | [docs/application/MAUI-ARCHITECTURE.md](docs/application/MAUI-ARCHITECTURE.md#error-handling) |
+| **Handle errors** | [MAUI-ARCHITECTURE.md](MAUI-ARCHITECTURE.md#error-handling) |
 | **Write unit tests** | [tests/README.md](tests/README.md) + [MAUI-QUICK-REFERENCE.md](MAUI-QUICK-REFERENCE.md#testing-patterns) |
 | **Use extension methods** | [Utilities/README.md](src/HCWMauiApp/Utilities/README.md#extension-methods-example) |
 | **Organize resources** | [Resources/README.md](src/HCWMauiApp/Resources/README.md) |

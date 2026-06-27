@@ -83,4 +83,4 @@ public partial class MyPageViewModel : BaseViewModel
 }
 ```
 
-See [MAUI-ARCHITECTURE.md](../../docs/application/MAUI-ARCHITECTURE.md) for detailed patterns.
+See [MAUI-ARCHITECTURE.md](../../../wiki/MAUI-ARCHITECTURE.md) for detailed patterns.

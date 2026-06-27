@@ -1,0 +1,62 @@
+name: Sync Wiki
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - wiki/**
+      - .github/workflows/sync-wiki.yml
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate wiki source folder
+        run: |
+          set -euo pipefail
+          if [ ! -d "wiki" ]; then
+            echo "wiki/ folder not found."
+            exit 1
+          fi
+
+      - name: Clone target GitHub Wiki repository
+        env:
+          REPO: ${{ github.repository }}
+          TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if ! git clone "https://x-access-token:${TOKEN}@github.com/${REPO}.wiki.git" wiki-repo; then
+            echo "Failed to clone wiki repository."
+            echo "Ensure GitHub Wiki is enabled and initialized for this repository."
+            exit 1
+          fi
+
+      - name: Sync files into wiki repository
+        run: |
+          set -euo pipefail
+          rm -rf wiki-repo/*
+          cp -R wiki/. wiki-repo/
+
+      - name: Commit and push wiki changes
+        env:
+          ACTOR: ${{ github.actor }}
+        run: |
+          set -euo pipefail
+          cd wiki-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "Sync wiki from repository source"
+            git push
+          else
+            echo "No wiki changes to publish."
+          fi

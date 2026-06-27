@@ -93,4 +93,4 @@ builder.Services.AddTransient<HomePage>();
 - **ILogger** - Logging (built-in)
 - **IUserService** - User domain logic
 
-See [MAUI-ARCHITECTURE.md](../../docs/application/MAUI-ARCHITECTURE.md) for detailed examples.
+See [MAUI-ARCHITECTURE.md](../../../wiki/MAUI-ARCHITECTURE.md) for detailed examples.

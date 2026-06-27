@@ -383,7 +383,7 @@ Behaviors:           [Behavior]Behavior.cs
 ## Essential Documentation
 
 - **src/HCWMauiApp/README.md** - Overview & structure
-- **docs/application/MAUI-ARCHITECTURE.md** - Full architecture guide
+- **wiki/MAUI-ARCHITECTURE.md** - Full architecture guide
 - **src/README.md** - Directory explanations
 - **[Folder]/README.md** - Specific guidance for each directory
 

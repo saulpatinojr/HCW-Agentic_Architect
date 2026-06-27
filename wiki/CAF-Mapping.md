@@ -5,7 +5,7 @@ Purpose: map this repository's Terraform/architecture patterns to the Azure Clou
 - **Scope**: naming, resource groups, landing zones, identity, networking, monitoring, IaC mapping, tagging, and deployment runbook.
 
 1. Naming & Resource Groups
-   - Use CAF-inspired short prefixes from docs/project/AGENTS.md (e.g., `rg`, `vn`, `vm`, `aks`).
+   - Use CAF-inspired short prefixes from `workspace-config/agents/*/AGENTS.md` guidance (e.g., `rg`, `vn`, `vm`, `aks`).
    - Resource Group pattern: `<org>-<env>-rg-<app>` (example: `hcw-dev-rg-agentic`).
 
 2. Landing Zones
@@ -22,7 +22,7 @@ Purpose: map this repository's Terraform/architecture patterns to the Azure Clou
 
 5. Monitoring & Logging
    - Central Log Analytics workspace per tenant/region; forward diagnostics from App Services/AKS/VMs.
-   - Include a minimal Alerting & Workbook README in `docs/` for runbook owners.
+   - Include a minimal Alerting & Workbook page in `wiki/` for runbook owners.
 
 6. IaC Mapping
    - Terraform: follow `workspace-config/agents/tf-engineer/AGENTS.md` rules — remote state, locking, provider-agnostic modules.
@@ -41,4 +41,4 @@ References
 - Terraform guidance: see `workspace-config/agents/tf-engineer/AGENTS.md`
 
 Notes
-- CI templates included in `docs/ci-templates/` target Windows runners per project decision.
+- CI workflows are in `.github/workflows/`; Azure DevOps pipelines are in `.ci/azure-devops/`.

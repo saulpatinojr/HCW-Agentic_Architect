@@ -6,14 +6,12 @@ Documentation hub for the AI Architect Agents workspace.
 
 ### Project
 
-- [Project overview](project/README.md)
-- [Agent guidance](project/AGENTS.md)
-- [Claude guidance](project/CLAUDE.md)
-- [Gemini guidance](project/GEMINI.md)
+- [Wiki home](Home.md)
+- [Repository README](../README.md)
 
 ### Application
 
-- [MAUI architecture](application/MAUI-ARCHITECTURE.md)
+- [MAUI architecture](MAUI-ARCHITECTURE.md)
 - [MAUI complete index](MAUI-COMPLETE-INDEX.md)
 - [MAUI quick reference](MAUI-QUICK-REFERENCE.md)
 - [App source guide](../src/HCWMauiApp/README.md)
@@ -26,9 +24,10 @@ Documentation hub for the AI Architect Agents workspace.
 - [Orchestration guardrails](../workspace-config/instructions/orchestration-guardrails.md)
 - [MCP scaffold skill](../workspace-config/skills/scaffold-mcp-server.md)
 
-### Legacy Reference
+### CI and Pipelines
 
-Historical architecture and infrastructure material now lives under `docs/legacy`. Keep new app and workspace-pack documentation in the active docs listed above.
+- [GitHub Actions workflows](../.github/workflows)
+- [Azure DevOps pipelines](../.ci/azure-devops)
 
 ## Current App Surface
 
@@ -42,7 +41,7 @@ The desktop app is a Windows-first MAUI control room for local AI architecture p
 
 ## Documentation Rules
 
-- Root-level docs should describe the product and operational workflow.
+- Wiki pages should describe the product and operational workflow.
 - `src/HCWMauiApp` docs should describe app implementation details.
 - `workspace-config` docs should describe pack authoring, agent instructions, and MCP behavior.
-- Legacy docs should not be updated unless intentionally preserving historical context.
+- Keep links rooted in `wiki`, `src`, `workspace-config`, `.github/workflows`, and `.ci`.

@@ -1,0 +1,11 @@
+trigger: none
+pr: none
+
+pool:
+  vmImage: windows-latest
+
+steps:
+  - script: |
+      echo "This is a placeholder Azure DevOps sample pipeline."
+      echo "Use .ci/azure-devops/azure-pipelines.yml for the active CI pipeline."
+    displayName: Pipeline reference
