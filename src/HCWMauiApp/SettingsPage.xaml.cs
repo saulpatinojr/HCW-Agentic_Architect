@@ -1,39 +1,35 @@
 using System.Diagnostics;
-using System.Text.Json;
+using WorkspaceManager.Services;
 
 namespace WorkspaceManager;
 
 public partial class SettingsPage : ContentPage
 {
+    private readonly AppPreferenceStore _preferenceStore;
     private readonly string _settingsDir;
-    private readonly string _settingsPath;
+    private readonly string _workspaceDataDir;
 
     public SettingsPage()
     {
         InitializeComponent();
-        _settingsDir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "AIArchitectAgents");
-        _settingsPath = Path.Combine(_settingsDir, "app-preferences.json");
+        _preferenceStore = new AppPreferenceStore();
+        _settingsDir = _preferenceStore.SettingsDirectory;
+        _workspaceDataDir = ResolveWorkspaceDataDirectory();
         Directory.CreateDirectory(_settingsDir);
         LoadPreferences();
     }
 
+    private static string ResolveWorkspaceDataDirectory()
+    {
+        var catalogService = new WorkspaceCatalogService();
+        string repoRoot = catalogService.DetermineRepositoryRoot(AppDomain.CurrentDomain.BaseDirectory);
+        string workspaceConfigPath = Path.Combine(repoRoot, "workspace-config");
+        return Directory.Exists(workspaceConfigPath) ? workspaceConfigPath : repoRoot;
+    }
+
     private void LoadPreferences()
     {
-        var prefs = AppPreferences.Default();
-        if (File.Exists(_settingsPath))
-        {
-            try
-            {
-                string json = File.ReadAllText(_settingsPath);
-                prefs = JsonSerializer.Deserialize<AppPreferences>(json) ?? prefs;
-            }
-            catch
-            {
-                SettingsStatusLabel.Text = "Could not read saved preferences; defaults are shown.";
-            }
-        }
+        var prefs = _preferenceStore.Load();
 
         ThemePicker.SelectedItem = prefs.Theme;
         ShowHelperBalloonsSwitch.IsToggled = prefs.ShowHelperBalloons;
@@ -41,6 +37,8 @@ public partial class SettingsPage : ContentPage
         RunAtStartupSwitch.IsToggled = prefs.RunAtStartup;
         ConfirmApplySwitch.IsToggled = prefs.ConfirmBeforeApply;
         AutoCheckUpdatesSwitch.IsToggled = prefs.CheckUpdatesOnScan;
+        PreviewModeDefaultSwitch.IsToggled = prefs.PreviewModeDefault;
+        EnableHelperMcpSwitch.IsToggled = prefs.EnableHelperMcp;
         DashboardTrackCheckBox.IsChecked = prefs.InstallDashboardTrack;
         SqliteTrackCheckBox.IsChecked = prefs.InstallSqliteTrack;
         McpTrackCheckBox.IsChecked = prefs.InstallMcpTrack;
@@ -56,13 +54,14 @@ public partial class SettingsPage : ContentPage
             RunAtStartup = RunAtStartupSwitch.IsToggled,
             ConfirmBeforeApply = ConfirmApplySwitch.IsToggled,
             CheckUpdatesOnScan = AutoCheckUpdatesSwitch.IsToggled,
+            PreviewModeDefault = PreviewModeDefaultSwitch.IsToggled,
+            EnableHelperMcp = EnableHelperMcpSwitch.IsToggled,
             InstallDashboardTrack = DashboardTrackCheckBox.IsChecked,
             InstallSqliteTrack = SqliteTrackCheckBox.IsChecked,
             InstallMcpTrack = McpTrackCheckBox.IsChecked
         };
 
-        string json = JsonSerializer.Serialize(prefs, new JsonSerializerOptions { WriteIndented = true });
-        await File.WriteAllTextAsync(_settingsPath, json);
+        await _preferenceStore.SaveAsync(prefs);
         SettingsStatusLabel.Text = $"Saved preferences at {DateTime.Now:t}.";
     }
 
@@ -79,9 +78,10 @@ public partial class SettingsPage : ContentPage
             return;
         }
 
-        if (File.Exists(_settingsPath))
+        string settingsPath = Path.Combine(_settingsDir, "app-preferences.json");
+        if (File.Exists(settingsPath))
         {
-            File.Delete(_settingsPath);
+            File.Delete(settingsPath);
         }
 
         LoadPreferences();
@@ -112,28 +112,14 @@ public partial class SettingsPage : ContentPage
     {
         Process.Start(new ProcessStartInfo
         {
-            FileName = _settingsDir,
+            FileName = _workspaceDataDir,
             UseShellExecute = true
         });
+        SettingsStatusLabel.Text = $"Opened: {_workspaceDataDir}";
     }
 
     private async void OnCloseClicked(object sender, EventArgs e)
     {
         await Navigation.PopModalAsync();
-    }
-
-    private sealed class AppPreferences
-    {
-        public string Theme { get; set; } = "System";
-        public bool ShowHelperBalloons { get; set; } = true;
-        public bool LockPanelSizing { get; set; }
-        public bool RunAtStartup { get; set; }
-        public bool ConfirmBeforeApply { get; set; } = true;
-        public bool CheckUpdatesOnScan { get; set; }
-        public bool InstallDashboardTrack { get; set; } = true;
-        public bool InstallSqliteTrack { get; set; } = true;
-        public bool InstallMcpTrack { get; set; } = true;
-
-        public static AppPreferences Default() => new();
     }
 }

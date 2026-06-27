@@ -53,102 +53,119 @@
                        LineBreakMode="TailTruncation" />
             </VerticalStackLayout>
 
-            <HorizontalStackLayout Grid.Column="2" Spacing="10" HorizontalOptions="End" VerticalOptions="Center">
-                <Button Text="⚙"
-                        Clicked="OnOpenSettingsClicked"
-                        ToolTipProperties.Text="Open settings and preferences"
-                        BackgroundColor="#FFF7D6"
-                        BorderColor="#E7C27B"
-                        BorderWidth="1"
-                        TextColor="#805C1A"
-                        FontSize="18"
-                        WidthRequest="44"
-                        HeightRequest="44"
-                        Padding="0" />
-                <VerticalStackLayout Spacing="6" HorizontalOptions="End" VerticalOptions="Center">
-                    <Border BackgroundColor="#EAF4FD" Stroke="#A8D4F2" Padding="10,5">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="999" />
-                        </Border.StrokeShape>
-                        <Label x:Name="StatusLabel"
-                               Text="Ready"
-                               TextColor="#005A9E"
-                               FontSize="12"
-                               FontAttributes="Bold" />
-                    </Border>
-                    <Label x:Name="LastScanLabel"
-                           Text="Last update: not run yet"
-                           TextColor="{StaticResource TextMuted}"
-                           FontSize="11"
-                           HorizontalOptions="End" />
-                </VerticalStackLayout>
-            </HorizontalStackLayout>
+            <Border Grid.Column="2"
+                    BackgroundColor="#CCFFFFFF"
+                    Stroke="{StaticResource Stroke}"
+                    StrokeThickness="1"
+                    Padding="6,5"
+                    MinimumWidthRequest="200">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6">
+                    <Button Text="⚙"
+                            Clicked="OnOpenSettingsClicked"
+                            ToolTipProperties.Text="Open settings and preferences"
+                            BackgroundColor="#FFF7D6"
+                            BorderColor="#E7C27B"
+                            BorderWidth="1"
+                            TextColor="#805C1A"
+                            FontSize="16"
+                            WidthRequest="34"
+                            HeightRequest="34"
+                            Padding="0" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                        <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                            <Border x:Name="StatusIndicatorDot"
+                                    WidthRequest="9"
+                                    HeightRequest="9"
+                                    BackgroundColor="#0078D4"
+                                    StrokeThickness="0"
+                                    VerticalOptions="Center">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="999" />
+                                </Border.StrokeShape>
+                            </Border>
+                            <Label x:Name="StatusLabel"
+                                   Text="Ready"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="10"
+                                   FontAttributes="Bold"
+                                   ToolTipProperties.Text="Status colors: Blue=ready, Green=loading, Yellow=configuring/downloading, Red=configuration issue" />
+                        </HorizontalStackLayout>
+                        <Label x:Name="LastScanLabel"
+                               Text="Last update: not run yet"
+                               TextColor="{StaticResource TextMuted}"
+                               FontSize="10" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
         </Grid>
 
         <Border Grid.Row="1"
                 Stroke="{StaticResource Stroke}"
                 StrokeThickness="1"
-                BackgroundColor="{StaticResource Surface}"
-                Padding="10">
+                BackgroundColor="#CCFFFFFF"
+                Padding="8,8,8,6">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10" />
             </Border.StrokeShape>
-            <FlexLayout Wrap="Wrap" AlignItems="Center" JustifyContent="Start">
+            <FlexLayout Wrap="Wrap" AlignItems="Center" JustifyContent="Center">
                 <Button Text="Scan"
                         Clicked="OnScanWorkspaceClicked"
                         ToolTipProperties.Text="Discover local workspace packs"
-                        BackgroundColor="{StaticResource SurfaceAlt}"
+                        BackgroundColor="#EAF1F8"
                         BorderColor="{StaticResource StrokeStrong}"
                         BorderWidth="1"
                         TextColor="{StaticResource TextPrimary}"
-                        Padding="14,8"
-                        Margin="0,0,8,6" />
+                        Padding="12,7"
+                        Margin="0,0,5,6" />
                 <Button Text="Import"
                         Clicked="OnImportWorkspacePackClicked"
                         ToolTipProperties.Text="Import a zipped workspace pack"
-                        BackgroundColor="{StaticResource SurfaceAlt}"
+                    BackgroundColor="#EAF1F8"
                         BorderColor="{StaticResource StrokeStrong}"
                         BorderWidth="1"
                         TextColor="{StaticResource TextPrimary}"
-                        Padding="14,8"
-                        Margin="0,0,8,6" />
+                        Padding="12,7"
+                        Margin="0,0,5,6" />
                 <Button Text="Preflight"
                         Clicked="OnSystemCheckClicked"
                         ToolTipProperties.Text="Validate tools, MCP paths, and required files"
-                        BackgroundColor="{StaticResource SurfaceAlt}"
+                    BackgroundColor="#EAF1F8"
                         BorderColor="{StaticResource StrokeStrong}"
                         BorderWidth="1"
                         TextColor="{StaticResource TextPrimary}"
-                        Padding="14,8"
-                        Margin="0,0,8,6" />
+                        Padding="12,7"
+                        Margin="0,0,5,6" />
                 <Button Text="Preview"
                         Clicked="OnPreviewWorkspaceClicked"
                         ToolTipProperties.Text="Run activation without writing files"
-                        BackgroundColor="{StaticResource SurfaceAlt}"
+                    BackgroundColor="#EAF1F8"
                         BorderColor="{StaticResource StrokeStrong}"
                         BorderWidth="1"
                         TextColor="{StaticResource TextPrimary}"
-                        Padding="14,8"
-                        Margin="0,0,8,6" />
+                        Padding="12,7"
+                        Margin="0,0,5,6" />
                 <Button Text="Check updates"
                         Clicked="OnCheckUpdatesClicked"
                         ToolTipProperties.Text="Compare local packs with the catalog"
-                        BackgroundColor="{StaticResource SurfaceAlt}"
+                    BackgroundColor="#EAF1F8"
                         BorderColor="{StaticResource StrokeStrong}"
                         BorderWidth="1"
                         TextColor="{StaticResource TextPrimary}"
-                        Padding="14,8"
-                        Margin="0,0,8,6" />
+                        Padding="12,7"
+                        Margin="0,0,5,6" />
                 <Button x:Name="UpdateButton"
                         Text="Update pack"
                         Clicked="OnUpdateSelectedPackClicked"
                         ToolTipProperties.Text="Download and replace the selected pack from the repository"
-                        BackgroundColor="{StaticResource SurfaceAlt}"
+                    BackgroundColor="#EAF1F8"
                         BorderColor="{StaticResource StrokeStrong}"
                         BorderWidth="1"
                         TextColor="{StaticResource TextPrimary}"
-                        Padding="14,8"
-                        Margin="0,0,8,6" />
+                        Padding="12,7"
+                        Margin="0,0,5,6" />
                 <Button x:Name="ApplyButton"
                         Text="Apply"
                         Clicked="OnActivateWorkspaceClicked"
@@ -156,46 +173,18 @@
                         BackgroundColor="{StaticResource Accent}"
                         TextColor="White"
                         FontAttributes="Bold"
-                        Padding="16,8"
-                        Margin="0,0,12,6" />
+                        Padding="14,7"
+                        Margin="0,0,8,6" />
 
-                <BoxView WidthRequest="1" HeightRequest="32" Color="{StaticResource Stroke}" Margin="2,0,10,6" />
-
-
-                <Border BackgroundColor="#F8FBFF" Stroke="#BFDDF5" Padding="10,6" Margin="0,0,8,6">
+                <Border BackgroundColor="#F8FBFF" Stroke="#BFDDF5" Padding="9,6" Margin="2,0,0,6">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="8" />
                     </Border.StrokeShape>
                     <Label Text="Flow: Scan finds packs, Preflight checks missing tools, Preview shows file changes, Apply writes selected packs."
                            TextColor="{StaticResource TextSecondary}"
                            FontSize="11"
-                           MaximumWidthRequest="420"
+                           MaximumWidthRequest="390"
                            LineBreakMode="WordWrap" />
-                </Border>
-                <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource Stroke}" Padding="10,6" Margin="0,0,8,6">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="8" />
-                    </Border.StrokeShape>
-                    <HorizontalStackLayout Spacing="8">
-                        <Switch x:Name="DryRunSwitch" IsToggled="True" OnColor="{StaticResource Accent}" ThumbColor="#FFFFFF" />
-                        <VerticalStackLayout Spacing="0">
-                            <Label Text="Preview mode" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
-                            <Label Text="No file writes" TextColor="{StaticResource TextMuted}" FontSize="11" />
-                        </VerticalStackLayout>
-                    </HorizontalStackLayout>
-                </Border>
-
-                <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource Stroke}" Padding="10,6" Margin="0,0,8,6">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="8" />
-                    </Border.StrokeShape>
-                    <HorizontalStackLayout Spacing="8">
-                        <Switch x:Name="IncludeHelperMcpSwitch" IsToggled="True" OnColor="{StaticResource Accent}" ThumbColor="#FFFFFF" Toggled="OnHelperMcpToggled" />
-                        <VerticalStackLayout Spacing="0">
-                            <Label Text="Helper MCP" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
-                            <Label Text="Token-aware file reads" TextColor="{StaticResource TextMuted}" FontSize="11" />
-                        </VerticalStackLayout>
-                    </HorizontalStackLayout>
                 </Border>
             </FlexLayout>
         </Border>

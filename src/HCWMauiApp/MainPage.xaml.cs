@@ -7,6 +7,7 @@ namespace WorkspaceManager;
 
 public partial class MainPage : ContentPage
 {
+    private readonly AppPreferenceStore _appPreferenceStore = new();
     private readonly WorkspaceCatalogService _workspaceCatalogService;
     private readonly WorkspaceSystemCheckService _workspaceSystemCheckService;
     private readonly WorkspaceActivationService _workspaceActivationService;
@@ -22,6 +23,8 @@ public partial class MainPage : ContentPage
     private string _repoRootPath = string.Empty;
     private AgentViewModel? _selectedPack;
     private bool _isCompactLayout;
+    private bool _previewModeByDefault = true;
+    private bool _includeHelperMcp = true;
     private OptionalFeaturePromptState _optionalTrackState = new();
 
     public ObservableCollection<AgentViewModel> DiscoveredAgents { get; } = [];
@@ -62,6 +65,7 @@ public partial class MainPage : ContentPage
 
         InitializeComponent();
         BindCollections();
+        LoadUiPreferences();
         DetermineRepositoryRoot();
         LoadProviders();
         RefreshFolderNodes();
@@ -69,6 +73,20 @@ public partial class MainPage : ContentPage
         RefreshDashboardPreview();
         _ = InitializeOptionalTracksAsync();
         _ = RefreshHelperHealthAsync();
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        LoadUiPreferences();
+        _ = RefreshHelperHealthAsync();
+    }
+
+    private void LoadUiPreferences()
+    {
+        var preferences = _appPreferenceStore.Load();
+        _previewModeByDefault = preferences.PreviewModeDefault;
+        _includeHelperMcp = preferences.EnableHelperMcp;
     }
 
     private async Task InitializeOptionalTracksAsync()
@@ -190,6 +208,7 @@ public partial class MainPage : ContentPage
     private void UpdateSummaryState(string status)
     {
         StatusLabel.Text = status;
+        SetStatusIndicator(status);
         PackCountLabel.Text = DiscoveredAgents.Count.ToString();
         SelectionCountLabel.Text = DiscoveredAgents.Count(agent => agent.IsSelected).ToString();
         ApplyButton.IsEnabled = DiscoveredAgents.Any(agent => agent.IsSelected);
@@ -197,9 +216,24 @@ public partial class MainPage : ContentPage
             && !string.Equals(_selectedPack.UpdateState, "Current", StringComparison.OrdinalIgnoreCase);
     }
 
+    private void SetStatusIndicator(string status)
+    {
+        string normalized = status.ToLowerInvariant();
+
+        string color = normalized switch
+        {
+            var s when s.Contains("fail") || s.Contains("issue") || s.Contains("error") || s.Contains("selection required") => "#D13438",
+            var s when s.Contains("update") || s.Contains("checking") || s.Contains("config") || s.Contains("download") => "#FFB900",
+            var s when s.Contains("applying") || s.Contains("preview") || s.Contains("scan") || s.Contains("loading") => "#107C10",
+            _ => "#0078D4"
+        };
+
+        StatusIndicatorDot.BackgroundColor = Color.FromArgb(color);
+    }
+
     private async Task RefreshHelperHealthAsync()
     {
-        var health = await _helperMcpHealthService.CheckAsync(_repoRootPath, IncludeHelperMcpSwitch.IsToggled);
+        var health = await _helperMcpHealthService.CheckAsync(_repoRootPath, _includeHelperMcp);
         McpHealthLabel.Text = health.Status;
         McpHealthLabel.TextColor = Color.FromArgb(health.Status == "Helper ready" ? "#107C10" : "#D83B01");
         McpSummaryLabel.Text = health.Summary;
@@ -337,7 +371,7 @@ public partial class MainPage : ContentPage
             return;
         }
 
-        bool dryRun = forceDryRun ?? DryRunSwitch.IsToggled;
+        bool dryRun = forceDryRun ?? _previewModeByDefault;
 
         try
         {
@@ -347,7 +381,7 @@ public partial class MainPage : ContentPage
                 RepoRootPath = _repoRootPath,
                 SelectedAgents = selected,
                 IsDryRun = dryRun,
-                IncludeHelperMcp = IncludeHelperMcpSwitch.IsToggled
+                IncludeHelperMcp = _includeHelperMcp
             });
 
             foreach (var line in result.Logs)
@@ -435,11 +469,6 @@ public partial class MainPage : ContentPage
     private void OnPackSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         RefreshPackInspector(e.CurrentSelection.FirstOrDefault() as AgentViewModel);
-    }
-
-    private async void OnHelperMcpToggled(object sender, ToggledEventArgs e)
-    {
-        await RefreshHelperHealthAsync();
     }
 
     private async void OnFolderNodeSelected(object sender, SelectionChangedEventArgs e)

@@ -85,20 +85,34 @@
                                             <x:String>Dark</x:String>
                                         </Picker.Items>
                                     </Picker>
-                                    <HorizontalStackLayout Spacing="8">
-                                        <Switch x:Name="ShowHelperBalloonsSwitch" IsToggled="True" OnColor="{StaticResource Accent}" />
-                                        <VerticalStackLayout Spacing="1">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
+                                        <Switch x:Name="ShowHelperBalloonsSwitch"
+                                                IsToggled="True"
+                                                OnColor="{StaticResource Accent}"
+                                                VerticalOptions="Start" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="1">
                                             <Label Text="Show helper balloons" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
-                                            <Label Text="Keep explanatory callouts visible for new users." TextColor="{StaticResource TextMuted}" FontSize="11" />
+                                            <Label Text="Keep explanatory callouts visible for new users."
+                                                   TextColor="{StaticResource TextMuted}"
+                                                   FontSize="11"
+                                                   LineBreakMode="WordWrap"
+                                                   MaxLines="2" />
                                         </VerticalStackLayout>
-                                    </HorizontalStackLayout>
-                                    <HorizontalStackLayout Spacing="8">
-                                        <Switch x:Name="LockPanelSizingSwitch" IsToggled="False" OnColor="{StaticResource Accent}" />
-                                        <VerticalStackLayout Spacing="1">
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
+                                        <Switch x:Name="LockPanelSizingSwitch"
+                                                IsToggled="False"
+                                                OnColor="{StaticResource Accent}"
+                                                VerticalOptions="Start" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="1">
                                             <Label Text="Lock panel sizing" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
-                                            <Label Text="Keep panels fixed instead of stretching with the window." TextColor="{StaticResource TextMuted}" FontSize="11" />
+                                            <Label Text="Keep panels fixed instead of stretching with the window."
+                                                   TextColor="{StaticResource TextMuted}"
+                                                   FontSize="11"
+                                                   LineBreakMode="WordWrap"
+                                                   MaxLines="2" />
                                         </VerticalStackLayout>
-                                    </HorizontalStackLayout>
+                                    </Grid>
                                 </VerticalStackLayout>
                             </Border>
 
@@ -111,27 +125,76 @@
                                            TextColor="{StaticResource TextPrimary}"
                                            FontSize="14"
                                            FontAttributes="Bold" />
-                                    <HorizontalStackLayout Spacing="8">
-                                        <Switch x:Name="RunAtStartupSwitch" IsToggled="False" OnColor="{StaticResource Accent}" />
-                                        <VerticalStackLayout Spacing="1">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
+                                        <Switch x:Name="RunAtStartupSwitch"
+                                                IsToggled="False"
+                                                OnColor="{StaticResource Accent}"
+                                                VerticalOptions="Start" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="1">
                                             <Label Text="Run at startup" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
-                                            <Label Text="Open this control surface after Windows sign-in." TextColor="{StaticResource TextMuted}" FontSize="11" />
+                                            <Label Text="Open this control surface after Windows sign-in."
+                                                   TextColor="{StaticResource TextMuted}"
+                                                   FontSize="11"
+                                                   LineBreakMode="WordWrap"
+                                                   MaxLines="2" />
                                         </VerticalStackLayout>
-                                    </HorizontalStackLayout>
-                                    <HorizontalStackLayout Spacing="8">
-                                        <Switch x:Name="ConfirmApplySwitch" IsToggled="True" OnColor="{StaticResource Accent}" />
-                                        <VerticalStackLayout Spacing="1">
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
+                                        <Switch x:Name="ConfirmApplySwitch"
+                                                IsToggled="True"
+                                                OnColor="{StaticResource Accent}"
+                                                VerticalOptions="Start" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="1">
                                             <Label Text="Confirm before Apply" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
-                                            <Label Text="Ask before writing selected pack files." TextColor="{StaticResource TextMuted}" FontSize="11" />
+                                            <Label Text="Ask before writing selected pack files."
+                                                   TextColor="{StaticResource TextMuted}"
+                                                   FontSize="11"
+                                                   LineBreakMode="WordWrap"
+                                                   MaxLines="2" />
                                         </VerticalStackLayout>
-                                    </HorizontalStackLayout>
-                                    <HorizontalStackLayout Spacing="8">
-                                        <Switch x:Name="AutoCheckUpdatesSwitch" IsToggled="False" OnColor="{StaticResource Accent}" />
-                                        <VerticalStackLayout Spacing="1">
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
+                                        <Switch x:Name="AutoCheckUpdatesSwitch"
+                                                IsToggled="False"
+                                                OnColor="{StaticResource Accent}"
+                                                VerticalOptions="Start" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="1">
                                             <Label Text="Check updates on scan" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
-                                            <Label Text="Refresh catalog state when packs are discovered." TextColor="{StaticResource TextMuted}" FontSize="11" />
+                                            <Label Text="Refresh catalog state when packs are discovered."
+                                                   TextColor="{StaticResource TextMuted}"
+                                                   FontSize="11"
+                                                   LineBreakMode="WordWrap"
+                                                   MaxLines="2" />
                                         </VerticalStackLayout>
-                                    </HorizontalStackLayout>
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
+                                        <Switch x:Name="PreviewModeDefaultSwitch"
+                                                IsToggled="True"
+                                                OnColor="{StaticResource Accent}"
+                                                VerticalOptions="Start" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                            <Label Text="Preview mode on Apply" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                                            <Label Text="Keep Apply in preview-only mode by default; no workspace files are written."
+                                                   TextColor="{StaticResource TextMuted}"
+                                                   FontSize="11"
+                                                   LineBreakMode="WordWrap"
+                                                   MaxLines="2" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4">
+                                        <Switch x:Name="EnableHelperMcpSwitch"
+                                                IsToggled="True"
+                                                OnColor="{StaticResource Accent}"
+                                                VerticalOptions="Start" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                            <Label Text="Include Helper MCP" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                                            <Label Text="Use token-aware helper checks during scan, preflight, preview, and apply."
+                                                   TextColor="{StaticResource TextMuted}"
+                                                   FontSize="11"
+                                                   LineBreakMode="WordWrap"
+                                                   MaxLines="2" />
+                                        </VerticalStackLayout>
+                                    </Grid>
                                 </VerticalStackLayout>
                             </Border>
                         </Grid>
