@@ -93,9 +93,11 @@ public partial class SettingsPage : ContentPage
         string backupDir = Path.Combine(_settingsDir, "backups", DateTime.Now.ToString("yyyyMMdd-HHmmss"));
         Directory.CreateDirectory(backupDir);
 
-        if (File.Exists(_settingsPath))
+        string settingsPath = Path.Combine(_settingsDir, "app-preferences.json");
+
+        if (File.Exists(settingsPath))
         {
-            File.Copy(_settingsPath, Path.Combine(backupDir, "app-preferences.json"), overwrite: true);
+            File.Copy(settingsPath, Path.Combine(backupDir, "app-preferences.json"), overwrite: true);
         }
 
         string optionalPrefs = Path.Combine(_settingsDir, "optional-feature-prefs.json");
