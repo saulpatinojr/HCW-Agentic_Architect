@@ -12,6 +12,7 @@ AI Architect Agents is a local .NET MAUI desktop app for composing, validating, 
 - Added structured activity entries, a pack inspector, workspace file shortcuts, MCP helper health, and pack update states.
 - Added explicit MAUI image packaging so local PNG/SVG provider assets are included in Windows builds.
 - Removed ISO from the provider list because it is not a selected provider.
+- Updated SQLite dependencies and dashboard export alerts so the Windows MAUI build is warning-free.
 
 ## Repository Structure
 
@@ -36,7 +37,7 @@ The app is configured for unpackaged Windows desktop execution with `.NET 10`.
 dotnet test src\HCWMauiApp.Tests\HCWMauiApp.Tests.csproj
 ```
 
-Current expected result: all unit tests pass. One existing `xUnit2031` analyzer warning remains in `ToolInstallServiceTests.cs`.
+Current expected result: all unit tests pass without analyzer warnings.
 
 ## Provider Assets
 
@@ -53,4 +54,3 @@ Selected provider groups:
 - Finish visual polish after confirming image rendering on the target desktop.
 - Add a dedicated app icon package for Windows shell/taskbar surfaces.
 - Expand pack catalog update flows beyond the local repository source.
-- Resolve the existing `xUnit2031` analyzer warning.

@@ -76,11 +76,11 @@ public partial class ContextOptimizationDashboardPage : ContentPage
                 new JsonSerializerOptions { WriteIndented = true });
 
             await File.WriteAllTextAsync(filePath, json);
-            await DisplayAlert("Export complete", $"Saved: {filePath}", "OK");
+            await DisplayAlertAsync("Export complete", $"Saved: {filePath}", "OK");
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Export failed", ex.Message, "OK");
+            await DisplayAlertAsync("Export failed", ex.Message, "OK");
         }
     }
 
@@ -89,11 +89,11 @@ public partial class ContextOptimizationDashboardPage : ContentPage
         try
         {
             string filePath = await _exportService.ExportCsvAsync(_lastSnapshot);
-            await DisplayAlert("Export complete", $"CSV saved: {filePath}", "OK");
+            await DisplayAlertAsync("Export complete", $"CSV saved: {filePath}", "OK");
         }
         catch (Exception ex)
         {
-            await DisplayAlert("CSV export failed", ex.Message, "OK");
+            await DisplayAlertAsync("CSV export failed", ex.Message, "OK");
         }
     }
 
@@ -102,11 +102,11 @@ public partial class ContextOptimizationDashboardPage : ContentPage
         try
         {
             string filePath = await _exportService.ExportBiSchemaAsync();
-            await DisplayAlert("Export complete", $"Schema saved: {filePath}", "OK");
+            await DisplayAlertAsync("Export complete", $"Schema saved: {filePath}", "OK");
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Schema export failed", ex.Message, "OK");
+            await DisplayAlertAsync("Schema export failed", ex.Message, "OK");
         }
     }
 

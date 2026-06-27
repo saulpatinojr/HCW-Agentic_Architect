@@ -15,7 +15,7 @@ public sealed class ToolInstallServiceTests
 
         var statuses = await service.GetToolStatusesAsync(null);
 
-        var copilot = Assert.Single(statuses.Where(s => s.Command == "gh copilot"));
+        var copilot = Assert.Single(statuses, s => s.Command == "gh copilot");
         Assert.True(copilot.IsAvailable);
     }
 

@@ -33,7 +33,7 @@ public sealed class ContextOptimizationHistoryStore
         insertSnapshot.Parameters.AddWithValue("$cost", snapshot.EstimatedCostSavedUsd);
         insertSnapshot.ExecuteNonQuery();
 
-        long snapshotId = connection.LastInsertRowId;
+        long snapshotId = GetLastInsertRowId(connection);
         foreach (var partner in snapshot.PartnerSavings)
         {
             using var insertPartner = connection.CreateCommand();
@@ -48,6 +48,13 @@ public sealed class ContextOptimizationHistoryStore
         }
 
         transaction.Commit();
+    }
+
+    private static long GetLastInsertRowId(SqliteConnection connection)
+    {
+        using var command = connection.CreateCommand();
+        command.CommandText = "SELECT last_insert_rowid();";
+        return (long)(command.ExecuteScalar() ?? 0L);
     }
 
     public IReadOnlyList<CompressionTrendPoint> GetDayTrend(int limit = 14)

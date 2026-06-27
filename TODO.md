@@ -13,6 +13,10 @@
 - [x] Redesign desktop UI as AI Architect Agents with provider groups, pack inspector, activity feed, and workspace files.
 - [x] Add explicit MAUI image packaging for provider/logo assets.
 - [x] Remove ISO from the provider registry.
+- [x] Resolve the `xUnit2031` analyzer warning in `ToolInstallServiceTests.cs`.
+- [x] Fix the Windows MAUI build failure in `ContextOptimizationHistoryStore`.
+- [x] Update SQLite dependencies to clear the `SQLitePCLRaw.lib.e_sqlite3` vulnerability warning.
+- [x] Replace obsolete dashboard `DisplayAlert` calls with `DisplayAlertAsync`.
 
 ## In Progress / Next
 
@@ -21,7 +25,6 @@
 - [ ] Improve responsive behavior below the default desktop size.
 - [ ] Add visual states for provider link buttons and workspace-file launch results.
 - [ ] Expand pack update workflows to support remote catalogs after the local repo catalog is stable.
-- [ ] Resolve the existing `xUnit2031` analyzer warning in `ToolInstallServiceTests.cs`.
 
 ## Verification
 
