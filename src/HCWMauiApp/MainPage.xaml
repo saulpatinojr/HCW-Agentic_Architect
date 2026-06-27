@@ -53,23 +53,36 @@
                        LineBreakMode="TailTruncation" />
             </VerticalStackLayout>
 
-            <VerticalStackLayout Grid.Column="2" Spacing="6" HorizontalOptions="End" VerticalOptions="Center">
-                <Border BackgroundColor="#EAF4FD" Stroke="#A8D4F2" Padding="10,5">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="999" />
-                    </Border.StrokeShape>
-                    <Label x:Name="StatusLabel"
-                           Text="Ready"
-                           TextColor="#005A9E"
-                           FontSize="12"
-                           FontAttributes="Bold" />
-                </Border>
-                <Label x:Name="LastScanLabel"
-                       Text="Last update: not run yet"
-                       TextColor="{StaticResource TextMuted}"
-                       FontSize="11"
-                       HorizontalOptions="End" />
-            </VerticalStackLayout>
+            <HorizontalStackLayout Grid.Column="2" Spacing="10" HorizontalOptions="End" VerticalOptions="Center">
+                <Button Text="⚙"
+                        Clicked="OnOpenSettingsClicked"
+                        ToolTipProperties.Text="Open settings and preferences"
+                        BackgroundColor="#FFF7D6"
+                        BorderColor="#E7C27B"
+                        BorderWidth="1"
+                        TextColor="#805C1A"
+                        FontSize="18"
+                        WidthRequest="44"
+                        HeightRequest="44"
+                        Padding="0" />
+                <VerticalStackLayout Spacing="6" HorizontalOptions="End" VerticalOptions="Center">
+                    <Border BackgroundColor="#EAF4FD" Stroke="#A8D4F2" Padding="10,5">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="999" />
+                        </Border.StrokeShape>
+                        <Label x:Name="StatusLabel"
+                               Text="Ready"
+                               TextColor="#005A9E"
+                               FontSize="12"
+                               FontAttributes="Bold" />
+                    </Border>
+                    <Label x:Name="LastScanLabel"
+                           Text="Last update: not run yet"
+                           TextColor="{StaticResource TextMuted}"
+                           FontSize="11"
+                           HorizontalOptions="End" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
         </Grid>
 
         <Border Grid.Row="1"
@@ -148,6 +161,17 @@
 
                 <BoxView WidthRequest="1" HeightRequest="32" Color="{StaticResource Stroke}" Margin="2,0,10,6" />
 
+
+                <Border BackgroundColor="#F8FBFF" Stroke="#BFDDF5" Padding="10,6" Margin="0,0,8,6">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="8" />
+                    </Border.StrokeShape>
+                    <Label Text="Flow: Scan finds packs, Preflight checks missing tools, Preview shows file changes, Apply writes selected packs."
+                           TextColor="{StaticResource TextSecondary}"
+                           FontSize="11"
+                           MaximumWidthRequest="420"
+                           LineBreakMode="WordWrap" />
+                </Border>
                 <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource Stroke}" Padding="10,6" Margin="0,0,8,6">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="8" />
@@ -386,12 +410,12 @@
                         </Border>
                     </Grid>
 
-                    <Grid x:Name="CenterPanel" Grid.Column="1" RowDefinitions="*,300" RowSpacing="12">
+                    <Grid x:Name="CenterPanel" Grid.Column="1" RowDefinitions="*,*" RowSpacing="12">
                         <Border Stroke="{StaticResource Stroke}" StrokeThickness="1" BackgroundColor="{StaticResource Surface}" Padding="14">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="10" />
                             </Border.StrokeShape>
-                            <VerticalStackLayout Spacing="12">
+                            <Grid RowDefinitions="Auto,Auto,*" RowSpacing="10">
                                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                                     <VerticalStackLayout Spacing="2">
                                         <Label Text="Workspace packs" TextColor="{StaticResource TextPrimary}" FontSize="17" FontAttributes="Bold" />
@@ -400,8 +424,19 @@
                                     <Label Grid.Column="1" Text="Details" TextColor="{StaticResource Accent}" FontSize="11" VerticalOptions="End" />
                                 </Grid>
 
+                                <Border Grid.Row="1" BackgroundColor="#F8FBFF" Stroke="#BFDDF5" Padding="10">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8" />
+                                    </Border.StrokeShape>
+                                    <Label Text="Start here: Scan finds packs in this repository, then select one to see what tools, files, providers, and links it controls. Use Preview before Apply to see planned writes without changing files."
+                                           TextColor="{StaticResource TextSecondary}"
+                                           FontSize="11"
+                                           LineBreakMode="WordWrap" />
+                                </Border>
+
                                 <CollectionView x:Name="AgentsCollectionView"
-                                                HeightRequest="310"
+                                                Grid.Row="2"
+                                                VerticalScrollBarVisibility="Always"
                                                 SelectionMode="Single"
                                                 SelectionChanged="OnPackSelectionChanged">
                                     <CollectionView.EmptyView>
@@ -440,16 +475,25 @@
                                         </DataTemplate>
                                     </CollectionView.ItemTemplate>
                                 </CollectionView>
-                            </VerticalStackLayout>
+                            </Grid>
                         </Border>
 
                         <Border Grid.Row="1" Stroke="{StaticResource Stroke}" StrokeThickness="1" BackgroundColor="{StaticResource Surface}" Padding="14">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="10" />
                             </Border.StrokeShape>
-                            <VerticalStackLayout Spacing="12">
+                            <Grid RowDefinitions="Auto,Auto,*" RowSpacing="10">
                                 <Label Text="Activity" TextColor="{StaticResource TextPrimary}" FontSize="17" FontAttributes="Bold" />
-                                <CollectionView x:Name="ActivityCollectionView" HeightRequest="260" SelectionMode="None">
+                                <Border Grid.Row="1" BackgroundColor="#F8FBFF" Stroke="#BFDDF5" Padding="10">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8" />
+                                    </Border.StrokeShape>
+                                    <Label Text="Activity is the audit trail. It records scan results, missing requirements, preview output, update attempts, applied changes, and errors so a new user can see what happened and why."
+                                           TextColor="{StaticResource TextSecondary}"
+                                           FontSize="11"
+                                           LineBreakMode="WordWrap" />
+                                </Border>
+                                <CollectionView x:Name="ActivityCollectionView" Grid.Row="2" VerticalScrollBarVisibility="Always" SelectionMode="None">
                                     <CollectionView.EmptyView>
                                         <Label Text="Activity appears here after scan, preflight, preview, update, or apply." TextColor="{StaticResource TextSecondary}" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center" />
                                     </CollectionView.EmptyView>
@@ -474,7 +518,7 @@
                                         </DataTemplate>
                                     </CollectionView.ItemTemplate>
                                 </CollectionView>
-                            </VerticalStackLayout>
+                            </Grid>
                         </Border>
                     </Grid>
 

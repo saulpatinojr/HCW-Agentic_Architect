@@ -35,6 +35,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<ContextOptimizationMetricsService>();
         builder.Services.AddSingleton<DashboardWindowService>();
         builder.Services.AddTransient<ContextOptimizationDashboardPage>();
+        builder.Services.AddTransient<SettingsPage>();
         builder.Services.AddSingleton<MainPage>();
         builder.Services.AddSingleton<App>();
 

@@ -521,6 +521,11 @@ public partial class MainPage : ContentPage
         await Navigation.PushModalAsync(_contextOptimizationDashboardPage);
     }
 
+    private async void OnOpenSettingsClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushModalAsync(new SettingsPage());
+        Log("Opened settings.", "Settings");
+    }
     private void OnDetachDashboardClicked(object sender, EventArgs e)
     {
         var detachedPage = new ContextOptimizationDashboardPage(

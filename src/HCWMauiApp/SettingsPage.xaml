@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WorkspaceManager.SettingsPage"
+             BackgroundColor="#00000000">
+    <ContentPage.Resources>
+        <Color x:Key="AppBackground">#F3F6FA</Color>
+        <Color x:Key="Surface">#FDFEFF</Color>
+        <Color x:Key="SurfaceAlt">#F7F9FC</Color>
+        <Color x:Key="Stroke">#D8E0EA</Color>
+        <Color x:Key="StrokeStrong">#B9C7D6</Color>
+        <Color x:Key="TextPrimary">#1B1F24</Color>
+        <Color x:Key="TextSecondary">#4E5D6C</Color>
+        <Color x:Key="TextMuted">#697887</Color>
+        <Color x:Key="Accent">#0078D4</Color>
+        <Color x:Key="Warning">#D83B01</Color>
+    </ContentPage.Resources>
+
+    <Grid Padding="24" BackgroundColor="#66000000">
+        <Border WidthRequest="760"
+                MaximumHeightRequest="720"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                BackgroundColor="{StaticResource Surface}"
+                Stroke="{StaticResource Stroke}"
+                StrokeThickness="1"
+                Padding="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
+            <Grid RowDefinitions="Auto,*,Auto">
+                <Grid Padding="18,16" ColumnDefinitions="*,Auto" ColumnSpacing="12" BackgroundColor="#F7F9FC">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Settings"
+                               TextColor="{StaticResource TextPrimary}"
+                               FontSize="22"
+                               FontAttributes="Bold" />
+                        <Label Text="Configure the local workspace manager, optional installs, and screen behavior."
+                               TextColor="{StaticResource TextSecondary}"
+                               FontSize="12" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1"
+                            Text="Close"
+                            Clicked="OnCloseClicked"
+                            BackgroundColor="{StaticResource Surface}"
+                            BorderColor="{StaticResource StrokeStrong}"
+                            BorderWidth="1"
+                            TextColor="{StaticResource TextPrimary}"
+                            Padding="14,7" />
+                </Grid>
+
+                <ScrollView Grid.Row="1">
+                    <VerticalStackLayout Padding="18" Spacing="14">
+                        <Border BackgroundColor="#F8FBFF" Stroke="#BFDDF5" Padding="12">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="What this app changes"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       FontSize="14"
+                                       FontAttributes="Bold" />
+                                <Label Text="AI Architect Agents scans local agent packs, validates required tools and files, previews workspace writes, updates packs from the catalog, and applies selected pack instructions into this repository. Preview mode keeps activation read-only until you are ready to apply."
+                                       TextColor="{StaticResource TextSecondary}"
+                                       FontSize="12"
+                                       LineBreakMode="WordWrap" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                            <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource Stroke}" Padding="12">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout Spacing="10">
+                                    <Label Text="Appearance"
+                                           TextColor="{StaticResource TextPrimary}"
+                                           FontSize="14"
+                                           FontAttributes="Bold" />
+                                    <Label Text="Theme" TextColor="{StaticResource TextSecondary}" FontSize="12" />
+                                    <Picker x:Name="ThemePicker" SelectedIndex="0">
+                                        <Picker.Items>
+                                            <x:String>System</x:String>
+                                            <x:String>Light</x:String>
+                                            <x:String>Dark</x:String>
+                                        </Picker.Items>
+                                    </Picker>
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Switch x:Name="ShowHelperBalloonsSwitch" IsToggled="True" OnColor="{StaticResource Accent}" />
+                                        <VerticalStackLayout Spacing="1">
+                                            <Label Text="Show helper balloons" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                                            <Label Text="Keep explanatory callouts visible for new users." TextColor="{StaticResource TextMuted}" FontSize="11" />
+                                        </VerticalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Switch x:Name="LockPanelSizingSwitch" IsToggled="False" OnColor="{StaticResource Accent}" />
+                                        <VerticalStackLayout Spacing="1">
+                                            <Label Text="Lock panel sizing" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                                            <Label Text="Keep panels fixed instead of stretching with the window." TextColor="{StaticResource TextMuted}" FontSize="11" />
+                                        </VerticalStackLayout>
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Border Grid.Column="1" BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource Stroke}" Padding="12">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout Spacing="10">
+                                    <Label Text="Startup and safety"
+                                           TextColor="{StaticResource TextPrimary}"
+                                           FontSize="14"
+                                           FontAttributes="Bold" />
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Switch x:Name="RunAtStartupSwitch" IsToggled="False" OnColor="{StaticResource Accent}" />
+                                        <VerticalStackLayout Spacing="1">
+                                            <Label Text="Run at startup" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                                            <Label Text="Open this control surface after Windows sign-in." TextColor="{StaticResource TextMuted}" FontSize="11" />
+                                        </VerticalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Switch x:Name="ConfirmApplySwitch" IsToggled="True" OnColor="{StaticResource Accent}" />
+                                        <VerticalStackLayout Spacing="1">
+                                            <Label Text="Confirm before Apply" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                                            <Label Text="Ask before writing selected pack files." TextColor="{StaticResource TextMuted}" FontSize="11" />
+                                        </VerticalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Switch x:Name="AutoCheckUpdatesSwitch" IsToggled="False" OnColor="{StaticResource Accent}" />
+                                        <VerticalStackLayout Spacing="1">
+                                            <Label Text="Check updates on scan" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                                            <Label Text="Refresh catalog state when packs are discovered." TextColor="{StaticResource TextMuted}" FontSize="11" />
+                                        </VerticalStackLayout>
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+
+                        <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource Stroke}" Padding="12">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Optional downloads"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       FontSize="14"
+                                       FontAttributes="Bold" />
+                                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                                    <Border Stroke="{StaticResource Stroke}" BackgroundColor="#FFFFFF" Padding="10">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8" />
+                                        </Border.StrokeShape>
+                                        <VerticalStackLayout Spacing="4">
+                                            <CheckBox x:Name="DashboardTrackCheckBox" IsChecked="True" />
+                                            <Label Text="Dashboard" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                                            <Label Text="Built-in metrics and export views." TextColor="{StaticResource TextMuted}" FontSize="11" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                    <Border Grid.Column="1" Stroke="{StaticResource Stroke}" BackgroundColor="#FFFFFF" Padding="10">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8" />
+                                        </Border.StrokeShape>
+                                        <VerticalStackLayout Spacing="4">
+                                            <CheckBox x:Name="SqliteTrackCheckBox" IsChecked="True" />
+                                            <Label Text="SQLite trends" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                                            <Label Text="Local history store for trend charts." TextColor="{StaticResource TextMuted}" FontSize="11" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                    <Border Grid.Column="2" Stroke="{StaticResource Stroke}" BackgroundColor="#FFFFFF" Padding="10">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8" />
+                                        </Border.StrokeShape>
+                                        <VerticalStackLayout Spacing="4">
+                                            <CheckBox x:Name="McpTrackCheckBox" IsChecked="True" />
+                                            <Label Text="MCP runtime" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                                            <Label Text="Python helper for token-aware reads." TextColor="{StaticResource TextMuted}" FontSize="11" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border BackgroundColor="#FFF8E8" Stroke="#E7C27B" Padding="12">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Maintenance"
+                                       TextColor="#7A4F01"
+                                       FontSize="14"
+                                       FontAttributes="Bold" />
+                                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                                    <Button Text="Manual backup"
+                                            Clicked="OnManualBackupClicked"
+                                            BackgroundColor="#FFFFFF"
+                                            BorderColor="#DAB47A"
+                                            BorderWidth="1"
+                                            TextColor="#805C1A"
+                                            Padding="10,7" />
+                                    <Button Grid.Column="1"
+                                            Text="Reset configuration"
+                                            Clicked="OnResetClicked"
+                                            BackgroundColor="#FFFFFF"
+                                            BorderColor="#DAB47A"
+                                            BorderWidth="1"
+                                            TextColor="#805C1A"
+                                            Padding="10,7" />
+                                    <Button Grid.Column="2"
+                                            Text="Open data folder"
+                                            Clicked="OnOpenDataFolderClicked"
+                                            BackgroundColor="#FFFFFF"
+                                            BorderColor="#DAB47A"
+                                            BorderWidth="1"
+                                            TextColor="#805C1A"
+                                            Padding="10,7" />
+                                </Grid>
+                                <Label x:Name="SettingsStatusLabel"
+                                       Text="Preferences are local to this Windows profile."
+                                       TextColor="#805C1A"
+                                       FontSize="11" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                </ScrollView>
+
+                <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Padding="18,14" BackgroundColor="#F7F9FC">
+                    <Label Text="More settings can be wired here as the app grows."
+                           TextColor="{StaticResource TextMuted}"
+                           FontSize="11"
+                           VerticalOptions="Center" />
+                    <Button Grid.Column="1"
+                            Text="Save"
+                            Clicked="OnSaveClicked"
+                            BackgroundColor="{StaticResource Accent}"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            Padding="18,8" />
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</ContentPage>
