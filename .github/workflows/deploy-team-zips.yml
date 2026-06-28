@@ -31,6 +31,10 @@ jobs:
             echo "Expected teams/ directory was not found."
             exit 1
           fi
+          if [ ! -f "teams/packs.manifest.json" ]; then
+            echo "Expected teams/packs.manifest.json was not found."
+            exit 1
+          fi
           shopt -s nullglob
           zips=(teams/*.zip)
           if [ ${#zips[@]} -eq 0 ]; then
@@ -43,6 +47,7 @@ jobs:
           set -euo pipefail
           mkdir -p pages-artifact
           cp teams/*.zip pages-artifact/
+          cp teams/packs.manifest.json pages-artifact/
           ls -1 pages-artifact
         
       - name: Upload artifact

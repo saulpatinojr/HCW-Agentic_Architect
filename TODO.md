@@ -32,3 +32,24 @@
 - [x] Run MAUI unit tests.
 - [x] Verify MAUI image resources are emitted into the Windows build output.
 - [ ] Manual UI check on the target desktop after relaunch.
+
+## Project Memory (North Star)
+
+- Agentic Architect is the primary orchestrator agent for this product.
+- The app goal is not generic chat orchestration; it is a practical IaC delivery system that turns architecture intent into governed infrastructure outcomes.
+- Intended orchestration flow:
+	- Requirements and constraints captured by Agentic Architect.
+	- Topology and policy context normalized into a canonical manifest.
+	- IaC/Terraform agent produces plan and state-aware output.
+	- Pull request and release gates enforce review and approval.
+	- Security/policy agent validates IAM, network, and compliance controls.
+	- Release agent executes approved apply/deploy sequence.
+	- Cloud-ready output targets AWS, Azure, and GCP consistently.
+- Product positioning memory:
+	- Cloud architecture remains the base.
+	- AI architecture extends it with data/model/agent/governance layers.
+	- The differentiator is trustworthy orchestration from intent to compliant infrastructure changes.
+- Current execution strategy memory:
+	- Phase 1: canonical pack model, harness adapter layer, source-of-truth generation.
+	- Phase 1.5: delegation modes, workflow gates, security hook profiles, quality thresholds with circuit breaker.
+	- Phase 2+: multi-host plus federation/swarm orchestration.

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "generatedAtUtc": "2026-06-27T00:00:00Z",
+  "baseUrl": "https://saulpatinojr.github.io/HCW-Agentic_Architect/",
+  "packs": [
+    {
+      "id": "aws-architect",
+      "fileName": "aws-architect.zip",
+      "version": "1.0.0",
+      "sha256": "63607e9dfceb240bbf436ce68923db4abaf4b97aa97601c8608f1770450151dd",
+      "url": "https://saulpatinojr.github.io/HCW-Agentic_Architect/aws-architect.zip"
+    },
+    {
+      "id": "azure-architect",
+      "fileName": "azure-architect.zip",
+      "version": "1.0.0",
+      "sha256": "2a40c9df3fbf931bc57d97dca2ddbe2c493ff64d1348d936aa0aac105b87d143",
+      "url": "https://saulpatinojr.github.io/HCW-Agentic_Architect/azure-architect.zip"
+    },
+    {
+      "id": "tf-engineer",
+      "fileName": "tf-engineer.zip",
+      "version": "1.0.0",
+      "sha256": "c6e48dc6ddfb34e2b1866f5f886289947a95178b198570a79720e27c0ee4e9f6",
+      "url": "https://saulpatinojr.github.io/HCW-Agentic_Architect/tf-engineer.zip"
+    }
+  ]
+}

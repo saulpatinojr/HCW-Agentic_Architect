@@ -60,6 +60,17 @@ Selected provider groups:
 - Service Providers: Ansible, Docker, FinOps Foundation, GitHub, Kubernetes, Terraform.
 - AI Providers: Claude, Codex, GitHub Copilot.
 
+## Pack Distribution
+
+Agent pack ZIPs are published with stable filenames via GitHub Pages. Clients should
+query the published manifest to detect new versions and verify checksums.
+
+- Manifest source: `teams/packs.manifest.json`
+- Manifest URL: `https://saulpatinojr.github.io/HCW-Agentic_Architect/packs.manifest.json`
+
+This allows cross-platform clients to compare local installed versions against
+the current published versions without changing file names.
+
 ## Next Milestones
 
 - Finish visual polish after confirming image rendering on the target desktop.
