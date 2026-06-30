@@ -21,6 +21,10 @@ public class AgentViewModel
     public string SourceRepository { get; set; } = string.Empty;
     public string SourceBranch { get; set; } = "main";
     public string SourcePath { get; set; } = string.Empty;
+    public ManifestWhoDimension Who { get; set; } = new();
+    public ManifestHowDimension How { get; set; } = new();
+    public ManifestTrustDimension Trust { get; set; } = new();
+    public ManifestTalkDimension Talk { get; set; } = new();
     public bool IsSelected { get; set; }
 }
 

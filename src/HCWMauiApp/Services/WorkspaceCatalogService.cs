@@ -48,11 +48,11 @@ public sealed class WorkspaceCatalogService
             var agent = new AgentViewModel
             {
                 DirectoryName = directoryName,
-                FriendlyName = string.IsNullOrWhiteSpace(manifest?.DisplayName) ? GetFriendlyName(directory, directoryName) : manifest.DisplayName,
+                FriendlyName = FirstNonEmpty(manifest?.DisplayName, manifest?.Who.Role, GetFriendlyName(directory, directoryName)),
                 FullPath = directory,
                 Version = string.IsNullOrWhiteSpace(manifest?.Version) ? "0.0.0" : manifest.Version,
-                Description = string.IsNullOrWhiteSpace(manifest?.Description) ? "No description provided." : manifest.Description,
-                Category = string.IsNullOrWhiteSpace(manifest?.Category) ? "Workspace Pack" : manifest.Category,
+                Description = FirstNonEmpty(manifest?.Description, manifest?.Who.Summary, "No description provided."),
+                Category = FirstNonEmpty(manifest?.Category, manifest?.Who.Persona, "Workspace Pack"),
                 ProviderIds = manifest?.ProviderIds ?? [],
                 IconKey = string.IsNullOrWhiteSpace(manifest?.IconKey) ? "pack" : manifest.IconKey,
                 OfficialLinks = manifest?.OfficialLinks ?? [],
@@ -63,6 +63,10 @@ public sealed class WorkspaceCatalogService
                 SourceRepository = string.IsNullOrWhiteSpace(manifest?.SourceRepository) ? "saulpatinojr/HCW-WorkspaceManager" : manifest.SourceRepository,
                 SourceBranch = string.IsNullOrWhiteSpace(manifest?.SourceBranch) ? "main" : manifest.SourceBranch,
                 SourcePath = string.IsNullOrWhiteSpace(manifest?.SourcePath) ? $"workspace-config/agents/{directoryName}" : manifest.SourcePath,
+                Who = manifest?.Who ?? new ManifestWhoDimension(),
+                How = manifest?.How ?? new ManifestHowDimension(),
+                Trust = manifest?.Trust ?? new ManifestTrustDimension(),
+                Talk = manifest?.Talk ?? new ManifestTalkDimension(),
                 IsSelected = false
             };
             agent.UpdateState = _packCatalogService.GetUpdateState(repoRootPath, agent);
@@ -105,6 +109,12 @@ public sealed class WorkspaceCatalogService
             ? directoryName
             : firstLine.Replace("# Persona:", string.Empty, StringComparison.Ordinal)
                 .Replace("#", string.Empty, StringComparison.Ordinal)
+                .Replace("Instructions", string.Empty, StringComparison.OrdinalIgnoreCase)
                 .Trim();
+    }
+
+    private static string FirstNonEmpty(params string?[] values)
+    {
+        return values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value))?.Trim() ?? string.Empty;
     }
 }

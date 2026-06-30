@@ -519,7 +519,24 @@
                             <VerticalStackLayout Spacing="10">
                                 <Label Text="Pack inspector" TextColor="{StaticResource TextPrimary}" FontSize="17" FontAttributes="Bold" />
                                 <Label x:Name="SelectedPackNameLabel" Text="Select a pack" TextColor="{StaticResource TextPrimary}" FontSize="14" FontAttributes="Bold" />
-                                <Label x:Name="SelectedPackDescriptionLabel" Text="Pack metadata, provider links, files, and MCP requirements appear here." TextColor="{StaticResource TextSecondary}" FontSize="12" LineBreakMode="WordWrap" />
+                                <Label x:Name="SelectedPackDescriptionLabel" Text="Pack metadata, dimension status, provider links, files, and MCP requirements appear here." TextColor="{StaticResource TextSecondary}" FontSize="12" LineBreakMode="WordWrap" />
+
+                                <Border BackgroundColor="#F8FBFF" Stroke="#BFDDF5" Padding="10">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8" />
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="6">
+                                        <Label x:Name="DimensionsSummaryLabel" Text="Dimensions: select a pack to inspect WHO/HOW/TRUST/TALK coverage." TextColor="{StaticResource TextPrimary}" FontSize="11" FontAttributes="Bold" />
+                                        <Label x:Name="WhoDimensionLabel" Text="WHO: not loaded" TextColor="{StaticResource TextSecondary}" FontSize="11" LineBreakMode="WordWrap" />
+                                        <Label x:Name="WhoDetailsLabel" Text="Responsibilities: not loaded" TextColor="{StaticResource TextMuted}" FontSize="10" LineBreakMode="WordWrap" />
+                                        <Label x:Name="HowDimensionLabel" Text="HOW: not loaded" TextColor="{StaticResource TextSecondary}" FontSize="11" LineBreakMode="WordWrap" />
+                                        <Label x:Name="HowDetailsLabel" Text="Handoffs: not loaded" TextColor="{StaticResource TextMuted}" FontSize="10" LineBreakMode="WordWrap" />
+                                        <Label x:Name="TrustDimensionLabel" Text="TRUST: not loaded" TextColor="{StaticResource TextSecondary}" FontSize="11" LineBreakMode="WordWrap" />
+                                        <Label x:Name="TrustDetailsLabel" Text="Guardrails: not loaded" TextColor="{StaticResource TextMuted}" FontSize="10" LineBreakMode="WordWrap" />
+                                        <Label x:Name="TalkDimensionLabel" Text="TALK: not loaded" TextColor="{StaticResource TextSecondary}" FontSize="11" LineBreakMode="WordWrap" />
+                                        <Label x:Name="TalkDetailsLabel" Text="Channels: not loaded" TextColor="{StaticResource TextMuted}" FontSize="10" LineBreakMode="WordWrap" />
+                                    </VerticalStackLayout>
+                                </Border>
 
                                 <Label Text="Provider links" TextColor="{StaticResource TextSecondary}" FontSize="12" FontAttributes="Bold" />
                                 <CollectionView x:Name="SelectedProvidersCollectionView"
@@ -623,3 +640,6 @@
         </Grid>
     </Grid>
 </ContentPage>
+
+
+

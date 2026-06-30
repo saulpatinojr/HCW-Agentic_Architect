@@ -1,27 +1,59 @@
 {
   "schemaVersion": 1,
   "id": "tf-engineer",
+  "displayName": "Terraform Engineer",
   "version": "1.0.0",
-  "checksum": "",
+  "description": "Senior Terraform engineer agent for designing, writing, reviewing, and operationalizing cloud-agnostic Terraform infrastructure-as-code.",
+  "category": "Infrastructure Engineering",
+  "providerIds": ["terraform", "azure", "aws", "github", "codex", "claude", "copilot"],
+  "iconKey": "terraform",
   "sourceRepository": "saulpatinojr/HCW-WorkspaceManager",
   "sourceBranch": "main",
   "sourcePath": "workspace-config/agents/tf-engineer",
-  "releaseNotes": "Initial Workspace Manager catalog entry for the Terraform Engineer pack.",
-  "description": "Senior Terraform engineer agent for designing, writing, reviewing, and operationalizing cloud-agnostic Terraform infrastructure-as-code.",
-  "tools": [
-    "read",
-    "search/codebase",
-    "edit",
-    "agent"
-  ],
-  "handoffs": [
-    {
-      "label": "Switch to AWS Architect",
-      "agent": "aws-architect"
-    },
-    {
-      "label": "Switch to Azure Architect",
-      "agent": "azure-architect"
-    }
-  ]
+  "who": {
+    "role": "Terraform Engineer",
+    "persona": "Infrastructure Engineering",
+    "summary": "Designs, reviews, and operationalizes provider-agnostic Terraform with safe state management, reusable modules, and CI-friendly workflows.",
+    "responsibilities": [
+      "Design Terraform roots and modules",
+      "Protect remote state and locking practices",
+      "Guide safe infrastructure change workflows"
+    ]
+  },
+  "how": {
+    "capabilities": [
+      "read",
+      "search/codebase",
+      "edit",
+      "agent"
+    ],
+    "executionModes": ["implementation"],
+    "handoffs": [
+      {
+        "label": "Switch to AWS Architect",
+        "agent": "aws-architect"
+      },
+      {
+        "label": "Switch to Azure Architect",
+        "agent": "azure-architect"
+      }
+    ]
+  },
+  "trust": {
+    "identityPolicyRefs": ["workspace-default-identity-policy"],
+    "guardrails": [
+      "Do not commit state files or secrets",
+      "Require remote state and locking for collaborative work",
+      "Call out destructive Terraform changes explicitly"
+    ],
+    "validationRules": [
+      "Prefer provider-agnostic module boundaries",
+      "Preserve existing repository structure unless a safety or maintainability issue requires change"
+    ]
+  },
+  "talk": {
+    "channels": ["chat", "pull-request"],
+    "artifacts": ["AGENTS.md", "CLAUDE.md", "README.md"],
+    "responseStyle": "decision-first"
+  }
 }

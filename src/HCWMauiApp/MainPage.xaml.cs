@@ -272,7 +272,8 @@ public partial class MainPage : ContentPage
         if (agent is null)
         {
             SelectedPackNameLabel.Text = "Select a pack";
-            SelectedPackDescriptionLabel.Text = "Pack metadata, provider links, files, and MCP requirements appear here.";
+            SelectedPackDescriptionLabel.Text = "Pack metadata, dimension status, provider links, files, and MCP requirements appear here.";
+            ResetDimensionInspector();
             UpdateButton.IsEnabled = false;
             RefreshFolderNodes();
             return;
@@ -280,6 +281,7 @@ public partial class MainPage : ContentPage
 
         SelectedPackNameLabel.Text = $"{agent.FriendlyName}  v{agent.Version}";
         SelectedPackDescriptionLabel.Text = $"{agent.Category} | {agent.UpdateState}\n{agent.Description}";
+        PopulateDimensionInspector(agent);
 
         foreach (var provider in _providerRegistryService.Resolve(agent.ProviderIds))
         {
@@ -303,6 +305,83 @@ public partial class MainPage : ContentPage
 
         UpdateButton.IsEnabled = !string.Equals(agent.UpdateState, "Current", StringComparison.OrdinalIgnoreCase);
         RefreshFolderNodes();
+    }
+
+    private void ResetDimensionInspector()
+    {
+        DimensionsSummaryLabel.Text = "Dimensions: select a pack to inspect WHO/HOW/TRUST/TALK coverage.";
+        WhoDimensionLabel.Text = "WHO: not loaded";
+        WhoDetailsLabel.Text = "Responsibilities: not loaded";
+        HowDimensionLabel.Text = "HOW: not loaded";
+        HowDetailsLabel.Text = "Handoffs: not loaded";
+        TrustDimensionLabel.Text = "TRUST: not loaded";
+        TrustDetailsLabel.Text = "Guardrails: not loaded";
+        TalkDimensionLabel.Text = "TALK: not loaded";
+        TalkDetailsLabel.Text = "Channels: not loaded";
+    }
+
+    private void PopulateDimensionInspector(AgentViewModel agent)
+    {
+        int completed = new[] { agent.Who.IsComplete, agent.How.IsComplete, agent.Trust.IsComplete, agent.Talk.IsComplete }
+            .Count(value => value);
+
+        DimensionsSummaryLabel.Text = $"Dimensions: {completed}/4 complete | schema-ready manifest coverage for issue #14.";
+        WhoDimensionLabel.Text = FormatDimensionLine("WHO", agent.Who.IsComplete, BuildWhoDetail(agent.Who));
+        WhoDetailsLabel.Text = $"Responsibilities: {FormatList(agent.Who.Responsibilities)}";
+        HowDimensionLabel.Text = FormatDimensionLine("HOW", agent.How.IsComplete, BuildHowDetail(agent.How));
+        HowDetailsLabel.Text = $"Handoffs: {FormatHandoffs(agent.How.Handoffs)}";
+        TrustDimensionLabel.Text = FormatDimensionLine("TRUST", agent.Trust.IsComplete, BuildTrustDetail(agent.Trust));
+        TrustDetailsLabel.Text = $"Guardrails: {FormatList(agent.Trust.Guardrails)}";
+        TalkDimensionLabel.Text = FormatDimensionLine("TALK", agent.Talk.IsComplete, BuildTalkDetail(agent.Talk));
+        TalkDetailsLabel.Text = $"Channels: {FormatList(agent.Talk.Channels)}";
+    }
+
+    private static string FormatDimensionLine(string label, bool isComplete, string detail)
+    {
+        string status = isComplete ? "complete" : "incomplete";
+        return $"{label}: {status} | {detail}";
+    }
+
+    private static string BuildWhoDetail(ManifestWhoDimension who)
+    {
+        string role = string.IsNullOrWhiteSpace(who.Role) ? "role missing" : who.Role;
+        string summary = string.IsNullOrWhiteSpace(who.Summary) ? "summary missing" : who.Summary;
+        return $"{role} | {summary}";
+    }
+
+    private static string BuildHowDetail(ManifestHowDimension how)
+    {
+        string mode = how.ExecutionModes.FirstOrDefault() ?? "mode missing";
+        return $"capabilities={how.Capabilities.Count}, handoffs={how.Handoffs.Count}, mode={mode}";
+    }
+
+    private static string BuildTrustDetail(ManifestTrustDimension trust)
+    {
+        return $"policies={trust.IdentityPolicyRefs.Count}, guardrails={trust.Guardrails.Count}, validations={trust.ValidationRules.Count}";
+    }
+
+    private static string BuildTalkDetail(ManifestTalkDimension talk)
+    {
+        string style = string.IsNullOrWhiteSpace(talk.ResponseStyle) ? "style missing" : talk.ResponseStyle;
+        return $"channels={talk.Channels.Count}, artifacts={talk.Artifacts.Count}, style={style}";
+    }
+
+    private static string FormatList(IEnumerable<string> values)
+    {
+        var entries = values.Where(value => !string.IsNullOrWhiteSpace(value)).ToList();
+        return entries.Count == 0 ? "none declared" : string.Join(" | ", entries);
+    }
+
+    private static string FormatHandoffs(IEnumerable<ManifestHandoff> handoffs)
+    {
+        var entries = handoffs
+            .Select(handoff => string.IsNullOrWhiteSpace(handoff.Label)
+                ? handoff.Agent
+                : $"{handoff.Label} -> {handoff.Agent}")
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .ToList();
+
+        return entries.Count == 0 ? "none declared" : string.Join(" | ", entries);
     }
 
     private void OnScanWorkspaceClicked(object sender, EventArgs e)
@@ -666,3 +745,7 @@ public partial class MainPage : ContentPage
         Grid.SetRow(InspectorPanel, 0);
     }
 }
+
+
+
+

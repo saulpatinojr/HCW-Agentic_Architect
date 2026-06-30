@@ -55,6 +55,7 @@ public sealed class PackManifestServiceTests : IDisposable
         Assert.False(result.IsValid);
         Assert.Contains("schemaVersion must be greater than 0.", result.Errors);
         Assert.Contains("displayName is required.", result.Errors);
+        Assert.Contains("who dimension must include at least one field.", result.Errors);
     }
 
     [Fact]
@@ -130,6 +131,10 @@ public sealed class PackManifestServiceTests : IDisposable
         Assert.Single(result.Manifest.RequiredFiles);
         Assert.Single(result.Manifest.RequiredMcpServers);
         Assert.Single(result.Manifest.RequiredEnvVars);
+        Assert.True(result.Manifest.Who.IsComplete);
+        Assert.True(result.Manifest.How.IsComplete);
+        Assert.True(result.Manifest.Trust.IsComplete);
+        Assert.True(result.Manifest.Talk.IsComplete);
     }
 
     [Fact]
@@ -162,6 +167,80 @@ public sealed class PackManifestServiceTests : IDisposable
         Assert.Single(result.Manifest.OfficialLinks);
         Assert.Single(result.Manifest.BestPracticeLinks);
         Assert.Equal("example/repo", result.Manifest.SourceRepository);
+    }
+
+    [Fact]
+    public void ValidatePack_WhenExplicitDimensionsProvided_UsesDeclaredValues()
+    {
+        string packPath = CreatePackDirectory("pack-explicit-dimensions");
+        File.WriteAllText(Path.Combine(packPath, "pack.manifest.json"), """
+{
+  "schemaVersion": 1,
+  "displayName": "Canonical Architect",
+  "who": {
+    "role": "Canonical Architect",
+    "persona": "Architecture Pack",
+    "summary": "Defines the canonical manifest contract.",
+    "responsibilities": ["Own manifest evolution"]
+  },
+  "how": {
+    "capabilities": ["schema design", "validation"],
+    "executionModes": ["implementation"],
+    "handoffs": [{ "label": "Delegate adapter work", "agent": "adapter-team" }]
+  },
+  "trust": {
+    "identityPolicyRefs": ["entra-workload-identity"],
+    "guardrails": ["No secrets in manifests"],
+    "validationRules": ["All four dimensions are required"]
+  },
+  "talk": {
+    "channels": ["chat", "pull-request"],
+    "artifacts": ["AGENTS.md", "CLAUDE.md"],
+    "responseStyle": "decision-first"
+  }
+}
+""");
+
+        var result = _service.ValidatePack(packPath);
+
+        Assert.True(result.IsValid);
+        Assert.NotNull(result.Manifest);
+        Assert.Equal("Canonical Architect", result.Manifest!.Who.Role);
+        Assert.Equal("Architecture Pack", result.Manifest.Who.Persona);
+        Assert.Equal(["schema design", "validation"], result.Manifest.How.Capabilities);
+        Assert.Equal("entra-workload-identity", Assert.Single(result.Manifest.Trust.IdentityPolicyRefs));
+        Assert.Equal("decision-first", result.Manifest.Talk.ResponseStyle);
+    }
+
+    [Fact]
+    public void ValidatePack_WhenLegacyManifestUsesToolsAndHandoffs_BackfillsDimensions()
+    {
+        string packPath = CreatePackDirectory("pack-legacy-dimensions");
+        File.WriteAllText(Path.Combine(packPath, "AGENTS.md"), "# Legacy Architect Instructions");
+        File.WriteAllText(Path.Combine(packPath, "CLAUDE.md"), "legacy");
+        File.WriteAllText(Path.Combine(packPath, "pack.manifest.json"), """
+{
+  "schemaVersion": 1,
+  "id": "legacy-architect",
+  "description": "Legacy manifest without explicit dimensions.",
+  "tools": ["read", "edit", "search/codebase"],
+  "handoffs": [
+    { "label": "Switch to AWS Architect", "agent": "aws-architect" }
+  ]
+}
+""");
+
+        var result = _service.ValidatePack(packPath);
+
+        Assert.True(result.IsValid);
+        Assert.NotNull(result.Manifest);
+        Assert.Equal("Legacy Architect", result.Manifest!.DisplayName);
+        Assert.Equal("Legacy Architect", result.Manifest.Who.Role);
+        Assert.Contains("edit", result.Manifest.How.Capabilities);
+        Assert.Equal("implementation", Assert.Single(result.Manifest.How.ExecutionModes));
+        Assert.Equal("aws-architect", Assert.Single(result.Manifest.How.Handoffs).Agent);
+        Assert.Contains("AGENTS.md", result.Manifest.Talk.Artifacts);
+        Assert.Contains("CLAUDE.md", result.Manifest.Talk.Artifacts);
     }
 
     private string CreatePackDirectory(string name)
