@@ -1,0 +1,58 @@
+{
+  "id": "ai-architect-agents",
+  "displayName": "AI Architect Agents",
+  "summary": "Canonical workspace pack used to generate harness-native guidance and policy-aware outputs.",
+  "repository": "saulpatinojr/HCW-Agentic_Architect",
+  "branch": "main",
+  "sourcePath": "workspace-config/agents",
+  "responsibilities": [
+    "Coordinate canonical pack generation.",
+    "Render harness-native instructions.",
+    "Track drift across generated outputs."
+  ],
+  "handoffs": [
+    {
+      "label": "Adapter work",
+      "agent": "adapter-team"
+    }
+  ],
+  "guardrails": [
+    "Keep generated outputs deterministic.",
+    "Regenerate drift before release."
+  ],
+  "channels": [
+    "markdown",
+    "chat",
+    "cli"
+  ],
+  "policyEntries": [
+    {
+      "name": "generate-claude",
+      "value": "enabled",
+      "scope": "Pack",
+      "source": "canonical-pack",
+      "enabled": true
+    },
+    {
+      "name": "generate-copilot",
+      "value": "enabled",
+      "scope": "Pack",
+      "source": "canonical-pack",
+      "enabled": true
+    },
+    {
+      "name": "generate-codex",
+      "value": "enabled",
+      "scope": "Pack",
+      "source": "canonical-pack",
+      "enabled": true
+    },
+    {
+      "name": "generation-mode",
+      "value": "preview",
+      "scope": "Session",
+      "source": "canonical-pack",
+      "enabled": true
+    }
+  ]
+}

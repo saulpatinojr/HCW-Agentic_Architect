@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using WorkspaceManager.Services;
 
 namespace WorkspaceManager;
@@ -7,20 +8,24 @@ public partial class SettingsPage : ContentPage
 {
     private readonly AppPreferenceStore _preferenceStore;
     private readonly WorkspacePolicyService _policyService;
+    private readonly HarnessPolicyService _harnessPolicyService;
     private readonly string _settingsDir;
     private readonly string _workspaceDataDir;
     private WorkspacePolicyManifest _policyManifest = WorkspacePolicyManifest.Default();
+    private HarnessPolicyManifest _harnessPolicyManifest = HarnessPolicyManifest.Default();
 
     public SettingsPage()
     {
         InitializeComponent();
         _preferenceStore = new AppPreferenceStore();
         _policyService = new WorkspacePolicyService();
+        _harnessPolicyService = new HarnessPolicyService();
         _settingsDir = _preferenceStore.SettingsDirectory;
         _workspaceDataDir = ResolveWorkspaceDataDirectory();
         Directory.CreateDirectory(_settingsDir);
         LoadPreferences();
         LoadPolicyPreferences();
+        LoadHarnessPolicyPreferences();
     }
 
     private static string ResolveWorkspaceDataDirectory()
@@ -146,6 +151,31 @@ public partial class SettingsPage : ContentPage
         PolicyStatusLabel.Text = $"Saved local policy variant at {DateTime.Now:t}.";
     }
 
+    private void LoadHarnessPolicyPreferences()
+    {
+        _harnessPolicyManifest = _harnessPolicyService.Load();
+        HarnessPolicyEditor.Text = JsonSerializer.Serialize(_harnessPolicyManifest, new JsonSerializerOptions { WriteIndented = true });
+        HarnessPolicyStatusLabel.Text = $"Loaded harness policy for {_harnessPolicyManifest.ActivePackId}.";
+    }
+
+    private async void OnSaveHarnessPolicyClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            var manifest = JsonSerializer.Deserialize<HarnessPolicyManifest>(HarnessPolicyEditor.Text ?? string.Empty, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? HarnessPolicyManifest.Default();
+
+            _harnessPolicyManifest = manifest;
+            await _harnessPolicyService.SaveAsync(_harnessPolicyManifest);
+            HarnessPolicyStatusLabel.Text = $"Saved harness policy variant at {DateTime.Now:t}.";
+        }
+        catch (Exception ex)
+        {
+            HarnessPolicyStatusLabel.Text = $"Unable to save harness policy: {ex.Message}";
+        }
+    }
     private async void OnResetClicked(object sender, EventArgs e)
     {
         bool reset = await DisplayAlertAsync(

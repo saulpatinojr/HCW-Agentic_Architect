@@ -27,6 +27,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<WorkspaceMcpConfigBuilderService>();
         builder.Services.AddSingleton<WorkspaceWriterService>();
         builder.Services.AddSingleton<WorkspacePolicyService>();
+        builder.Services.AddSingleton<HarnessPolicyService>();
+        builder.Services.AddSingleton(sp => new HarnessPipelineService(sp.GetRequiredService<HarnessPolicyService>()));
         builder.Services.AddSingleton<WorkspaceSystemCheckService>();
         builder.Services.AddSingleton<WorkspaceActivationService>();
         builder.Services.AddSingleton<OptionalFeatureSetupService>();

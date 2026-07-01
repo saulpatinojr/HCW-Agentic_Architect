@@ -37,5 +37,8 @@
     <Compile Include="..\HCWMauiApp\Services\WorkspaceActivationService.cs" Link="Services\WorkspaceActivationService.cs" />
     <Compile Include="..\HCWMauiApp\Services\WorkspacePolicyService.cs" Link="Services\WorkspacePolicyService.cs" />
     <Compile Include="..\HCWMauiApp\Services\PartnerAdapterHealthService.cs" Link="Services\PartnerAdapterHealthService.cs" />
+    <Compile Include="..\HCWMauiApp\Models\HarnessPipelineModels.cs" Link="Models\HarnessPipelineModels.cs" />
+    <Compile Include="..\HCWMauiApp\Services\HarnessPolicyService.cs" Link="Services\HarnessPolicyService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\HarnessPipelineService.cs" Link="Services\HarnessPipelineService.cs" />
   </ItemGroup>
 </Project>
