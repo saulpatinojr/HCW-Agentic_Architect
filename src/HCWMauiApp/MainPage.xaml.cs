@@ -19,6 +19,7 @@ public partial class MainPage : ContentPage
     private readonly OptionalFeatureSetupService _optionalFeatureSetupService;
     private readonly DashboardWindowService _dashboardWindowService;
     private readonly ContextOptimizationExportService _contextOptimizationExportService;
+    private readonly HarnessPipelineService _harnessPipelineService;
     private readonly ContextOptimizationDashboardPage _contextOptimizationDashboardPage;
     private string _repoRootPath = string.Empty;
     private AgentViewModel? _selectedPack;
@@ -35,6 +36,8 @@ public partial class MainPage : ContentPage
     public ObservableCollection<WorkspaceFolderNode> FolderNodes { get; } = [];
     public ObservableCollection<ManifestToolRequirement> SelectedRequiredTools { get; } = [];
     public ObservableCollection<ManifestMcpServerRequirement> SelectedMcpServers { get; } = [];
+    public ObservableCollection<HarnessCompatibilityEntry> HarnessCompatibilityEntries { get; } = [];
+    public ObservableCollection<HarnessPolicyEntry> HarnessPolicyEntries { get; } = [];
 
     public MainPage(
         WorkspaceCatalogService workspaceCatalogService,
@@ -48,6 +51,7 @@ public partial class MainPage : ContentPage
         OptionalFeatureSetupService optionalFeatureSetupService,
         DashboardWindowService dashboardWindowService,
         ContextOptimizationExportService contextOptimizationExportService,
+        HarnessPipelineService harnessPipelineService,
         ContextOptimizationDashboardPage contextOptimizationDashboardPage)
     {
         _workspaceCatalogService = workspaceCatalogService;
@@ -61,6 +65,7 @@ public partial class MainPage : ContentPage
         _optionalFeatureSetupService = optionalFeatureSetupService;
         _dashboardWindowService = dashboardWindowService;
         _contextOptimizationExportService = contextOptimizationExportService;
+        _harnessPipelineService = harnessPipelineService;
         _contextOptimizationDashboardPage = contextOptimizationDashboardPage;
 
         InitializeComponent();
@@ -71,6 +76,7 @@ public partial class MainPage : ContentPage
         RefreshFolderNodes();
         UpdateSummaryState("Ready");
         RefreshDashboardPreview();
+        RefreshHarnessPipelinePreview();
         _ = InitializeOptionalTracksAsync();
         _ = RefreshHelperHealthAsync();
     }
@@ -145,6 +151,8 @@ public partial class MainPage : ContentPage
         FolderNodesCollectionView.ItemsSource = FolderNodes;
         RequiredToolsCollectionView.ItemsSource = SelectedRequiredTools;
         McpServersCollectionView.ItemsSource = SelectedMcpServers;
+        HarnessCompatibilityCollectionView.ItemsSource = HarnessCompatibilityEntries;
+        HarnessPolicyCollectionView.ItemsSource = HarnessPolicyEntries;
     }
 
     private void LoadProviders()
@@ -384,6 +392,55 @@ public partial class MainPage : ContentPage
         return entries.Count == 0 ? "none declared" : string.Join(" | ", entries);
     }
 
+    private void RefreshHarnessPipelinePreview()
+    {
+        var report = _harnessPipelineService.ValidateAsync(_repoRootPath).GetAwaiter().GetResult();
+        ApplyHarnessPipelineReport(report);
+    }
+
+    private void ApplyHarnessPipelineReport(HarnessGenerationReport report)
+    {
+        HarnessCompatibilityEntries.Clear();
+        foreach (var entry in report.CompatibilityMatrix)
+        {
+            HarnessCompatibilityEntries.Add(entry);
+        }
+
+        HarnessPolicyEntries.Clear();
+        foreach (var entry in report.EffectivePolicy)
+        {
+            HarnessPolicyEntries.Add(entry);
+        }
+
+        HarnessPipelineSummaryLabel.Text = report.Summary;
+        HarnessPolicySummaryLabel.Text = report.EffectivePolicy.Count == 0
+            ? "Policy: no effective controls resolved yet."
+            : $"Policy: {report.EffectivePolicy.Count} effective controls, {report.DriftEntries.Count} drift checks.";
+    }
+
+    private async void OnGenerateHarnessOutputsClicked(object sender, EventArgs e)
+    {
+        var report = await _harnessPipelineService.GenerateAsync(_repoRootPath);
+        foreach (var line in report.Logs)
+        {
+            Log(line, "Harness generation");
+        }
+
+        ApplyHarnessPipelineReport(report);
+        Log(report.Succeeded ? "Harness outputs generated." : "Harness generation completed with issues.", "Harness generation", report.Summary);
+    }
+
+    private async void OnValidateHarnessOutputsClicked(object sender, EventArgs e)
+    {
+        var report = await _harnessPipelineService.ValidateAsync(_repoRootPath);
+        foreach (var line in report.Logs)
+        {
+            Log(line, "Harness validation");
+        }
+
+        ApplyHarnessPipelineReport(report);
+        Log(report.Succeeded ? "Harness outputs are aligned." : "Harness validation found drift.", "Harness validation", report.Summary);
+    }
     private void OnScanWorkspaceClicked(object sender, EventArgs e)
     {
         DiscoveredAgents.Clear();
@@ -745,7 +802,3 @@ public partial class MainPage : ContentPage
         Grid.SetRow(InspectorPanel, 0);
     }
 }
-
-
-
-

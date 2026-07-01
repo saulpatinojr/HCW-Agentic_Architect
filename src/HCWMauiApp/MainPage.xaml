@@ -166,6 +166,24 @@
                         TextColor="{StaticResource TextPrimary}"
                         Padding="12,7"
                         Margin="0,0,5,6" />
+                <Button Text="Generate outputs"
+                        Clicked="OnGenerateHarnessOutputsClicked"
+                        ToolTipProperties.Text="Generate harness-native outputs from the canonical pack"
+                        BackgroundColor="#EAF1F8"
+                        BorderColor="{StaticResource StrokeStrong}"
+                        BorderWidth="1"
+                        TextColor="{StaticResource TextPrimary}"
+                        Padding="12,7"
+                        Margin="0,0,5,6" />
+                <Button Text="Validate pipeline"
+                        Clicked="OnValidateHarnessOutputsClicked"
+                        ToolTipProperties.Text="Check generated outputs for drift before release"
+                        BackgroundColor="#EAF1F8"
+                        BorderColor="{StaticResource StrokeStrong}"
+                        BorderWidth="1"
+                        TextColor="{StaticResource TextPrimary}"
+                        Padding="12,7"
+                        Margin="0,0,5,6" />
                 <Button x:Name="ApplyButton"
                         Text="Apply"
                         Clicked="OnActivateWorkspaceClicked"
@@ -603,6 +621,51 @@
                                         </DataTemplate>
                                     </CollectionView.ItemTemplate>
                                 </CollectionView>
+                                <Border BackgroundColor="#F8FBFF" Stroke="#BFDDF5" Padding="10">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8" />
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="8">
+                                        <Label Text="Harness pipeline" TextColor="{StaticResource TextPrimary}" FontSize="14" FontAttributes="Bold" />
+                                        <Label x:Name="HarnessPipelineSummaryLabel" Text="Pipeline: no canonical pack loaded." TextColor="{StaticResource TextSecondary}" FontSize="11" LineBreakMode="WordWrap" />
+                                        <Label x:Name="HarnessPolicySummaryLabel" Text="Policy: no resolution yet." TextColor="{StaticResource TextMuted}" FontSize="10" LineBreakMode="WordWrap" />
+                                        <CollectionView x:Name="HarnessCompatibilityCollectionView" HeightRequest="96" SelectionMode="None">
+                                            <CollectionView.EmptyView>
+                                                <Label Text="No harness compatibility entries yet." TextColor="{StaticResource TextMuted}" FontSize="10" />
+                                            </CollectionView.EmptyView>
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" Padding="0,0,0,4">
+                                                        <Label Text="{Binding AdapterName}" TextColor="{StaticResource TextPrimary}" FontSize="11" FontAttributes="Bold" />
+                                                        <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                                            <Label Text="{Binding Detail}" TextColor="{StaticResource TextSecondary}" FontSize="10" LineBreakMode="WordWrap" />
+                                                            <Label Text="{Binding OutputPath}" TextColor="{StaticResource TextMuted}" FontSize="9" LineBreakMode="TailTruncation" />
+                                                        </VerticalStackLayout>
+                                                        <Label Grid.Column="2" Text="{Binding Status}" TextColor="{StaticResource Accent}" FontSize="10" FontAttributes="Bold" VerticalOptions="Center" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                        <CollectionView x:Name="HarnessPolicyCollectionView" HeightRequest="92" SelectionMode="None">
+                                            <CollectionView.EmptyView>
+                                                <Label Text="No effective harness policy entries yet." TextColor="{StaticResource TextMuted}" FontSize="10" />
+                                            </CollectionView.EmptyView>
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" Padding="0,0,0,4">
+                                                        <Label Text="{Binding Name}" TextColor="{StaticResource TextPrimary}" FontSize="10" FontAttributes="Bold" />
+                                                        <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                                            <Label Text="{Binding Value}" TextColor="{StaticResource TextSecondary}" FontSize="10" />
+                                                            <Label Text="{Binding Source}" TextColor="{StaticResource TextMuted}" FontSize="9" />
+                                                            <Label Text="{Binding Precedence}" TextColor="{StaticResource TextMuted}" FontSize="9" />
+                                                        </VerticalStackLayout>
+                                                        <Label Grid.Column="2" Text="{Binding Scope}" TextColor="{StaticResource Accent}" FontSize="10" FontAttributes="Bold" VerticalOptions="Center" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                    </VerticalStackLayout>
+                                </Border>
                             </VerticalStackLayout>
                         </Border>
 
@@ -640,6 +703,3 @@
         </Grid>
     </Grid>
 </ContentPage>
-
-
-
