@@ -80,7 +80,7 @@ public sealed class WorkspaceActivationServiceIntegrationTests : IDisposable
         var mcpBuilder = new WorkspaceMcpConfigBuilderService();
         var writerService = new WorkspaceWriterService(new DefaultWorkspaceFileSystem());
 
-        return new WorkspaceActivationService(toolInstallService, packManifestService, mergeService, mcpBuilder, writerService);
+        return new WorkspaceActivationService(toolInstallService, packManifestService, mergeService, mcpBuilder, writerService, new WorkspacePolicyService());
     }
 
     private string CreateAgentPack(string directoryName, bool includeToolchainFiles)
