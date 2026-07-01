@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Compile Include="..\HCWMauiApp\Models\WorkspaceModels.cs" Link="Models\WorkspaceModels.cs" />
+    <Compile Include="..\HCWMauiApp\Models\CompressionDashboardModels.cs" Link="Models\CompressionDashboardModels.cs" />
     <Compile Include="..\HCWMauiApp\Services\PackManifestService.cs" Link="Services\PackManifestService.cs" />
     <Compile Include="..\HCWMauiApp\Services\ManifestRequirementsMergeService.cs" Link="Services\ManifestRequirementsMergeService.cs" />
     <Compile Include="..\HCWMauiApp\Services\WorkspacePackCatalogService.cs" Link="Services\WorkspacePackCatalogService.cs" />
@@ -34,5 +35,7 @@
     <Compile Include="..\HCWMauiApp\Services\WorkspaceMcpConfigBuilderService.cs" Link="Services\WorkspaceMcpConfigBuilderService.cs" />
     <Compile Include="..\HCWMauiApp\Services\WorkspaceWriterService.cs" Link="Services\WorkspaceWriterService.cs" />
     <Compile Include="..\HCWMauiApp\Services\WorkspaceActivationService.cs" Link="Services\WorkspaceActivationService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\WorkspacePolicyService.cs" Link="Services\WorkspacePolicyService.cs" />
+    <Compile Include="..\HCWMauiApp\Services\PartnerAdapterHealthService.cs" Link="Services\PartnerAdapterHealthService.cs" />
   </ItemGroup>
 </Project>

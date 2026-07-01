@@ -9,19 +9,22 @@ public sealed class WorkspaceActivationService
     private readonly PackManifestService _packManifestService;
     private readonly WorkspaceMcpConfigBuilderService _workspaceMcpConfigBuilderService;
     private readonly WorkspaceWriterService _workspaceWriterService;
+    private readonly WorkspacePolicyService _workspacePolicyService;
 
     public WorkspaceActivationService(
         ToolInstallService toolInstallService,
         PackManifestService packManifestService,
         ManifestRequirementsMergeService mergeService,
         WorkspaceMcpConfigBuilderService workspaceMcpConfigBuilderService,
-        WorkspaceWriterService workspaceWriterService)
+        WorkspaceWriterService workspaceWriterService,
+        WorkspacePolicyService workspacePolicyService)
     {
         _toolInstallService = toolInstallService;
         _packManifestService = packManifestService;
         _mergeService = mergeService;
         _workspaceMcpConfigBuilderService = workspaceMcpConfigBuilderService;
         _workspaceWriterService = workspaceWriterService;
+        _workspacePolicyService = workspacePolicyService;
     }
 
     public async Task<WorkspaceActivationResult> ActivateAsync(WorkspaceActivationRequest request)
@@ -65,11 +68,52 @@ public sealed class WorkspaceActivationService
         var validManifestCount = manifestResults.Count(r => r.Validation.HasManifest);
         logs.Add($"[+] Manifest validation complete. Valid manifests loaded: {validManifestCount}/{request.SelectedAgents.Count}.");
 
+        logs.Add("[*] Evaluating workspace policy presets...");
+        var policy = _workspacePolicyService.Evaluate(request.RepoRootPath, manifestResults);
+        logs.Add($"[+] Policy presets: {policy.SecurityProfile.DisplayName} | {policy.WorkflowBundle.DisplayName} | {policy.DelegationMode.DisplayName}.");
+        logs.Add($"[+] Policy quality: {policy.QualitySummary}; delegation: {policy.DelegationSummary}.");
+
+        foreach (var checkpoint in policy.Checkpoints)
+        {
+            logs.Add($"[{(checkpoint.IsComplete ? "+" : "!")}] Checkpoint {checkpoint.Order}:{checkpoint.Stage} => {checkpoint.Status}");
+        }
+
+        foreach (var warning in policy.Warnings)
+        {
+            logs.Add($"[!] {warning}");
+        }
+
+        if (policy.Errors.Any())
+        {
+            foreach (var error in policy.Errors)
+            {
+                logs.Add(policy.Manifest.StrictWorkflowMode ? $"[-] {error}" : $"[!] {error}");
+            }
+
+            if (policy.Manifest.StrictWorkflowMode)
+            {
+                logs.Add("[-] Activation halted: strict workflow mode blocked policy violations.");
+                return new WorkspaceActivationResult(false, logs);
+            }
+
+            if (!string.IsNullOrWhiteSpace(policy.Manifest.BypassReason))
+            {
+                logs.Add($"[!] Policy bypass noted by {Environment.UserName}: {policy.Manifest.BypassReason}");
+            }
+        }
         var merged = _mergeService.Merge(manifestResults);
-        foreach (var warning in merged.Warnings) { logs.Add($"[!] {warning}"); }
+        foreach (var warning in merged.Warnings)
+        {
+            logs.Add($"[!] {warning}");
+        }
+
         if (!merged.IsValid)
         {
-            foreach (var error in merged.Errors) { logs.Add($"[-] {error}"); }
+            foreach (var error in merged.Errors)
+            {
+                logs.Add($"[-] {error}");
+            }
+
             logs.Add("[-] Activation halted: merged manifest requirements contain conflicts or missing files.");
             return new WorkspaceActivationResult(false, logs);
         }

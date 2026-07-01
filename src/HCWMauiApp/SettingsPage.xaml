@@ -243,6 +243,70 @@
                             </VerticalStackLayout>
                         </Border>
 
+                        <Border BackgroundColor="#EEF4FF" Stroke="#BFDDF5" Padding="12">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Operating policies"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       FontSize="14"
+                                       FontAttributes="Bold" />
+                                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="8">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label Text="Security profile" TextColor="{StaticResource TextSecondary}" FontSize="12" FontAttributes="Bold" />
+                                        <Picker x:Name="SecurityProfilePicker" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                        <Label Text="Workflow bundle" TextColor="{StaticResource TextSecondary}" FontSize="12" FontAttributes="Bold" />
+                                        <Picker x:Name="WorkflowBundlePicker" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Row="1" Spacing="4">
+                                        <Label Text="Delegation mode" TextColor="{StaticResource TextSecondary}" FontSize="12" FontAttributes="Bold" />
+                                        <Picker x:Name="DelegationModePicker" />
+                                    </VerticalStackLayout>
+                                    <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="Auto,*" ColumnSpacing="4">
+                                        <Switch x:Name="StrictWorkflowModeSwitch" IsToggled="True" OnColor="{StaticResource Accent}" VerticalOptions="Start" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                            <Label Text="Strict workflow mode" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                                            <Label Text="Block Apply when checkpoints or quality gates fail." TextColor="{StaticResource TextMuted}" FontSize="11" LineBreakMode="WordWrap" MaxLines="2" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                    <VerticalStackLayout Grid.Row="2" Spacing="4">
+                                        <Label Text="Research min" TextColor="{StaticResource TextSecondary}" FontSize="12" FontAttributes="Bold" />
+                                        <Entry x:Name="ResearchScoreMinEntry" Keyboard="Numeric" Text="70" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Row="2" Grid.Column="1" Spacing="4">
+                                        <Label Text="Plan min" TextColor="{StaticResource TextSecondary}" FontSize="12" FontAttributes="Bold" />
+                                        <Entry x:Name="PlanScoreMinEntry" Keyboard="Numeric" Text="75" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Row="3" Spacing="4">
+                                        <Label Text="Max auto retry" TextColor="{StaticResource TextSecondary}" FontSize="12" FontAttributes="Bold" />
+                                        <Entry x:Name="MaxAutoRetryEntry" Keyboard="Numeric" Text="2" />
+                                    </VerticalStackLayout>
+                                    <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="Auto,*" ColumnSpacing="4">
+                                        <Switch x:Name="TestPassRequiredSwitch" IsToggled="True" OnColor="{StaticResource Accent}" VerticalOptions="Start" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                            <Label Text="Test pass required" TextColor="{StaticResource TextPrimary}" FontSize="12" FontAttributes="Bold" />
+                                            <Label Text="Block apply if packs fail validation." TextColor="{StaticResource TextMuted}" FontSize="11" LineBreakMode="WordWrap" MaxLines="2" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Grid>
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="Bypass reason" TextColor="{StaticResource TextSecondary}" FontSize="12" FontAttributes="Bold" />
+                                    <Entry x:Name="BypassReasonEntry" Placeholder="Required when strict mode is off" />
+                                </VerticalStackLayout>
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="Delegation profiles JSON" TextColor="{StaticResource TextSecondary}" FontSize="12" FontAttributes="Bold" />
+                                    <Editor x:Name="DelegationProfilesEditor" AutoSize="TextChanges" HeightRequest="150" />
+                                </VerticalStackLayout>
+                                <HorizontalStackLayout Spacing="8" HorizontalOptions="End">
+                                    <Button Text="Save local variant" Clicked="OnSavePolicyVariantClicked" BackgroundColor="#FFFFFF" BorderColor="#A8C4E8" BorderWidth="1" TextColor="#005A9E" Padding="12,6" />
+                                </HorizontalStackLayout>
+                                <Label x:Name="PolicyStatusLabel" Text="Policy manifests are stored locally per Windows profile." TextColor="{StaticResource TextMuted}" FontSize="11" LineBreakMode="WordWrap" />
+                            </VerticalStackLayout>
+                        </Border>
+
                         <Border BackgroundColor="#FFF8E8" Stroke="#E7C27B" Padding="12">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
